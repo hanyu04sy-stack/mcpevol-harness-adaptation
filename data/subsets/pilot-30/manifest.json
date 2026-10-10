@@ -1,0 +1,385 @@
+{
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "version_mapping": {
+    "early": "original",
+    "middle": "iter3",
+    "late": "iter5"
+  },
+  "seed": 6203,
+  "requested_size": 30,
+  "actual_size": 30,
+  "affected_count": 24,
+  "retention_count": 6,
+  "change_type_task_counts": {
+    "description": 17,
+    "parameter": 23,
+    "tool": 19
+  },
+  "selected_indices": [
+    10,
+    11,
+    14,
+    28,
+    79,
+    92,
+    142,
+    161,
+    176,
+    177,
+    181,
+    186,
+    194,
+    227,
+    246,
+    260,
+    262,
+    289,
+    295,
+    302,
+    312,
+    325,
+    353,
+    358,
+    383,
+    400,
+    407,
+    434,
+    437,
+    444
+  ],
+  "selected_task_details": [
+    {
+      "idx": 10,
+      "status": "affected",
+      "affected_servers": [
+        "@executeautomation/playwright-mcp-server",
+        "mcp-maven-deps"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 11,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    },
+    {
+      "idx": 14,
+      "status": "affected",
+      "affected_servers": [
+        "@kazuph/mcp-taskmanager",
+        "mcp-filesystem-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter"
+      ]
+    },
+    {
+      "idx": 28,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-filesystem-server",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 79,
+      "status": "affected",
+      "affected_servers": [
+        "@puchunjie/doc-tools-mcp",
+        "giisp-openlibrary-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 92,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    },
+    {
+      "idx": 142,
+      "status": "affected",
+      "affected_servers": [
+        "@regle/mcp-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 161,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    },
+    {
+      "idx": 176,
+      "status": "affected",
+      "affected_servers": [
+        "time-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 177,
+      "status": "affected",
+      "affected_servers": [
+        "coffee-mcp-agent"
+      ],
+      "change_types": [
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 181,
+      "status": "affected",
+      "affected_servers": [
+        "@botanicastudios/crossref-mcp",
+        "docuking-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 186,
+      "status": "affected",
+      "affected_servers": [
+        "@sylphlab/pdf-reader-mcp",
+        "clojars-deps-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 194,
+      "status": "affected",
+      "affected_servers": [
+        "@nekzus/mcp-server",
+        "fetch-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 227,
+      "status": "affected",
+      "affected_servers": [
+        "@rtuin/mcp-mermaid-validator"
+      ],
+      "change_types": [
+        "parameter"
+      ]
+    },
+    {
+      "idx": 246,
+      "status": "affected",
+      "affected_servers": [
+        "@magicuidesign/mcp"
+      ],
+      "change_types": [
+        "tool"
+      ]
+    },
+    {
+      "idx": 260,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    },
+    {
+      "idx": 262,
+      "status": "affected",
+      "affected_servers": [
+        "@j0kz/smart-reviewer-mcp",
+        "@primeng/mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 289,
+      "status": "affected",
+      "affected_servers": [
+        "@aiuluna/knowledge-graph-mcp",
+        "nfty-mcp-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 295,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-weather-demo"
+      ],
+      "change_types": [
+        "parameter"
+      ]
+    },
+    {
+      "idx": 302,
+      "status": "affected",
+      "affected_servers": [
+        "slidev-mcp"
+      ],
+      "change_types": [
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 312,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    },
+    {
+      "idx": 325,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-calculator",
+        "time-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 353,
+      "status": "affected",
+      "affected_servers": [
+        "@googlemaps/code-assist-mcp",
+        "@jzone-mcp/antd-components-mcp",
+        "derived-mcp-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 358,
+      "status": "affected",
+      "affected_servers": [
+        "bazi-mcp",
+        "mcp-server-commands"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 383,
+      "status": "affected",
+      "affected_servers": [
+        "xcomet-mcp-server"
+      ],
+      "change_types": [
+        "parameter"
+      ]
+    },
+    {
+      "idx": 400,
+      "status": "affected",
+      "affected_servers": [
+        "claude-faf-mcp",
+        "mcp-knowledge-graph",
+        "pantheon-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 407,
+      "status": "affected",
+      "affected_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 434,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-tung-shing"
+      ],
+      "change_types": [
+        "parameter"
+      ]
+    },
+    {
+      "idx": 437,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-echarts",
+        "mcp-tung-shing"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ]
+    },
+    {
+      "idx": 444,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": []
+    }
+  ],
+  "source_test_cases_sha256": "b51d09d93afa94b08a67281a95ee8b4c7d69953816adf6769a996e26274bb023",
+  "source_task_count": 393,
+  "eligible_task_count": 371,
+  "excluded_due_to_missing_server_count": 22,
+  "common_configured_server_count": 167
+}

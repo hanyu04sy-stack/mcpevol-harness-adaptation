@@ -1,0 +1,15 @@
+{
+  "name": "mcpevol-harness-adaptation",
+  "private": true,
+  "scripts": {
+    "test": "python3 -m unittest discover -s tests -v",
+    "1mcp": "1mcp",
+    "serve:early": "1mcp serve --config generated/1mcp/early.json --host 127.0.0.1 --port 3050",
+    "serve:middle": "1mcp serve --config generated/1mcp/middle.json --host 127.0.0.1 --port 3050",
+    "serve:late": "1mcp serve --config generated/1mcp/late.json --host 127.0.0.1 --port 3050"
+  },
+  "devDependencies": {
+    "@1mcp/agent": "0.38.2"
+  },
+  "packageManager": "pnpm@11.25.0"
+}

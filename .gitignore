@@ -1,0 +1,12 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+node_modules/
+
+external/
+generated/1mcp/
+results/
+logs/
