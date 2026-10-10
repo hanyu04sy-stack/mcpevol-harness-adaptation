@@ -57,6 +57,7 @@ python3 scripts/setup_environment.py
 - [x] 在项目中固定安装 1mcp 0.38.2
 - [x] 建立统一模型与 judge 配置（当前统一使用 `gpt-4o`）
 - [x] 安装 benchmark tool-level runner 所需的 Python 依赖
+- [x] 启动并验证 Early/Middle/Late 工具环境
 - [ ] 完成一次小规模 smoke run
 
 ## 安全说明

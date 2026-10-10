@@ -64,13 +64,34 @@ def command_version(
         path = str(fallback.resolve())
     if not path:
         return {"ok": False, "path": None, "version": None}
-    result = subprocess.run([path, flag], text=True, capture_output=True)
+    try:
+        result = subprocess.run(
+            [path, flag], text=True, capture_output=True, timeout=30
+        )
+    except subprocess.TimeoutExpired:
+        return {"ok": False, "path": path, "version": None, "error": "timed out"}
     version = (result.stdout or result.stderr).strip().splitlines()
     return {
         "ok": result.returncode == 0,
         "path": path,
         "version": version[0] if version else None,
     }
+
+
+def one_mcp_package_version() -> dict[str, object]:
+    package = Path("node_modules/@1mcp/agent/package.json")
+    if not package.is_file():
+        return {"ok": False, "path": None, "version": None}
+    try:
+        version = json.loads(package.read_text(encoding="utf-8"))["version"]
+    except (OSError, json.JSONDecodeError, KeyError) as exc:
+        return {
+            "ok": False,
+            "path": str(package.resolve()),
+            "version": None,
+            "error": str(exc),
+        }
+    return {"ok": version == "0.38.2", "path": str(package.resolve()), "version": version}
 
 
 def main() -> None:
@@ -103,7 +124,9 @@ def main() -> None:
         },
         "node": command_version("node"),
         "pnpm": command_version("pnpm"),
-        "1mcp": command_version("1mcp", fallback=Path("node_modules/.bin/1mcp")),
+        "npx": command_version("npx", fallback=Path("node_modules/.bin/npx")),
+        "uvx": command_version("uvx", fallback=Path(".venv/bin/uvx")),
+        "1mcp": one_mcp_package_version(),
         "python_packages": python_packages(venv_python),
         "benchmark_runner_import": benchmark_import(venv_python),
         "benchmark_checkout": {

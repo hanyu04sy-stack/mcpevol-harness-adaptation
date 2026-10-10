@@ -54,7 +54,19 @@ python3 scripts/download_server_bundles.py --verify-only
 
 因此可复现安装阶段已完成；下一阶段是实际启动并验证 Early/Middle/Late 三个环境。
 
-## 5. 公平比较规则
+## 5. 工具环境验证
+
+以隔离端口依次启动三个环境，等待 server 进入 connected/failed 状态；若个别 server 一直卡在 loading，则在 15 分钟上限后把它记为未可用，并生成机器可读报告：
+
+```bash
+.venv/bin/python scripts/validate_tool_environments.py
+```
+
+报告位于 `reports/environment-validation.json`，包含每个版本的 server 数、tool 数、连接状态、失败清单和失败原因。原始日志位于 `logs/environment-validation/`，不提交 Git。
+
+本次实测结果和已知失败项见 [ENVIRONMENT_VALIDATION.md](ENVIRONMENT_VALIDATION.md)。
+
+## 6. 公平比较规则
 
 每次正式实验都要保存一份填写完成的配置文件。No-update、Full-rewrite、Selective-patch 只能改变 harness 内容，以下项目必须完全相同：
 
@@ -66,6 +78,6 @@ python3 scripts/download_server_bundles.py --verify-only
 - 运行次数
 - MCP host/port 设置
 
-## 6. 已发现的版本差异
+## 7. 已发现的版本差异
 
 Case 文档写的是 201 个任务，但当前锁定的公开仓库中 `test_cases.json` 实际包含 393 个任务。这不是代码错误，而是课程说明与公开仓库版本之间的差异。报告中必须写明实际使用的仓库提交、任务数量和固定子集清单。

@@ -1,0 +1,1260 @@
+{
+  "schema_version": 2,
+  "generated_at": "2026-10-10T13:03:23.198997+00:00",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "one_mcp_version": "0.38.2",
+  "versions": {
+    "early": {
+      "version": "early",
+      "start_result": "started",
+      "validation_complete": true,
+      "url": "http://127.0.0.1:3051",
+      "elapsed_seconds": 904.31,
+      "configured_server_count": 59,
+      "observed_server_count": 59,
+      "connected_server_count": 47,
+      "failed_server_count": 12,
+      "tool_count": 520,
+      "status_counts": {
+        "connected": 47,
+        "failed": 9,
+        "loading": 3
+      },
+      "failed_servers": [
+        "@agent-infra/mcp-server-commands",
+        "@assistant-ui/mcp-docs-server",
+        "@googlemaps/code-assist-mcp",
+        "@nilsir/mcp-server-mysql",
+        "@primeng/mcp",
+        "derived-mcp-server",
+        "gemini-mcp-tool",
+        "mcp-knowledge-graph",
+        "mcp-maven-deps",
+        "osm-mcp-server",
+        "weather",
+        "xcomet-mcp-server"
+      ],
+      "servers": [
+        {
+          "name": "@agent-infra/mcp-server-commands",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@assistant-ui/mcp-docs-server",
+          "status": "loading",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Validation timeout while status remained loading"
+        },
+        {
+          "name": "@botanicastudios/crossref-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@cablate/mcp-doc-forge",
+          "status": "connected",
+          "available": true,
+          "tool_count": 16
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@executeautomation/playwright-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 33
+        },
+        {
+          "name": "@googlemaps/code-assist-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 2,
+          "failure_reason": "No failure reason emitted by 1MCP log"
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@j0kz/smart-reviewer-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        },
+        {
+          "name": "@jzone-mcp/antd-components-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 4
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@nekzus/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 19
+        },
+        {
+          "name": "@nilsir/mcp-server-mysql",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@primeng/mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 8,
+          "failure_reason": "No failure reason emitted by 1MCP log"
+        },
+        {
+          "name": "@puchunjie/doc-tools-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 7
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 11
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@sylphlab/pdf-reader-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "artic-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "arxiv-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 19
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "bytefun-ai-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "claude-faf-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 14
+        },
+        {
+          "name": "clojars-deps-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "derived-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "docuking-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "fetch-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "gemini-mcp-tool",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "giisp-openlibrary-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "howtocook-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 101
+        },
+        {
+          "name": "mcp-echarts",
+          "status": "connected",
+          "available": true,
+          "tool_count": 18
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "mcp-knowledge-graph",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-maven-deps",
+          "status": "loading",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Validation timeout while status remained loading"
+        },
+        {
+          "name": "mcp-postgres-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "osm-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "slidev-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 18
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        },
+        {
+          "name": "weather",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "xcomet-mcp-server",
+          "status": "loading",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Validation timeout while status remained loading"
+        }
+      ],
+      "settled": false,
+      "timed_out": true,
+      "backend_failed_status_count": 9,
+      "unresolved_server_count": 3,
+      "unresolved_servers": [
+        "@assistant-ui/mcp-docs-server",
+        "mcp-maven-deps",
+        "xcomet-mcp-server"
+      ],
+      "collection_mode": "direct_run"
+    },
+    "middle": {
+      "version": "middle",
+      "start_result": "started",
+      "validation_complete": true,
+      "url": "http://127.0.0.1:3052",
+      "elapsed_seconds": null,
+      "configured_server_count": 59,
+      "observed_server_count": 59,
+      "connected_server_count": 55,
+      "failed_server_count": 4,
+      "tool_count": 602,
+      "status_counts": {
+        "connected": 55,
+        "failed": 4
+      },
+      "failed_servers": [
+        "@assistant-ui/mcp-docs-server",
+        "mcp-echarts",
+        "osm-mcp-server",
+        "weather"
+      ],
+      "servers": [
+        {
+          "name": "@agent-infra/mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@assistant-ui/mcp-docs-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@botanicastudios/crossref-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@cablate/mcp-doc-forge",
+          "status": "connected",
+          "available": true,
+          "tool_count": 16
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@executeautomation/playwright-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 33
+        },
+        {
+          "name": "@googlemaps/code-assist-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@j0kz/smart-reviewer-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        },
+        {
+          "name": "@jzone-mcp/antd-components-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 4
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 9
+        },
+        {
+          "name": "@nekzus/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 19
+        },
+        {
+          "name": "@nilsir/mcp-server-mysql",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@primeng/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 47
+        },
+        {
+          "name": "@puchunjie/doc-tools-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 7
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 11
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@sylphlab/pdf-reader-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "artic-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "arxiv-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 19
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "bytefun-ai-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "claude-faf-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 14
+        },
+        {
+          "name": "clojars-deps-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "derived-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "docuking-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "fetch-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "gemini-mcp-tool",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "giisp-openlibrary-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "howtocook-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 101
+        },
+        {
+          "name": "mcp-echarts",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "mcp-knowledge-graph",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "mcp-maven-deps",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "mcp-postgres-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "osm-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "slidev-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 18
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        },
+        {
+          "name": "weather",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "xcomet-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        }
+      ],
+      "settled": true,
+      "timed_out": false,
+      "backend_failed_status_count": 4,
+      "unresolved_server_count": 0,
+      "unresolved_servers": [],
+      "collection_mode": "stable_api_snapshot"
+    },
+    "late": {
+      "version": "late",
+      "start_result": "started",
+      "validation_complete": true,
+      "url": "http://127.0.0.1:3053",
+      "elapsed_seconds": 902.705,
+      "configured_server_count": 59,
+      "observed_server_count": 59,
+      "connected_server_count": 23,
+      "failed_server_count": 36,
+      "tool_count": 206,
+      "status_counts": {
+        "connected": 23,
+        "failed": 36
+      },
+      "failed_servers": [
+        "@aiuluna/knowledge-graph-mcp",
+        "@assistant-ui/mcp-docs-server",
+        "@botanicastudios/crossref-mcp",
+        "@executeautomation/playwright-mcp-server",
+        "@j0kz/orchestrator-mcp",
+        "@j0kz/smart-reviewer-mcp",
+        "@jzone-mcp/antd-components-mcp",
+        "@kazuph/mcp-taskmanager",
+        "@magicuidesign/mcp",
+        "@nekzus/mcp-server",
+        "@primeng/mcp",
+        "@puchunjie/doc-tools-mcp",
+        "@regle/mcp-server",
+        "@rtuin/mcp-mermaid-validator",
+        "@sylphlab/pdf-reader-mcp",
+        "bazi-mcp",
+        "claude-faf-mcp",
+        "clojars-deps-server",
+        "docuking-mcp",
+        "fetch-mcp",
+        "giisp-openlibrary-mcp",
+        "mcp-calculator",
+        "mcp-echarts",
+        "mcp-filesystem-server",
+        "mcp-knowledge-graph",
+        "mcp-maven-deps",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks",
+        "mcp-tung-shing",
+        "mcp-weather-demo",
+        "osm-mcp-server",
+        "pantheon-mcp",
+        "slidev-mcp",
+        "time-mcp",
+        "weather",
+        "xcomet-mcp-server"
+      ],
+      "servers": [
+        {
+          "name": "@agent-infra/mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@assistant-ui/mcp-docs-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@botanicastudios/crossref-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@cablate/mcp-doc-forge",
+          "status": "connected",
+          "available": true,
+          "tool_count": 16
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@executeautomation/playwright-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@googlemaps/code-assist-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@j0kz/smart-reviewer-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@jzone-mcp/antd-components-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@nekzus/mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@nilsir/mcp-server-mysql",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@primeng/mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@puchunjie/doc-tools-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@sylphlab/pdf-reader-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "artic-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "arxiv-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 19
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "bytefun-ai-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "claude-faf-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "clojars-deps-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "derived-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "docuking-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "fetch-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "gemini-mcp-tool",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "giisp-openlibrary-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "howtocook-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-echarts",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-knowledge-graph",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "mcp-maven-deps",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-postgres-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "osm-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Request timed out\""
+        },
+        {
+          "name": "slidev-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "weather",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        },
+        {
+          "name": "xcomet-mcp-server",
+          "status": "failed",
+          "available": false,
+          "tool_count": 0,
+          "failure_reason": "Connection closed\""
+        }
+      ],
+      "settled": true,
+      "timed_out": false,
+      "backend_failed_status_count": 36,
+      "unresolved_server_count": 0,
+      "unresolved_servers": [],
+      "collection_mode": "direct_run"
+    }
+  },
+  "all_versions_started": true,
+  "all_validations_complete": true
+}
