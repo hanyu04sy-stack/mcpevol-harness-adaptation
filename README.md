@@ -41,7 +41,14 @@ python3 scripts/setup_environment.py
 .venv/bin/python scripts/check_environment.py --strict
 ```
 
-详细步骤见 [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) 和 [docs/SUBSET.md](docs/SUBSET.md)。
+详细步骤见 [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)、[docs/SUBSET.md](docs/SUBSET.md) 和 [docs/RUNNING.md](docs/RUNNING.md)。
+
+统一配置检查和运行入口：
+
+```bash
+.venv/bin/python scripts/check_experiment_config.py
+.venv/bin/python scripts/run_benchmark.py --version early --dry-run
+```
 
 ## 当前完成度
 
@@ -58,6 +65,7 @@ python3 scripts/setup_environment.py
 - [x] 建立统一模型与 judge 配置（当前统一使用 `gpt-4o`）
 - [x] 安装 benchmark tool-level runner 所需的 Python 依赖
 - [x] 启动并验证 Early/Middle/Late 工具环境
+- [x] 建立安全、统一且真正读取配置的 benchmark 运行入口
 - [ ] 完成一次小规模 smoke run
 
 ## 安全说明

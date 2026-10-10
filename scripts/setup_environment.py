@@ -35,6 +35,7 @@ def main() -> None:
             "--test-case-file", "data/subsets/pilot-30/test_cases.json",
             "--output", f"generated/1mcp/{version}.json",
         )
+    run(PYTHON, "scripts/check_experiment_config.py")
     run(PYTHON, "scripts/check_environment.py", "--strict")
 
 

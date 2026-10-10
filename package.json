@@ -5,11 +5,15 @@
     "test": "python3 -m unittest discover -s tests -v",
     "setup": "python3 scripts/setup_environment.py",
     "check": ".venv/bin/python scripts/check_environment.py --strict",
+    "check:config": ".venv/bin/python scripts/check_experiment_config.py",
     "validate:environments": ".venv/bin/python scripts/validate_tool_environments.py",
+    "run:early": ".venv/bin/python scripts/run_benchmark.py --version early",
+    "run:middle": ".venv/bin/python scripts/run_benchmark.py --version middle",
+    "run:late": ".venv/bin/python scripts/run_benchmark.py --version late",
     "1mcp": "1mcp",
-    "serve:early": "1mcp serve --config generated/1mcp/early.json --host 127.0.0.1 --port 3050",
-    "serve:middle": "1mcp serve --config generated/1mcp/middle.json --host 127.0.0.1 --port 3050",
-    "serve:late": "1mcp serve --config generated/1mcp/late.json --host 127.0.0.1 --port 3050"
+    "serve:early": "1mcp serve --config generated/1mcp/early.json --host 127.0.0.1 --port 3051",
+    "serve:middle": "1mcp serve --config generated/1mcp/middle.json --host 127.0.0.1 --port 3052",
+    "serve:late": "1mcp serve --config generated/1mcp/late.json --host 127.0.0.1 --port 3053"
   },
   "devDependencies": {
     "@1mcp/agent": "0.38.2",
