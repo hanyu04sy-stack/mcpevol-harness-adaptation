@@ -20,14 +20,27 @@ MCPEvol-Bench 仍在更新。为了保证三种策略的分数可以比较，本
 
 ## 3. 安装顺序
 
-1. 运行 `python3 scripts/check_environment.py`。
-2. 运行 `python3 scripts/bootstrap_benchmark.py` 下载并锁定上游代码。
-3. 创建 Python 3.12 虚拟环境并安装上游 `requirements.txt`。
-4. 安装 Node.js 24、npm 11 和 1mcp。
-5. 从上游 README 指向的数据源下载 evolution server bundles。
-6. 把 bundles 解压到 `external/servers/iter3_servers` 和 `external/servers/iter5_servers`。
-7. 用 `render_mcp_config.py` 生成三个不含占位符的本机配置。
-8. 先用 1 到 3 个任务做 smoke run，再运行固定 30 题子集。
+先安装 Python 3.12、Node.js 24 和 pnpm 11.25，然后在项目根目录只运行：
+
+```bash
+python3 scripts/setup_environment.py
+```
+
+脚本会依次完成：锁定上游代码、创建 `.venv`、安装精简且固定的 Python 依赖、安装 1mcp、下载/校验/解压 server bundles、生成三个本机配置，最后执行严格自检。
+
+上游 `requirements.txt` 同时包含 CUDA/NVIDIA 专用包，不能在 macOS 上直接使用。本项目改用 `requirements/benchmark.txt`：仅保留远程 OpenAI-compatible tool-level benchmark 所需依赖，并固定版本，因此同时支持 macOS 和 Linux。
+
+单独验证下载档案（不联网、不解压）：
+
+```bash
+python3 scripts/download_server_bundles.py --verify-only
+```
+
+一键严格检查：
+
+```bash
+.venv/bin/python scripts/check_environment.py --strict
+```
 
 ## 4. 当前机器检查结果
 
@@ -39,7 +52,7 @@ MCPEvol-Bench 仍在更新。为了保证三种策略的分数可以比较，本
 - `1mcp`：项目本地固定为 0.38.2
 - iter3/iter5 evolution server bundles：已下载、SHA-256 校验通过并解压
 
-因此目前是“代码骨架已建立，重量级依赖和数据尚未安装”的状态。
+因此可复现安装阶段已完成；下一阶段是实际启动并验证 Early/Middle/Late 三个环境。
 
 ## 5. 公平比较规则
 

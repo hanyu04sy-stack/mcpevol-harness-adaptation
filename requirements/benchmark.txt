@@ -1,0 +1,17 @@
+# Minimal runtime needed by the MCPEvol-Bench tool-level runner.
+# Pinned from the upstream requirements at commit 888c779a0fe735f612ca62bdd1fdd7c9e6bf8701.
+# CUDA-only packages from upstream are intentionally excluded so this works on
+# both macOS and Linux. The benchmark calls a remote OpenAI-compatible model;
+# it does not train or serve a local model.
+accelerate==1.12.0
+backoff==2.2.1
+cachetools==7.0.0
+mcp==1.25.0
+openai==2.16.0
+psutil==7.2.2
+pydantic==2.12.5
+protobuf==7.34.1
+requests==2.32.5
+torch==2.10.0
+tqdm==4.67.2
+transformers==5.0.0

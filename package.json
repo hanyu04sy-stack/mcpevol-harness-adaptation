@@ -3,6 +3,8 @@
   "private": true,
   "scripts": {
     "test": "python3 -m unittest discover -s tests -v",
+    "setup": "python3 scripts/setup_environment.py",
+    "check": ".venv/bin/python scripts/check_environment.py --strict",
     "1mcp": "1mcp",
     "serve:early": "1mcp serve --config generated/1mcp/early.json --host 127.0.0.1 --port 3050",
     "serve:middle": "1mcp serve --config generated/1mcp/middle.json --host 127.0.0.1 --port 3050",
