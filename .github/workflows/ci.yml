@@ -1,15 +1,40 @@
-name: ci
+name: Lightweight validation
 
 on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: lightweight-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out tracked files only
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - run: python -m unittest discover -s tests -v
+
+      # Deliberately no dependency installation, bundle download, 1MCP, Ollama,
+      # or benchmark execution. These checks use Python's standard library only.
+      - name: Validate configs and task manifests
+        run: python scripts/validate_ci_assets.py
+
+      - name: Compile all Python scripts
+        run: python -m compileall -q scripts tests
+
+      - name: Run script unit tests
+        run: python -m unittest discover -s tests -v
