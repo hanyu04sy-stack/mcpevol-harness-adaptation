@@ -47,6 +47,14 @@
 
 当前结果为 24 affected + 6 retention，覆盖 17 个 description、23 个 parameter 和 20 个 tool change 任务。
 
+覆盖性不需要人工数 manifest，直接执行：
+
+```bash
+.venv/bin/python scripts/validate_subset_coverage.py
+```
+
+该命令同时核对任务 ID、required server、affected/retention 标签和汇总计数，产生机器可读的 `reports/pilot-30-coverage.json`。
+
 ## 从 30 题升级到全量
 
 只有在 30 题已经完整跑通，并确认预算、运行时间和 server 稳定性以后，才切换为全量。升级后应创建新的 experiment name，不能覆盖 pilot 结果。

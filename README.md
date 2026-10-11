@@ -50,8 +50,11 @@ python3 scripts/setup_environment.py
 
 ```bash
 .venv/bin/python scripts/check_experiment_config.py
+.venv/bin/python scripts/validate_subset_coverage.py
 .venv/bin/python scripts/run_benchmark.py --version early --dry-run
 ```
+
+覆盖检查会对 tool/parameter/description change、affected/recovery 和 retention 五项要求逐项判定，并写入 [`reports/pilot-30-coverage.json`](reports/pilot-30-coverage.json)。任何一项缺失都会以非零状态退出。
 
 不需要 API key 的完整端到端自检：
 
