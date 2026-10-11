@@ -34,6 +34,26 @@ class DownloadServerBundlesTest(unittest.TestCase):
                 MODULE.safe_extract(archive, root / "output")
             self.assertFalse((root / "escape.txt").exists())
 
+    def test_repair_extract_restores_missing_and_truncated_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            archive = root / "bundle.zip"
+            with zipfile.ZipFile(archive, "w") as bundle:
+                bundle.writestr("nested/one.txt", "complete")
+                bundle.writestr("two.txt", "restored")
+            output = root / "output"
+            output.mkdir()
+            (output / "nested").mkdir()
+            (output / "nested/one.txt").write_text("bad", encoding="utf-8")
+            repaired = MODULE.repair_extract(archive, output)
+            self.assertEqual(repaired, 2)
+            self.assertEqual(
+                (output / "nested/one.txt").read_text(encoding="utf-8"), "complete"
+            )
+            self.assertEqual(
+                (output / "two.txt").read_text(encoding="utf-8"), "restored"
+            )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -10,7 +10,7 @@
   "dataset": {
     "mode": "fixed_subset",
     "path": "data/subsets/pilot-30/test_cases.json",
-    "sha256": "df2b43c05af7c75bef9e3673417719d19f7bb0a476f275b1acf3fdec4e5e1d2b",
+    "sha256": "cffb5a709fd707b1db454d07e2ae7cef04393d2a9ee98a9e7c5c6542ad42bd48",
     "size": 30,
     "seed": 6203
   },

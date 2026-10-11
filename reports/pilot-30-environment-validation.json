@@ -1,0 +1,551 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-11T01:48:45.025203+00:00",
+  "platform": "macOS-26.3-arm64-arm-64bit",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "one_mcp_version": "0.38.2",
+  "versions": {
+    "early": {
+      "version": "early",
+      "collection_mode": "direct_run",
+      "start_result": "started",
+      "validation_complete": true,
+      "settled": true,
+      "timed_out": false,
+      "url": "http://127.0.0.1:3051",
+      "elapsed_seconds": 35.248,
+      "configured_server_count": 26,
+      "observed_server_count": 26,
+      "connected_server_count": 26,
+      "failed_server_count": 0,
+      "backend_failed_status_count": 0,
+      "unresolved_server_count": 0,
+      "tool_count": 304,
+      "status_counts": {
+        "connected": 26
+      },
+      "failed_servers": [],
+      "unresolved_servers": [],
+      "servers": [
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 11
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 101
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        }
+      ]
+    },
+    "middle": {
+      "version": "middle",
+      "collection_mode": "direct_run",
+      "start_result": "started",
+      "validation_complete": true,
+      "settled": true,
+      "timed_out": false,
+      "url": "http://127.0.0.1:3052",
+      "elapsed_seconds": 28.898,
+      "configured_server_count": 26,
+      "observed_server_count": 26,
+      "connected_server_count": 26,
+      "failed_server_count": 0,
+      "backend_failed_status_count": 0,
+      "unresolved_server_count": 0,
+      "tool_count": 311,
+      "status_counts": {
+        "connected": 26
+      },
+      "failed_servers": [],
+      "unresolved_servers": [],
+      "servers": [
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 9
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 11
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 101
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        }
+      ]
+    },
+    "late": {
+      "version": "late",
+      "collection_mode": "direct_run",
+      "start_result": "started",
+      "validation_complete": true,
+      "settled": true,
+      "timed_out": false,
+      "url": "http://127.0.0.1:3053",
+      "elapsed_seconds": 28.095,
+      "configured_server_count": 26,
+      "observed_server_count": 26,
+      "connected_server_count": 26,
+      "failed_server_count": 0,
+      "backend_failed_status_count": 0,
+      "unresolved_server_count": 0,
+      "tool_count": 318,
+      "status_counts": {
+        "connected": 26
+      },
+      "failed_servers": [],
+      "unresolved_servers": [],
+      "servers": [
+        {
+          "name": "@aiuluna/knowledge-graph-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "@antv/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 27
+        },
+        {
+          "name": "@driflyte/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "@j0kz/orchestrator-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 4
+        },
+        {
+          "name": "@kazuph/mcp-taskmanager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 10
+        },
+        {
+          "name": "@likec4/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 20
+        },
+        {
+          "name": "@magicuidesign/mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 12
+        },
+        {
+          "name": "@regle/mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 11
+        },
+        {
+          "name": "@rtuin/mcp-mermaid-validator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "@umengfe/mcp-server-chart",
+          "status": "connected",
+          "available": true,
+          "tool_count": 28
+        },
+        {
+          "name": "basic-memory",
+          "status": "connected",
+          "available": true,
+          "tool_count": 21
+        },
+        {
+          "name": "bazi-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "coffee-mcp-agent",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "interactive-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-calculator",
+          "status": "connected",
+          "available": true,
+          "tool_count": 103
+        },
+        {
+          "name": "mcp-filesystem-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 13
+        },
+        {
+          "name": "mcp-server-commands",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-shrimp-task-manager",
+          "status": "connected",
+          "available": true,
+          "tool_count": 15
+        },
+        {
+          "name": "mcp-tasks",
+          "status": "connected",
+          "available": true,
+          "tool_count": 5
+        },
+        {
+          "name": "mcp-tung-shing",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "mcp-weather-demo",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "metatag-genie",
+          "status": "connected",
+          "available": true,
+          "tool_count": 1
+        },
+        {
+          "name": "nfty-mcp-server",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "pantheon-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 3
+        },
+        {
+          "name": "time",
+          "status": "connected",
+          "available": true,
+          "tool_count": 2
+        },
+        {
+          "name": "time-mcp",
+          "status": "connected",
+          "available": true,
+          "tool_count": 6
+        }
+      ]
+    }
+  },
+  "all_versions_started": true,
+  "all_validations_complete": true
+}

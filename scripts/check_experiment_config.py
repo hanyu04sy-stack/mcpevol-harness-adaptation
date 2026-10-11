@@ -36,6 +36,21 @@ def main() -> None:
             raise ConfigError("each version must have a separate MCP URL")
         if len({str(item["server_config"]) for item in resolved}) != len(VERSIONS):
             raise ConfigError("each version must have a separate 1MCP config")
+        task_file = Path(resolved[0]["task_file"])
+        manifest_path = task_file.with_name("manifest.json")
+        if manifest_path.is_file():
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            tasks = json.loads(task_file.read_text(encoding="utf-8"))
+            task_ids = [int(task["idx"]) for task in tasks]
+            if manifest.get("selected_indices") != task_ids:
+                raise ConfigError("task file does not match its subset manifest")
+            if manifest.get("eligibility_basis") != "connected_in_all_versions":
+                raise ConfigError(
+                    "formal subset must be selected from servers connected in all versions"
+                )
+            covered = set(manifest.get("change_type_task_counts", {}))
+            if covered != {"tool", "parameter", "description"}:
+                raise ConfigError("formal subset does not cover all three change types")
     except ConfigError as exc:
         raise SystemExit(f"CONFIG ERROR: {exc}") from exc
     print(

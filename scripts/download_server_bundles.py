@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import shutil
 import sys
 import urllib.request
@@ -100,7 +101,56 @@ def safe_extract(archive: Path, destination: Path) -> None:
         raise
 
 
-def process_bundle(name: str, root: Path, verify_only: bool, no_extract: bool) -> None:
+def repair_extract(archive: Path, destination: Path) -> int:
+    """Restore missing, truncated, or macOS-dataless files from a verified ZIP."""
+    if not destination.is_dir():
+        safe_extract(archive, destination)
+        return -1
+    repaired = 0
+    root = destination.resolve()
+    with zipfile.ZipFile(archive) as bundle:
+        for member in bundle.infolist():
+            target = (destination / member.filename).resolve()
+            if root not in target.parents and target != root:
+                raise ValueError(f"Unsafe archive member: {member.filename}")
+            if member.is_dir():
+                target.mkdir(parents=True, exist_ok=True)
+                continue
+            needs_restore = not target.is_file()
+            if not needs_restore:
+                stat = target.stat()
+                needs_restore = stat.st_size != member.file_size
+                # macOS may evict files under Desktop/iCloud while retaining their
+                # logical size. A non-empty regular file with no allocated blocks
+                # must be rehydrated from the already SHA-verified archive.
+                needs_restore = needs_restore or (
+                    member.file_size > 0
+                    and hasattr(stat, "st_blocks")
+                    and stat.st_blocks == 0
+                )
+            if not needs_restore:
+                continue
+            target.parent.mkdir(parents=True, exist_ok=True)
+            # Opening an evicted macOS dataless file may block while iCloud tries
+            # to fetch it. Remove that placeholder before restoring local bytes.
+            if target.exists():
+                target.unlink()
+            with bundle.open(member) as source, target.open("wb") as output:
+                shutil.copyfileobj(source, output, length=1024 * 1024)
+            mode = member.external_attr >> 16
+            if mode:
+                os.chmod(target, mode)
+            repaired += 1
+    return repaired
+
+
+def process_bundle(
+    name: str,
+    root: Path,
+    verify_only: bool,
+    no_extract: bool,
+    repair: bool,
+) -> None:
     spec = BUNDLES[name]
     archive = root / "archives" / str(spec["filename"])
     if not archive.exists():
@@ -112,7 +162,12 @@ def process_bundle(name: str, root: Path, verify_only: bool, no_extract: bool) -
     verify(archive, int(spec["size"]), str(spec["sha256"]))
     print(f"SHA-256 OK: {spec['sha256']}")
     if not verify_only and not no_extract:
-        safe_extract(archive, root / str(spec["directory"]))
+        destination = root / str(spec["directory"])
+        if repair:
+            repaired = repair_extract(archive, destination)
+            print(f"Repaired {repaired if repaired >= 0 else 'all'} files: {destination}")
+        else:
+            safe_extract(archive, destination)
 
 
 def main() -> None:
@@ -121,10 +176,21 @@ def main() -> None:
     parser.add_argument("--versions", nargs="+", choices=sorted(BUNDLES), default=["middle", "late"])
     parser.add_argument("--verify-only", action="store_true")
     parser.add_argument("--no-extract", action="store_true")
+    parser.add_argument(
+        "--repair-extraction",
+        action="store_true",
+        help="Restore missing, truncated, or macOS-dataless extracted files",
+    )
     args = parser.parse_args()
     try:
         for name in args.versions:
-            process_bundle(name, args.root, args.verify_only, args.no_extract)
+            process_bundle(
+                name,
+                args.root,
+                args.verify_only,
+                args.no_extract,
+                args.repair_extraction,
+            )
     except (OSError, ValueError, zipfile.BadZipFile) as error:
         print(f"ERROR: {error}", file=sys.stderr)
         raise SystemExit(1) from error

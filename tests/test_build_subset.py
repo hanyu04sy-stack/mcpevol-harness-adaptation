@@ -40,6 +40,21 @@ class BuildSubsetTest(unittest.TestCase):
             {"tool", "parameter", "description"},
         )
 
+    def test_connected_servers_requires_real_connected_status(self) -> None:
+        report = {
+            "versions": {
+                version: {
+                    "servers": [
+                        {"name": "stable", "status": "connected", "available": True},
+                        {"name": "failed", "status": "failed", "available": False},
+                    ]
+                }
+                for version in ("early", "middle", "late")
+            }
+        }
+        result = MODULE.connected_servers(report)
+        self.assertEqual(result["late"], {"stable"})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,6 +8,7 @@
 - 固定上游提交：`888c779a0fe735f612ca62bdd1fdd7c9e6bf8701`
 - 三个环境版本：Early=`original`、Middle=`iter3`、Late=`iter5`
 - 默认开发集：30 个任务的固定子集，随机种子 `6203`
+- 可运行性门槛：任务依赖的 server 必须在 Early/Middle/Late 三版都实际连接成功
 - 子集构成：约 80% affected tasks + 20% retention tasks
 - 公平性原则：三种 harness 策略必须共用同一个模型、任务文件、推理参数和 judge 配置
 
@@ -35,7 +36,7 @@ results/                  实验输出，不提交到 Git
 python3 scripts/setup_environment.py
 ```
 
-该命令会锁定 benchmark 提交、创建 `.venv`、安装 macOS/Linux 通用依赖、安装 1mcp、自动下载并校验约 2.2 GB 的 Middle/Late server bundles，再生成 Early/Middle/Late 配置。已存在且校验通过的文件会自动跳过下载。
+该命令会锁定 benchmark 提交、创建 `.venv`、安装 macOS/Linux 通用依赖、安装 1mcp、自动下载并校验约 2.2 GB 的 Middle/Late server bundles，再生成 Early/Middle/Late 配置。已存在且校验通过的压缩包会自动跳过下载；脚本会恢复 macOS/iCloud 可能卸载的 dataless 依赖文件。
 
 一键检查：
 
@@ -75,6 +76,8 @@ python3 scripts/setup_environment.py
 - [x] 建立统一模型与 judge 配置（当前统一使用 `gpt-4o`）
 - [x] 安装 benchmark tool-level runner 所需的 Python 依赖
 - [x] 启动并验证 Early/Middle/Late 工具环境
+- [x] 修复 Late bundle 的 dataless 文件，Late 可用 server 从 23 提升到 54
+- [x] 按三版实际连接结果重建 30 题子集，26/26 server 在每个版本全部可用
 - [x] 建立安全、统一且真正读取配置的 benchmark 运行入口
 - [x] 完成 Early/Middle/Late 小规模端到端 smoke run 并保留 trajectory/log
 

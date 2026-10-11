@@ -25,7 +25,23 @@ def main() -> None:
     if not pnpm:
         raise SystemExit("pnpm is required (expected version 11.25.x).")
     run(pnpm, "install", "--frozen-lockfile")
-    run(PYTHON, "scripts/download_server_bundles.py")
+    try:
+        subprocess.run(
+            [str(ROOT / "node_modules/.bin/1mcp"), "--version"],
+            cwd=ROOT,
+            check=True,
+            timeout=30,
+            stdout=subprocess.DEVNULL,
+        )
+    except (OSError, subprocess.SubprocessError):
+        print("Local node_modules is unreadable; reinstalling it...", flush=True)
+        shutil.rmtree(ROOT / "node_modules", ignore_errors=True)
+        run(pnpm, "install", "--frozen-lockfile")
+    run(
+        PYTHON,
+        "scripts/download_server_bundles.py",
+        "--repair-extraction",
+    )
     for version in ("early", "middle", "late"):
         run(
             PYTHON, "scripts/render_mcp_config.py",

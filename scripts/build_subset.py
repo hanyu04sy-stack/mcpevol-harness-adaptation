@@ -13,6 +13,7 @@ from typing import Any
 
 PINNED_COMMIT = "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701"
 CHANGE_TYPES = ("tool", "parameter", "description")
+VERSIONS = ("early", "middle", "late")
 
 
 def read_json(path: Path) -> Any:
@@ -52,6 +53,23 @@ def changed_server_types(evolution_paths: list[Path]) -> dict[str, set[str]]:
     for path in evolution_paths:
         for server, change in read_json(path).items():
             result.setdefault(server, set()).update(infer_change_types(change))
+    return result
+
+
+def connected_servers(report: dict[str, Any]) -> dict[str, set[str]]:
+    versions = report.get("versions")
+    if not isinstance(versions, dict) or not set(VERSIONS) <= set(versions):
+        raise ValueError("availability report must contain early, middle, and late")
+    result = {}
+    for version in VERSIONS:
+        servers = versions[version].get("servers")
+        if not isinstance(servers, list):
+            raise ValueError(f"availability report has no server list for {version}")
+        result[version] = {
+            item["name"]
+            for item in servers
+            if item.get("status") == "connected" and item.get("available") is True
+        }
     return result
 
 
@@ -104,6 +122,14 @@ def select_subset(
     chosen.extend(retention[:retention_target])
     chosen.sort(key=lambda row: int(row[0]["idx"]))
 
+    covered = {label for row in chosen for label in row[2]}
+    missing_types = set(CHANGE_TYPES) - covered
+    if missing_types:
+        raise ValueError(
+            "Eligible tasks do not cover change types: "
+            + ", ".join(sorted(missing_types))
+        )
+
     selected_tasks = [row[0] for row in chosen]
     type_counts = Counter(label for row in chosen for label in row[2])
     manifest = {
@@ -126,6 +152,7 @@ def select_subset(
                 "status": "affected" if row[1] else "retention",
                 "affected_servers": sorted(row[1]),
                 "change_types": row[2],
+                "required_servers": sorted(row[0].get("servers", {})),
             }
             for row in chosen
         ],
@@ -140,6 +167,11 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=6203)
     parser.add_argument("--affected-fraction", type=float, default=0.8)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument(
+        "--availability-report",
+        type=Path,
+        help="Only select tasks whose servers are connected in every version",
+    )
     args = parser.parse_args()
 
     data_root = args.benchmark_root / "src/custom/data"
@@ -154,8 +186,20 @@ def main() -> None:
         config_path = args.benchmark_root / "servers/1mcp_config" / version_dir / "mcp.json"
         configured_server_sets.append(set(read_json(config_path)["mcpServers"]))
     common_configured_servers = set.intersection(*configured_server_sets)
+    eligible_servers = common_configured_servers
+    availability: dict[str, Any] | None = None
+    if args.availability_report:
+        availability = read_json(args.availability_report)
+        if availability.get("benchmark_commit") != PINNED_COMMIT:
+            raise ValueError("availability report benchmark commit does not match")
+        per_version = connected_servers(availability)
+        eligible_servers = common_configured_servers & set.intersection(
+            *per_version.values()
+        )
     eligible_tasks = [
-        task for task in tasks if set(task.get("servers", {})) <= common_configured_servers
+        task
+        for task in tasks
+        if task.get("servers") and set(task["servers"]) <= eligible_servers
     ]
     server_types = changed_server_types(evolution_paths)
     selected, manifest = select_subset(
@@ -166,6 +210,21 @@ def main() -> None:
     manifest["eligible_task_count"] = len(eligible_tasks)
     manifest["excluded_due_to_missing_server_count"] = len(tasks) - len(eligible_tasks)
     manifest["common_configured_server_count"] = len(common_configured_servers)
+    manifest["eligibility_basis"] = (
+        "connected_in_all_versions" if availability else "configured_in_all_versions"
+    )
+    manifest["common_eligible_server_count"] = len(eligible_servers)
+    manifest["common_eligible_servers"] = sorted(eligible_servers)
+    if availability is not None:
+        manifest["availability_report"] = str(args.availability_report)
+        manifest["availability_report_sha256"] = hashlib.sha256(
+            args.availability_report.read_bytes()
+        ).hexdigest()
+        manifest["availability_report_generated_at"] = availability.get("generated_at")
+        manifest["connected_server_counts"] = {
+            version: len(connected_servers(availability)[version])
+            for version in VERSIONS
+        }
     args.output_dir.mkdir(parents=True, exist_ok=True)
     (args.output_dir / "test_cases.json").write_text(
         json.dumps(selected, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

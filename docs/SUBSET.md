@@ -24,6 +24,9 @@
 - size：30
 - seed：6203
 - 上游 commit：`888c779a0fe735f612ca62bdd1fdd7c9e6bf8701`
+- 可用性报告：`reports/environment-validation.json`
+
+任务不再只因为 server 出现在配置文件中就入选。只有当它需要的所有 server 在 Early/Middle/Late 三版中都是 `connected` 时，才进入候选池。
 
 生成结果包含：
 
@@ -31,6 +34,18 @@
 - `manifest.json`：源文件哈希、选中任务 idx、affected/retention 数量和变化类型覆盖情况
 
 三种策略必须使用同一个生成结果，不能各自重新抽样。
+
+重建命令：
+
+```bash
+.venv/bin/python scripts/build_subset.py \
+  --benchmark-root external/MCPEvol-Bench \
+  --size 30 --seed 6203 --affected-fraction 0.8 \
+  --availability-report reports/environment-validation.json \
+  --output-dir data/subsets/pilot-30
+```
+
+当前结果为 24 affected + 6 retention，覆盖 17 个 description、23 个 parameter 和 20 个 tool change 任务。
 
 ## 从 30 题升级到全量
 
