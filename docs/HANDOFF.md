@@ -1,17 +1,17 @@
-# B / C / D 交接命令
+# B / C / D Handoff Commands
 
-## 接手前：一键验收 A 的交付物
+## Accept Member A's deliverables
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
 python3 scripts/check_handoff.py
 ```
 
-命令会一次性检查 A 的配置、任务集、报告、脚本、测试和文档，并运行所有轻量验证。最外层 `passed` 必须为 `true`；该命令不会下载或启动 server bundles。
+The top-level `passed` value must be `true`. This command validates all required configurations, tasks, reports, scripts, tests, and documents without downloading or starting server bundles.
 
-如果验收或后续 server 启动失败，先查阅 [macOS / Linux 故障排查手册](TROUBLESHOOTING.md)，不要自行删题或更改锁定哈希。
+If acceptance or a later server start fails, use the [macOS/Linux troubleshooting guide](TROUBLESHOOTING.md). Do not remove tasks or change pinned hashes.
 
-## 所有成员：首次初始化
+## First-time setup for every member
 
 ```bash
 git clone https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation.git
@@ -21,27 +21,27 @@ python3 scripts/setup_environment.py
 .venv/bin/python scripts/run_smoke_tests.py
 ```
 
-smoke 命令会自动依次启动 Early/Middle/Late，不需要 `.env`，也不使用外部模型 API。
+The smoke command starts Early, Middle, and Late sequentially. It requires no `.env` and uses no external model API.
 
-## B / C：运行正式 30 题实验
+## Members B/C: run the fixed 30-task experiment
 
-先本地填写密钥：
+Create the local credential file:
 
 ```bash
 cp .env.example .env
 ```
 
-每个版本需要两个终端。以 Early 为例：
+Each version uses two terminals. For Early:
 
 ```bash
-# 终端 1
+# Terminal 1
 pnpm run serve:early
 
-# 终端 2
+# Terminal 2
 pnpm run run:early
 ```
 
-其余版本直接复制：
+Copy the same pattern for the other versions:
 
 ```bash
 pnpm run serve:middle
@@ -51,7 +51,7 @@ pnpm run serve:late
 pnpm run run:late
 ```
 
-B 和 C 只能修改各自的 harness 逻辑；不得修改 `configs/experiment.json` 中的 model、temperature、task SHA-256、MCP URL 和 benchmark commit。正式对比前必须再运行：
+Members B and C may modify only their own harness logic. Do not change the model, temperature, task SHA-256, MCP URL, or benchmark commit in `configs/experiment.json`. Before the final comparison, run:
 
 ```bash
 .venv/bin/python scripts/validate_subset_coverage.py
@@ -59,9 +59,9 @@ B 和 C 只能修改各自的 harness 逻辑；不得修改 `configs/experiment.
 .venv/bin/python scripts/check_experiment_config.py
 ```
 
-当前固定集已实测 Early/Middle/Late 各 26/26 server 连接成功。如果本机启动结果不符，先执行 `python3 scripts/setup_environment.py`，不要自行删题或更换数据集。
+The fixed subset has 26/26 connected servers in every version. If a local result differs, rerun `python3 scripts/setup_environment.py`; do not remove tasks or replace the dataset.
 
-## D：收集和核对输出
+## Member D: collect and verify output
 
 ```bash
 python3 -m json.tool reports/environment-validation.json >/dev/null
@@ -73,12 +73,12 @@ python3 -m json.tool reports/smoke/summary.json >/dev/null
 find results/pilot-30 -type f -name '*.json' | sort
 ```
 
-每个正式运行目录必须有 `run-metadata.json`，并核对其 `benchmark_commit`、`task_sha256`、`model_name`、`temperature` 和对应版本的 `mcp_url`。实验数据在 `results/` 中，已提交的环境和 smoke 证据在 `reports/` 中。
+Every formal run directory must contain `run-metadata.json`. Verify its `benchmark_commit`, `task_sha256`, `model_name`, `temperature`, and version-specific `mcp_url`. Experiment data is under `results/`; committed environment and smoke evidence is under `reports/`.
 
-不使用外部 API 的真实模型 canary：
+Run the local-model canary without an external API:
 
 ```bash
 .venv/bin/python scripts/run_local_canary.py
 ```
 
-该命令使用本机 Ollama `qwen3.5:4b`，不读取 `.env`。三版已验证结果和原始 trajectory/log 位于 `reports/canary-local-qwen35-4b-2/`。
+It uses local Ollama `qwen3.5:4b` and does not read `.env`. Verified trajectories and logs are stored under `reports/canary-local-qwen35-4b-2/`.

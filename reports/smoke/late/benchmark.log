@@ -14,17 +14,17 @@
   "judge_temperature": 0.0,
   "mcp_url": "http://127.0.0.1:3153/mcp",
   "configured_server_count": 2,
-  "config_path": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/configs/smoke.json",
-  "task_file": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/data/subsets/smoke-1/test_cases.json",
+  "config_path": "/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/configs/smoke.json",
+  "task_file": "/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/data/subsets/smoke-1/test_cases.json",
   "runnability_matrix": null,
   "startup_stability_report": null,
-  "server_config": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/late.json",
-  "output_dir": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/smoke-1/late"
+  "server_config": "/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/generated/1mcp-smoke/late.json",
+  "output_dir": "/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/results/smoke-1/late"
 }
 Tools Number 22
 Server Number: 2
-Run completed; metadata: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/smoke-1/late/run-metadata.json
+Run completed; metadata: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/results/smoke-1/late/run-metadata.json
 
-测试用例进度:   0%|[34m          [0m| 0/1 [00:00<?, ?case/s]
-测试用例进度: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.19case/s]
-测试用例进度: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.19case/s]
+\u6D4B\u8BD5\u7528\u4F8B\u8FDB\u5EA6:   0%|[34m          [0m| 0/1 [00:00<?, ?case/s]
+\u6D4B\u8BD5\u7528\u4F8B\u8FDB\u5EA6: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.19case/s]
+\u6D4B\u8BD5\u7528\u4F8B\u8FDB\u5EA6: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  2.19case/s]

@@ -14,7 +14,7 @@
 │   Transport: HTTP (127.0.0.1:3353)                                           │
 │   Servers: 0 configured                                                      │
 │   Auth: Disabled | Log: info                                                 │
-│   Config: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/gen   │
+│   Config: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/gen   │
 │   erated/1mcp-canary                                                         │
 │                                                                              │
 │   https://github.com/1mcp-app/agent                                          │
@@ -22,10 +22,10 @@
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
 2026-10-11T12:57:56.660Z [INFO] message="Configuration loaded successfully with environment variable substitution"
-2026-10-11T12:57:56.661Z [INFO] message="Started watching configuration directory: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-canary for file: late.json"
+2026-10-11T12:57:56.661Z [INFO] message="Started watching configuration directory: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/generated/1mcp-canary for file: late.json"
 2026-10-11T12:57:56.661Z [INFO] message="ConfigManager initialized"
 2026-10-11T12:57:56.661Z [INFO] message="ConfigChangeHandler initialized"
-2026-10-11T12:57:56.669Z [INFO] message="PresetManager initialized successfully" presetsLoaded=0 configPath="/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-canary/presets.json"
+2026-10-11T12:57:56.669Z [INFO] message="PresetManager initialized successfully" presetsLoaded=0 configPath="/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/generated/1mcp-canary/presets.json"
 2026-10-11T12:57:56.669Z [INFO] message="Preset management system initialized successfully"
 2026-10-11T12:57:56.669Z [WARN] message="Transport type is missing for time, inferring type..."
 2026-10-11T12:57:56.669Z [INFO] message="Inferred transport type for time as stdio"
@@ -50,7 +50,7 @@
 2026-10-11T12:57:56.690Z [INFO] message="Using async loading mode - HTTP server will start immediately, MCP servers load in background"
 2026-10-11T12:57:56.692Z [INFO] message="Configuration loaded successfully with environment variable substitution"
 2026-10-11T12:57:56.699Z [INFO] message="Authentication disabled - all endpoints accessible without auth"
-2026-10-11T12:57:56.707Z [INFO] message="PID file written: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-canary/server.pid"
+2026-10-11T12:57:56.707Z [INFO] message="PID file written: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/generated/1mcp-canary/server.pid"
 2026-10-11T12:57:56.710Z [INFO] message="Server is running on port 3353 with HTTP/SSE and Streamable HTTP transport without authentication"
 2026-10-11T12:57:56.710Z [INFO] message="📋 OAuth Management Dashboard: http://127.0.0.1:3353/oauth"
 2026-10-11T12:57:57.460Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3353","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
@@ -82,9 +82,9 @@
 2026-10-11T12:58:02.512Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="7ms" contentType="application/json; charset=utf-8"
 2026-10-11T12:58:03.518Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3353","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
 2026-10-11T12:58:03.521Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="3ms" contentType="application/json; charset=utf-8"
-2026-10-11T12:58:04.277Z [WARN] message="[@likec4/mcp] 12:58:04.275 INF likec4·mcp Loading LikeC4 from workspace: '/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path'" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=1 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T12:58:04.277Z [WARN] message="[@likec4/mcp] 12:58:04.275 INF likec4·mcp Loading LikeC4 from workspace: '/Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path'" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=1 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
 2026-10-11T12:58:04.278Z [WARN] message="[@likec4/mcp] 12:58:04.276 INF likec4·lang layout wasm" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=2 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T12:58:04.281Z [WARN] message="[@likec4/mcp] 12:58:04.281 INF likec4·lang workspace: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=3 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T12:58:04.281Z [WARN] message="[@likec4/mcp] 12:58:04.281 INF likec4·lang workspace: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=3 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
 2026-10-11T12:58:04.286Z [WARN] message="[@likec4/mcp] 12:58:04.286 WRN likec4·server·workspace No likec4 documents found in workspace" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=4 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
 2026-10-11T12:58:04.441Z [WARN] message="[@likec4/mcp] 12:58:04.441 ERR likec4·lang no LikeC4 sources found" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=5 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
 2026-10-11T12:58:04.441Z [WARN] message="[@likec4/mcp] 12:58:04.441 INF likec4·lang workspace: found 0 source files" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=6 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
@@ -454,6 +454,6 @@
 2026-10-11T13:27:44.382Z [INFO] message="InstructionAggregator: Cleanup completed - all listeners cleared"
 2026-10-11T13:27:44.382Z [INFO] message="InstructionAggregator cleanup complete"
 2026-10-11T13:27:44.398Z [INFO] message="PresetManager cleanup complete"
-2026-10-11T13:27:44.399Z [INFO] message="PID file cleaned up: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-canary/server.pid"
+2026-10-11T13:27:44.399Z [INFO] message="PID file cleaned up: /Users/apple/Desktop/6203\u4E0B\u534A\u5B66\u671F/mcpevol-harness-adaptation/generated/1mcp-canary/server.pid"
 2026-10-11T13:27:44.399Z [INFO] message="PID file cleanup complete"
 2026-10-11T13:27:44.429Z [INFO] message="Server shutdown complete"

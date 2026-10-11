@@ -14,10 +14,10 @@ class TroubleshootingDocumentTest(unittest.TestCase):
         required = (
             "macOS",
             "Linux",
-            "端口被占用",
-            "版本错误",
+            "Port already in use",
+            "version error",
             "SHA-256",
-            "server 加载失败",
+            "Server loading failure",
             "check_handoff.py",
         )
         for phrase in required:
