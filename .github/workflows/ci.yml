@@ -13,7 +13,14 @@ concurrency:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    name: validate (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - macos-15
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     env:
       PYTHONDONTWRITEBYTECODE: "1"

@@ -76,6 +76,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
     "tests": [
         "tests/test_build_runnability_matrix.py",
         "tests/test_build_subset.py",
+        "tests/test_ci_workflow.py",
         "tests/test_download_server_bundles.py",
         "tests/test_experiment_config.py",
         "tests/test_local_canary_report.py",
