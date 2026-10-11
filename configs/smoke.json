@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "experiment_name": "smoke-1",
+  "benchmark": {
+    "repository": "https://github.com/Octobrist/MCPEvol-Bench.git",
+    "root": "external/MCPEvol-Bench",
+    "commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+    "runner": "src/custom/real_mcp/tool_level_test.py"
+  },
+  "dataset": {
+    "mode": "fixed_subset",
+    "path": "data/subsets/smoke-1/test_cases.json",
+    "sha256": "3c056e185032961ab680b78ac62d5536da8d8640e1080d015142676457d8d71f",
+    "size": 1,
+    "seed": 6203
+  },
+  "model": {
+    "provider": "openai_compatible",
+    "name": "smoke-local",
+    "temperature": 0.0,
+    "max_completion_tokens": 1024,
+    "api_key_env": "MODEL_API_KEY",
+    "base_url_env": "MODEL_BASE_URL"
+  },
+  "judge": {
+    "name": "smoke-local",
+    "temperature": 0.0,
+    "api_key_env": "JUDGE_API_KEY",
+    "base_url_env": "JUDGE_BASE_URL"
+  },
+  "runner": {
+    "step": 3,
+    "part_num": -1,
+    "part_idx": 0,
+    "fschat": false
+  },
+  "mcp": {
+    "versions": {
+      "early": {
+        "url": "http://127.0.0.1:3151/mcp",
+        "server_config": "generated/1mcp-smoke/early.json"
+      },
+      "middle": {
+        "url": "http://127.0.0.1:3152/mcp",
+        "server_config": "generated/1mcp-smoke/middle.json"
+      },
+      "late": {
+        "url": "http://127.0.0.1:3153/mcp",
+        "server_config": "generated/1mcp-smoke/late.json"
+      }
+    }
+  },
+  "output": {
+    "root": "results",
+    "layout": "{experiment_name}/{version}"
+  },
+  "environment": {
+    "file": ".env"
+  }
+}

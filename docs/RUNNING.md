@@ -55,3 +55,11 @@ results/pilot-30/<early|middle|late>/run-metadata.json
 ```
 
 元数据不包含密钥。
+
+## 5. 无 API 费用的端到端 smoke test
+
+```bash
+.venv/bin/python scripts/run_smoke_tests.py
+```
+
+该命令使用 `configs/smoke.json` 和本地确定性模型，自动启动、执行并停止三个环境。完整结果见 [SMOKE_TEST.md](SMOKE_TEST.md)，成员交接命令见 [HANDOFF.md](HANDOFF.md)。

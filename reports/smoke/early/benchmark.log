@@ -1,0 +1,26 @@
+{
+  "experiment_name": "smoke-1",
+  "version": "early",
+  "config_sha256": "5d3ace634d4c8876aec318988eb1cad98bfedcb41b50aa2e281204e74ea137bb",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "task_sha256": "3c056e185032961ab680b78ac62d5536da8d8640e1080d015142676457d8d71f",
+  "task_count": 1,
+  "model_name": "smoke-local",
+  "temperature": 0.0,
+  "max_completion_tokens": 1024,
+  "judge_name": "smoke-local",
+  "judge_temperature": 0.0,
+  "mcp_url": "http://127.0.0.1:3151/mcp",
+  "configured_server_count": 2,
+  "config_path": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/configs/smoke.json",
+  "task_file": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/data/subsets/smoke-1/test_cases.json",
+  "server_config": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/early.json",
+  "output_dir": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/smoke-1/early"
+}
+Tools Number 22
+Server Number: 2
+Run completed; metadata: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/smoke-1/early/run-metadata.json
+
+测试用例进度:   0%|[34m          [0m| 0/1 [00:00<?, ?case/s]
+测试用例进度: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  1.63case/s]
+测试用例进度: 100%|[34m██████████[0m| 1/1 [00:00<00:00,  1.63case/s]

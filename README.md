@@ -20,8 +20,10 @@ configs/                  统一实验配置
 docs/                     环境和任务子集说明
 scripts/                  环境检查、基准下载、配置生成、子集生成
 tests/                    不需要 API key 的本地测试
+data/subsets/             固定的 30 题子集和 1 题 smoke 子集
 external/MCPEvol-Bench/   bootstrap 后生成，不提交到 Git
 generated/                生成的任务子集和 1mcp 配置，不提交到 Git
+reports/                  已验证的环境、smoke trajectory 和原始日志
 results/                  实验输出，不提交到 Git
 ```
 
@@ -41,7 +43,7 @@ python3 scripts/setup_environment.py
 .venv/bin/python scripts/check_environment.py --strict
 ```
 
-详细步骤见 [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md)、[docs/SUBSET.md](docs/SUBSET.md) 和 [docs/RUNNING.md](docs/RUNNING.md)。
+详细步骤见 [环境安装](docs/ENVIRONMENT.md)、[任务子集](docs/SUBSET.md)、[统一运行](docs/RUNNING.md)、[smoke 报告](docs/SMOKE_TEST.md) 和 [B/C/D 交接](docs/HANDOFF.md)。
 
 统一配置检查和运行入口：
 
@@ -49,6 +51,14 @@ python3 scripts/setup_environment.py
 .venv/bin/python scripts/check_experiment_config.py
 .venv/bin/python scripts/run_benchmark.py --version early --dry-run
 ```
+
+不需要 API key 的完整端到端自检：
+
+```bash
+.venv/bin/python scripts/run_smoke_tests.py
+```
+
+已实测 Early、Middle、Late 全部通过：每个版本 2/2 server 连接、4/4 tool call 完成、0 tool error，完整 trajectory 和原始日志位于 [`reports/smoke/`](reports/smoke/)。
 
 ## 当前完成度
 
@@ -66,7 +76,7 @@ python3 scripts/setup_environment.py
 - [x] 安装 benchmark tool-level runner 所需的 Python 依赖
 - [x] 启动并验证 Early/Middle/Late 工具环境
 - [x] 建立安全、统一且真正读取配置的 benchmark 运行入口
-- [ ] 完成一次小规模 smoke run
+- [x] 完成 Early/Middle/Late 小规模端到端 smoke run 并保留 trajectory/log
 
 ## 安全说明
 

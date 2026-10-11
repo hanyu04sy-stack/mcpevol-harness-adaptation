@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-11T01:11:13.667043+00:00",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "model_mode": "deterministic_local_openai_compatible_smoke",
+  "external_api_used": false,
+  "task_indices": [
+    161
+  ],
+  "versions": {
+    "early": {
+      "success": true,
+      "duration_seconds": 18.738,
+      "configured_servers": 2,
+      "connected_servers": 2,
+      "available_tools": 22,
+      "trajectory": "reports/smoke/early/trajectory-161.json",
+      "benchmark_log": "reports/smoke/early/benchmark.log",
+      "server_log": "reports/smoke/early/server.log",
+      "stop": true,
+      "exceeded": false,
+      "tool_message_count": 4,
+      "tool_errors": [],
+      "answer": "[FINISH] Deterministic smoke run completed the available architecture and time-conversion tool calls."
+    },
+    "middle": {
+      "success": true,
+      "duration_seconds": 10.374,
+      "configured_servers": 2,
+      "connected_servers": 2,
+      "available_tools": 22,
+      "trajectory": "reports/smoke/middle/trajectory-161.json",
+      "benchmark_log": "reports/smoke/middle/benchmark.log",
+      "server_log": "reports/smoke/middle/server.log",
+      "stop": true,
+      "exceeded": false,
+      "tool_message_count": 4,
+      "tool_errors": [],
+      "answer": "[FINISH] Deterministic smoke run completed the available architecture and time-conversion tool calls."
+    },
+    "late": {
+      "success": true,
+      "duration_seconds": 10.138,
+      "configured_servers": 2,
+      "connected_servers": 2,
+      "available_tools": 22,
+      "trajectory": "reports/smoke/late/trajectory-161.json",
+      "benchmark_log": "reports/smoke/late/benchmark.log",
+      "server_log": "reports/smoke/late/server.log",
+      "stop": true,
+      "exceeded": false,
+      "tool_message_count": 4,
+      "tool_errors": [],
+      "answer": "[FINISH] Deterministic smoke run completed the available architecture and time-conversion tool calls."
+    }
+  },
+  "all_passed": true
+}

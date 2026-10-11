@@ -1,0 +1,32 @@
+[
+  {
+    "recorded_at": "2026-10-11T01:11:42.148534+00:00",
+    "model": "smoke-local",
+    "message_count": 2,
+    "action": "list-projects"
+  },
+  {
+    "recorded_at": "2026-10-11T01:11:42.240868+00:00",
+    "model": "smoke-local",
+    "message_count": 4,
+    "action": "read-project-summary"
+  },
+  {
+    "recorded_at": "2026-10-11T01:11:42.320498+00:00",
+    "model": "smoke-local",
+    "message_count": 6,
+    "action": "search-element"
+  },
+  {
+    "recorded_at": "2026-10-11T01:11:42.392455+00:00",
+    "model": "smoke-local",
+    "message_count": 8,
+    "action": "convert_time"
+  },
+  {
+    "recorded_at": "2026-10-11T01:11:42.471264+00:00",
+    "model": "smoke-local",
+    "message_count": 10,
+    "action": "finish"
+  }
+]

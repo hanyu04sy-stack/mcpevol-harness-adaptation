@@ -1,0 +1,196 @@
+{
+  "question": "I need to schedule a system architecture review meeting for our payment processing components. First, can you help me explore what architecture documentation we have available? Then, I need to set up a meeting at 14:00 Tokyo time - what would that be in New York time?",
+  "tool_calls": [
+    {
+      "tool_name": "list-projects",
+      "parameters": {}
+    },
+    {
+      "tool_name": "read-project-summary",
+      "parameters": {}
+    },
+    {
+      "tool_name": "search-element",
+      "parameters": {
+        "search": "payment"
+      }
+    },
+    {
+      "tool_name": "convert_time",
+      "parameters": {
+        "source_timezone": "Asia/Tokyo",
+        "target_timezone": "America/New_York",
+        "time": "14:00"
+      }
+    }
+  ],
+  "servers": {
+    "@likec4/mcp": [
+      "list-projects",
+      "read-project-summary",
+      "search-element"
+    ],
+    "time": [
+      "convert_time"
+    ]
+  },
+  "idx": 161,
+  "answer": "[FINISH] Deterministic smoke run completed the available architecture and time-conversion tool calls.",
+  "trajectory_messages": [
+    {
+      "role": "system",
+      "content": "You are an AI agent connected to the MCP (Model Context Protocol) server. Based on the user's request, select and invoke tools to fulfill the task accurately and efficiently. \nNote that do not to ask any questions to the user, just call the tool to complete the task.\n\nConsidering real-time performance, the time is set to be around `2026-10-11 (星期日)`.\n\nThese files are stored in the local file system and serve as relevant resources for tool utilization. Add the prefix path \"./anotation_path\" to the following file systems as an absolute path during use:\n`anotation_path/\n  code/\n    log_analysis.py\n    new_aggregator.py\n  csv/\n    customers-100.csv\n    products-100.csv\n  excel/\n    goods.xlsx\n    Local_Electronic_Sales.xlsx\n    people_data.xlsx\n  figs/\n  files/\n  html/\n    time.html\n  markdown/\n    work.md\n  music/\n    mixkit-retro-game-emergency-alarm-1000.wav\n  pdf/\n    embodied_ai_papers/\n      PaLM-E, An Embodied Multimodal Language Model, Danny Driess et al., 2023, v1_compressed.pdf\n      RT-2, Vision-Language-Action Models Transfer Web Knowledge to Robotic Control, Anthony Brohan et al., 2023, v1_compressed.pdf\n      Voyager, An Open-Ended Embodied Agent with Large Language Models, Guanzhi Wang et al., 2023, v2_compressed.pdf\n    WebArena.pdf\n  picture/\n    clock.png\n  ppt/\n    build_effective_agents.pptx\n  txt/\n    Android.txt\n    log_today.txt\n    log_yesterday.txt\n    paper_list.bib\n  word/\n    CV.docx\n    exchange.docx\n    Report_Card.docx\n  llms-full.txt`\n\nDatabase Configuration (if applicable):\n- Host: 127.0.0.1\n- Port: 3305\n- User: root\n- Password: 123456\n- Database Name: mydb\n"
+    },
+    {
+      "role": "user",
+      "content": "I need to schedule a system architecture review meeting for our payment processing components. First, can you help me explore what architecture documentation we have available? Then, I need to set up a meeting at 14:00 Tokyo time - what would that be in New York time?"
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "smoke-aadd78b674ef",
+          "function": {
+            "arguments": "{}",
+            "name": "list-projects"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "smoke-aadd78b674ef",
+      "content": "[]..."
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "smoke-37278bb3d518",
+          "function": {
+            "arguments": "{}",
+            "name": "read-project-summary"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "smoke-37278bb3d518",
+      "content": "[]..."
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "smoke-4595208d1a88",
+          "function": {
+            "arguments": "{\"search\": \"payment\"}",
+            "name": "search-element"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "smoke-4595208d1a88",
+      "content": "[]..."
+    },
+    {
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "id": "smoke-0c4712a7c46e",
+          "function": {
+            "arguments": "{\"source_timezone\": \"Asia/Tokyo\", \"target_timezone\": \"America/New_York\", \"time\": \"14:00\"}",
+            "name": "convert_time"
+          },
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "role": "tool",
+      "tool_call_id": "smoke-0c4712a7c46e",
+      "content": "[TextContent(type='text', text='{\\n  \"source\": {\\n    \"timezone\": \"Asia/Tokyo\",\\n    \"datetime\": \"2026-10-11T14:00:00+09:00\",\\n    \"day_of_week\": \"Sunday\",\\n    \"is_dst\": false\\n  },\\n  \"target\": {\\n    \"timezone\": \"America/New_York\",\\n    \"datetime\": \"2026-10-11T01:00:00-04:00\",\\n    \"day_of_week\": \"Sunday\",\\n    \"is_dst\": true\\n  },\\n  \"time_difference\": \"-13.0h\"\\n}', annotations=None, meta=None)]..."
+    },
+    {
+      "content": "[FINISH] Deterministic smoke run completed the available architecture and time-conversion tool calls.",
+      "role": "assistant"
+    }
+  ],
+  "stop": true,
+  "exceeded": false,
+  "involved_tools": [
+    {
+      "name": "list-projects",
+      "description": "List LikeC4 projects discoverable in the current workspace.\n\nRequest:\n- No input parameters.\n\nResponse (JSON object):\n- projects: Project[]\n\nProject (object) fields:\n- id: string — stable project identifier\n- title: string — human-readable project title\n- folder: string — absolute path to the project root\n- sources: string[] — absolute file paths of related documents\n\nNotes:\n- Read-only, idempotent, no side effects.\n- Safe to call repeatedly.\n\nExample response:\n{\n  \"projects\": [\n    {\n      \"id\": \"docs\",\n      \"title\": \"Documentation\",\n      \"folder\": \"/abs/path/to/workspace/docs\",\n      \"sources\": [\n        \"/abs/path/to/workspace/docs/model/contexts.likec4\",\n        \"/abs/path/to/workspace/docs/model/relations.likec4\"\n      ]\n    }\n  ]\n}",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "read-project-summary",
+      "description": "Request:\n- project: string (optional) — project id. Defaults to \"default\" if omitted.\n\nResponse (JSON object):\n- title: string — human-readable project title\n- folder: string — absolute path to the project root\n- sources: string[] — absolute file paths of model documents\n- config: object — project configuration\n  - name: string — project identifier\n  - title?: string — human-readable title\n  - contactPerson?: string — maintainer contact\n  - metadata?: object — custom project metadata as key-value pairs\n  - extends?: string | string[] — style inheritance paths\n  - exclude?: string[] — file exclusion patterns\n  - include?: object — include configuration (paths, maxDepth, fileThreshold)\n  - manualLayouts?: object — manual layouts config (outDir)\n  - styles?: object — simplified styles (hasTheme, hasDefaults, hasCustomCss)\n- specification: object\n  - elementKinds: string[] — all element kinds\n  - relationshipKinds: string[] — all relationship kinds\n  - deploymentKinds: string[] — all deployment kinds\n  - tags: string[] — all tags\n  - metadataKeys: string[] — used metadata keys\n- elements: Element[] — list of elements\n- deployments: Deployment[] — list of deployment entities\n- views: View[] — list of views defined in the model\n\nElement (object) fields:\n- id: string — element id (FQN)\n- kind: string — element kind\n- title: string — element title\n- tags: string[] — element tags\n\nDeployment (object) fields:\n- type = \"deployment-node\": { id: string, kind: string, title: string, tags: string[] }\n- type = \"deployed-instance\": { id: string, title: string, tags: string[], referencedElementId: string }\n\nView (object) fields:\n- id: string — view identifier\n- title: string — view title\n- type: \"element\" | \"deployment\" | \"dynamic\"\n\nNotes:\n- Read-only, idempotent, no side effects.\n- Safe to call repeatedly.\n\nExample response:\n{\n  \"title\": \"Cloud Boutique\",\n  \"folder\": \"/abs/path/to/workspace/examples/cloud-system\",\n  \"sources\": [\n    \"/abs/path/to/workspace/examples/cloud-system/model.c4\"\n  ],\n  \"config\": {\n    \"name\": \"cloud-boutique\",\n    \"title\": \"Cloud Boutique\",\n    \"contactPerson\": \"admin@example.com\"\n  },\n  \"specification\": {\n    \"elementKinds\": [\"system\", \"container\", \"component\"],\n    \"relationshipKinds\": [\"uses\", \"depends-on\"],\n    \"deploymentKinds\": [\"node\", \"cluster\"],\n    \"tags\": [\"public\", \"internal\"],\n    \"metadataKeys\": [\"owner\", \"tier\"]\n  },\n  \"elements\": [\n    {\n      \"id\": \"shop.frontend\",\n      \"kind\": \"component\",\n      \"title\": \"Frontend\",\n      \"tags\": [\"public\"]\n    }\n  ],\n  \"deployments\": [\n    {\n      \"type\": \"deployment-node\",\n      \"id\": \"k8s.shop.frontend\",\n      \"kind\": \"cluster\",\n      \"title\": \"Frontend\",\n      \"tags\": []\n    }\n  ],\n  \"views\": [\n    {\n      \"id\": \"system-overview\",\n      \"title\": \"System Overview\",\n      \"type\": \"element\"\n    }\n  ]\n}",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "project": {
+            "default": "default",
+            "description": "Project id (optional, will use \"default\" if not specified)",
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "search-element",
+      "description": "Search LikeC4 elements and deployment nodes across all projects.\n\nQuery syntax (case-insensitive):\n- kind:<value>  filters by kind\n- shape:<value> filters by shape\n- meta:<key>    filters by having metadata with the given key\n- #<value>      matches assigned tags\n- <value>       matches id (FQN) or title\n\nRequest:\n- search: string — at least 2 characters\n\nResponse (JSON object):\n- total: number - total number of results\n- found: Result[] - returns top 20 results\n\nResult (discriminated union by \"type\"):\n- type = \"element\": { id: string, name: string, kind: string, title: string, technology: string|null, shape: string, project: string, includedInViews: View[], tags: string[], metadata: Record<string, string> }\n- type = \"deployment-node\": { id: string, name: string, kind: string, title: string, technology: string|null, shape: string, project: string, includedInViews: View[], tags: string[], metadata: Record<string, string> }\n\nView (object) fields:\n- id: string — view identifier\n- title: string — view title\n- type: \"element\" | \"deployment\" | \"dynamic\"\n\nNotes:\n- Read-only, idempotent.\n- Use results as input to other tools (e.g., read-element, read-view).\n\nExample response:\n{\n  \"total\": 1,\n  \"found\": [\n    {\n      \"type\": \"logical\",\n      \"project\": \"default\",\n      \"id\": \"shop.frontend\",\n      \"name\": \"frontend\",\n      \"kind\": \"container\",\n      \"title\": \"Frontend\",\n      \"technology\": \"React\",\n      \"shape\": \"rectangle\",      \n      \"includedInViews\": [\n        {\n          \"id\": \"system-overview\",\n          \"title\": \"System Overview\",\n          \"type\": \"element\"\n        }\n      ],\n      \"tags\": [\"public\"],\n      \"metadata\": {}\n    }\n  ]\n}",
+      "inputSchema": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "type": "object",
+        "properties": {
+          "search": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "required": [
+          "search"
+        ]
+      }
+    },
+    {
+      "name": "convert_time",
+      "description": "Convert time between timezones",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source_timezone": {
+            "type": "string",
+            "description": "Source IANA timezone name (e.g., 'America/New_York', 'Europe/London'). Use 'America/New_York' as local timezone if no source timezone provided by the user."
+          },
+          "time": {
+            "type": "string",
+            "description": "Time to convert in 24-hour format (HH:MM)"
+          },
+          "target_timezone": {
+            "type": "string",
+            "description": "Target IANA timezone name (e.g., 'Asia/Tokyo', 'America/San_Francisco'). Use 'America/New_York' as local timezone if no target timezone provided by the user."
+          }
+        },
+        "required": [
+          "source_timezone",
+          "time",
+          "target_timezone"
+        ]
+      }
+    }
+  ]
+}

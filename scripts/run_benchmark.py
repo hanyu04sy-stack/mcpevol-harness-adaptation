@@ -95,6 +95,10 @@ def run_upstream(
     old_argv = sys.argv[:]
     agent_module = None
     original_init = None
+    annotation_link = benchmark_src / "anotation_path"
+    annotation_target = Path(resolved["benchmark_root"]) / "anotation_path"
+    if not annotation_link.exists() and annotation_target.is_dir():
+        annotation_link.symlink_to(Path("..") / "anotation_path", target_is_directory=True)
     sys.path.insert(0, str(benchmark_src))
     os.chdir(benchmark_src)
     try:
