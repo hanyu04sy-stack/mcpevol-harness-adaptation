@@ -42,6 +42,8 @@ python3 scripts/download_server_bundles.py --verify-only
 .venv/bin/python scripts/check_environment.py --strict
 ```
 
+如果检查失败，按 [macOS / Linux 故障排查手册](TROUBLESHOOTING.md) 处理端口占用、版本、SHA-256 或 server 加载问题。
+
 ## 4. 当前机器检查结果
 
 本次初始化时已经确认：

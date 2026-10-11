@@ -88,6 +88,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_validate_subset_coverage.py",
         "tests/test_validate_tool_environments.py",
         "tests/test_check_handoff.py",
+        "tests/test_troubleshooting_doc.py",
     ],
     "documentation": [
         "README.md",
@@ -97,6 +98,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "docs/RUNNING.md",
         "docs/SMOKE_TEST.md",
         "docs/HANDOFF.md",
+        "docs/TROUBLESHOOTING.md",
         "requirements-ci.txt",
     ],
 }

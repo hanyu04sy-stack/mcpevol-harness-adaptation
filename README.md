@@ -46,7 +46,7 @@ python3 scripts/setup_environment.py
 .venv/bin/python scripts/check_environment.py --strict
 ```
 
-详细步骤见 [环境安装](docs/ENVIRONMENT.md)、[任务子集](docs/SUBSET.md)、[统一运行](docs/RUNNING.md)、[smoke 报告](docs/SMOKE_TEST.md) 和 [B/C/D 交接](docs/HANDOFF.md)。
+详细步骤见 [环境安装](docs/ENVIRONMENT.md)、[故障排查](docs/TROUBLESHOOTING.md)、[任务子集](docs/SUBSET.md)、[统一运行](docs/RUNNING.md)、[smoke 报告](docs/SMOKE_TEST.md) 和 [B/C/D 交接](docs/HANDOFF.md)。
 
 统一配置检查和运行入口：
 

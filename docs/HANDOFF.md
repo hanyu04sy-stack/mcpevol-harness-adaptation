@@ -9,6 +9,8 @@ python3 scripts/check_handoff.py
 
 命令会一次性检查 A 的配置、任务集、报告、脚本、测试和文档，并运行所有轻量验证。最外层 `passed` 必须为 `true`；该命令不会下载或启动 server bundles。
 
+如果验收或后续 server 启动失败，先查阅 [macOS / Linux 故障排查手册](TROUBLESHOOTING.md)，不要自行删题或更改锁定哈希。
+
 ## 所有成员：首次初始化
 
 ```bash
