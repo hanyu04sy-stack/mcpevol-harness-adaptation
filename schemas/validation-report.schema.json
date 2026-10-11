@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/validation-report.schema.json",
+  "title": "MCPEvol validation report",
+  "oneOf": [
+    {"$ref": "#/$defs/environmentReport"},
+    {"$ref": "#/$defs/coverageReport"},
+    {"$ref": "#/$defs/runnabilityReport"},
+    {"$ref": "#/$defs/stabilityReport"},
+    {"$ref": "#/$defs/smokeSummary"},
+    {"$ref": "#/$defs/canarySummary"}
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "indices": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "integer", "minimum": 0}},
+    "versionNames": {
+      "type": "object",
+      "required": ["early", "middle", "late"],
+      "properties": {"early": {"type": "object"}, "middle": {"type": "object"}, "late": {"type": "object"}},
+      "additionalProperties": false
+    },
+    "base": {
+      "type": "object",
+      "required": ["schema_version"],
+      "properties": {"schema_version": {"const": 1}}
+    },
+    "environmentReport": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["generated_at", "platform", "benchmark_commit", "one_mcp_version", "versions", "all_versions_started", "all_validations_complete"],
+          "properties": {
+            "generated_at": {"type": "string", "format": "date-time"},
+            "platform": {"type": "string", "minLength": 1},
+            "benchmark_commit": {"$ref": "#/$defs/commit"},
+            "one_mcp_version": {"type": "string", "minLength": 1},
+            "versions": {"$ref": "#/$defs/versionNames"},
+            "all_versions_started": {"type": "boolean"},
+            "all_validations_complete": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "coverageReport": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["passed", "benchmark_commit", "task_count", "affected_recovery_task_count", "retention_task_count", "change_type_task_counts", "requirements", "selected_indices", "task_file_sha256", "manifest_sha256"],
+          "properties": {
+            "passed": {"type": "boolean"},
+            "benchmark_commit": {"$ref": "#/$defs/commit"},
+            "task_count": {"type": "integer", "minimum": 1},
+            "affected_recovery_task_count": {"type": "integer", "minimum": 1},
+            "retention_task_count": {"type": "integer", "minimum": 1},
+            "change_type_task_counts": {"type": "object", "required": ["description", "parameter", "tool"]},
+            "requirements": {"type": "object", "required": ["tool_change", "parameter_change", "description_change", "affected_recovery_tasks", "retention_tasks"]},
+            "selected_indices": {"$ref": "#/$defs/indices"},
+            "task_file_sha256": {"$ref": "#/$defs/sha256"},
+            "manifest_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      ]
+    },
+    "runnabilityReport": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["benchmark_commit", "task_count", "all_tasks_runnable_in_all_versions", "version_summary", "tasks", "task_file_sha256", "environment_report_sha256"],
+          "properties": {
+            "benchmark_commit": {"$ref": "#/$defs/commit"},
+            "task_count": {"type": "integer", "minimum": 1},
+            "all_tasks_runnable_in_all_versions": {"type": "boolean"},
+            "version_summary": {"$ref": "#/$defs/versionNames"},
+            "tasks": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["idx", "required_servers", "versions", "runnable_in_all_versions"]}},
+            "task_file_sha256": {"$ref": "#/$defs/sha256"},
+            "environment_report_sha256": {"$ref": "#/$defs/sha256"}
+          }
+        }
+      ]
+    },
+    "stabilityReport": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["generated_at", "platform", "benchmark_commit", "trial_count", "versions", "all_versions_stable"],
+          "properties": {
+            "generated_at": {"type": "string", "format": "date-time"},
+            "platform": {"type": "string", "minLength": 1},
+            "benchmark_commit": {"$ref": "#/$defs/commit"},
+            "trial_count": {"type": "integer", "minimum": 2},
+            "versions": {"$ref": "#/$defs/versionNames"},
+            "all_versions_stable": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "smokeSummary": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["generated_at", "benchmark_commit", "model_mode", "external_api_used", "task_indices", "versions", "all_passed"],
+          "properties": {
+            "generated_at": {"type": "string", "format": "date-time"},
+            "benchmark_commit": {"$ref": "#/$defs/commit"},
+            "model_mode": {"type": "string", "minLength": 1},
+            "external_api_used": {"type": "boolean"},
+            "task_indices": {"$ref": "#/$defs/indices"},
+            "versions": {"$ref": "#/$defs/versionNames"},
+            "all_passed": {"type": "boolean"}
+          }
+        }
+      ]
+    },
+    "canarySummary": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": ["generated_at", "external_api_used", "credential_recorded", "model", "temperature", "task_indices", "versions", "requested_versions_passed", "all_passed"],
+          "properties": {
+            "generated_at": {"type": "string", "format": "date-time"},
+            "external_api_used": {"type": "boolean"},
+            "credential_recorded": {"type": "boolean"},
+            "model": {"type": "string", "minLength": 1},
+            "temperature": {"type": "number", "minimum": 0},
+            "task_indices": {"$ref": "#/$defs/indices"},
+            "versions": {"$ref": "#/$defs/versionNames"},
+            "requested_versions_passed": {"type": "boolean"},
+            "all_passed": {"type": "boolean"}
+          }
+        }
+      ]
+    }
+  }
+}

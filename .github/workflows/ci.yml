@@ -27,9 +27,16 @@ jobs:
         uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+          cache: pip
 
-      # Deliberately no dependency installation, bundle download, 1MCP, Ollama,
-      # or benchmark execution. These checks use Python's standard library only.
+      # Only the small JSON Schema validator is installed. There is deliberately
+      # no benchmark dependency, bundle download, 1MCP, Ollama, or benchmark run.
+      - name: Install lightweight schema validator
+        run: python -m pip install --requirement requirements-ci.txt
+
+      - name: Validate formal JSON Schemas
+        run: python scripts/validate_json_schemas.py
+
       - name: Validate configs and task manifests
         run: python scripts/validate_ci_assets.py
 

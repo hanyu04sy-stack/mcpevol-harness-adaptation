@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/experiment-config.schema.json",
+  "title": "MCPEvol experiment configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_name", "benchmark", "dataset", "model", "judge", "runner", "mcp", "output", "environment"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "experiment_name": {"type": "string", "minLength": 1},
+    "benchmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "root", "commit", "runner"],
+      "properties": {
+        "repository": {"type": "string", "format": "uri"},
+        "root": {"type": "string", "minLength": 1},
+        "commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+        "runner": {"type": "string", "minLength": 1}
+      }
+    },
+    "dataset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "path", "sha256", "size", "seed"],
+      "properties": {
+        "mode": {"enum": ["fixed_subset", "fixed_canary"]},
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "size": {"type": "integer", "minimum": 1},
+        "seed": {"type": "integer", "minimum": 0},
+        "runnability_matrix": {"type": "string", "minLength": 1},
+        "runnability_matrix_sha256": {"$ref": "#/$defs/sha256"},
+        "startup_stability_report": {"type": "string", "minLength": 1},
+        "startup_stability_report_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "dependentRequired": {
+        "runnability_matrix": ["runnability_matrix_sha256"],
+        "startup_stability_report": ["startup_stability_report_sha256"]
+      }
+    },
+    "model": {"$ref": "#/$defs/model"},
+    "judge": {"$ref": "#/$defs/judge"},
+    "runner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step", "part_num", "part_idx", "fschat"],
+      "properties": {
+        "step": {"type": "integer", "minimum": 1},
+        "part_num": {"type": "integer", "minimum": -1},
+        "part_idx": {"type": "integer", "minimum": 0},
+        "fschat": {"type": "boolean"}
+      }
+    },
+    "mcp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["versions"],
+      "properties": {
+        "versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["early", "middle", "late"],
+          "properties": {
+            "early": {"$ref": "#/$defs/mcpVersion"},
+            "middle": {"$ref": "#/$defs/mcpVersion"},
+            "late": {"$ref": "#/$defs/mcpVersion"}
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root", "layout"],
+      "properties": {
+        "root": {"type": "string", "minLength": 1},
+        "layout": {"type": "string", "pattern": "\\{experiment_name\\}.*\\{version\\}"}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["file"],
+      "properties": {"file": {"type": "string", "minLength": 1}}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "name", "temperature", "max_completion_tokens", "api_key_env", "base_url_env"],
+      "properties": {
+        "provider": {"enum": ["openai_compatible", "local_ollama"]},
+        "name": {"type": "string", "minLength": 1},
+        "temperature": {"type": "number", "minimum": 0},
+        "max_completion_tokens": {"type": "integer", "minimum": 1},
+        "api_key_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "base_url_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+      }
+    },
+    "judge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "temperature", "api_key_env", "base_url_env"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "temperature": {"type": "number", "minimum": 0},
+        "api_key_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "base_url_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+      }
+    },
+    "mcpVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "server_config"],
+      "properties": {
+        "url": {"type": "string", "format": "uri", "pattern": "/mcp$"},
+        "server_config": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

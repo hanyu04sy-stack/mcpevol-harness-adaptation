@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/subset-manifest.schema.json",
+  "title": "MCPEvol fixed subset manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["benchmark_commit", "version_mapping", "seed", "source_test_cases_sha256", "source_task_count", "eligible_task_count", "excluded_due_to_missing_server_count", "common_configured_server_count", "eligibility_basis", "common_eligible_server_count", "common_eligible_servers", "availability_report", "availability_report_sha256", "availability_report_generated_at", "connected_server_counts", "requested_size", "actual_size", "affected_count", "retention_count", "change_type_task_counts", "selected_indices", "selected_task_details"],
+  "properties": {
+    "benchmark_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "version_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["early", "middle", "late"],
+      "properties": {
+        "early": {"const": "original"},
+        "middle": {"const": "iter3"},
+        "late": {"const": "iter5"}
+      }
+    },
+    "seed": {"type": "integer", "minimum": 0},
+    "requested_size": {"type": "integer", "minimum": 1},
+    "actual_size": {"type": "integer", "minimum": 1},
+    "affected_count": {"type": "integer", "minimum": 1},
+    "retention_count": {"type": "integer", "minimum": 1},
+    "source_test_cases_sha256": {"$ref": "#/$defs/sha256"},
+    "source_task_count": {"type": "integer", "minimum": 1},
+    "eligible_task_count": {"type": "integer", "minimum": 1},
+    "excluded_due_to_missing_server_count": {"type": "integer", "minimum": 0},
+    "common_configured_server_count": {"type": "integer", "minimum": 1},
+    "eligibility_basis": {"const": "connected_in_all_versions"},
+    "common_eligible_server_count": {"type": "integer", "minimum": 1},
+    "common_eligible_servers": {"$ref": "#/$defs/nonEmptyStringList"},
+    "availability_report": {"type": "string", "minLength": 1},
+    "availability_report_sha256": {"$ref": "#/$defs/sha256"},
+    "availability_report_generated_at": {"type": "string", "format": "date-time"},
+    "connected_server_counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["early", "middle", "late"],
+      "properties": {
+        "early": {"type": "integer", "minimum": 1},
+        "middle": {"type": "integer", "minimum": 1},
+        "late": {"type": "integer", "minimum": 1}
+      }
+    },
+    "change_type_task_counts": {"$ref": "#/$defs/changeCounts"},
+    "selected_indices": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0}
+    },
+    "selected_task_details": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["idx", "status", "affected_servers", "change_types", "required_servers"],
+        "properties": {
+          "idx": {"type": "integer", "minimum": 0},
+          "status": {"enum": ["affected", "retention"]},
+          "affected_servers": {"$ref": "#/$defs/stringList"},
+          "change_types": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {"enum": ["tool", "parameter", "description"]}
+          },
+          "required_servers": {"$ref": "#/$defs/nonEmptyStringList"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "stringList": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "nonEmptyStringList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "changeCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "parameter", "tool"],
+      "properties": {
+        "description": {"type": "integer", "minimum": 1},
+        "parameter": {"type": "integer", "minimum": 1},
+        "tool": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

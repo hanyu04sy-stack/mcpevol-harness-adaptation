@@ -61,9 +61,11 @@ python3 scripts/setup_environment.py
 
 任务可运行矩阵位于 [`reports/pilot-30-runnability-matrix.json`](reports/pilot-30-runnability-matrix.json)，记录每道题在 Early/Middle/Late 中的每个 server 依赖状态。配置检查会核对矩阵 SHA-256 和任务 SHA-256；正式运行前还会实时要求所有依赖为 `connected`。
 
-GitHub Actions 会在每次 push 和 pull request 时运行轻量级检查：校验全部实验配置、任务文件 SHA-256/数量/唯一 ID、Early/Middle/Late 配置、pilot manifest 的五类覆盖要求、可运行矩阵与稳定性报告，并运行所有脚本单元测试。CI 只使用 Python 标准库，不安装依赖、不下载或启动大型 server bundles，也不运行 1MCP、Ollama 或 benchmark。可在本地执行同一套检查：
+GitHub Actions 会在每次 push 和 pull request 时运行轻量级检查：用 [`schemas/`](schemas/) 中的 JSON Schema Draft 2020-12 正式校验实验配置、任务文件、子集 manifest 和验证报告；同时检查 SHA-256/数量/唯一 ID、Early/Middle/Late 配置、pilot manifest 的五类覆盖要求、可运行矩阵与稳定性报告，并运行所有脚本单元测试。CI 只安装轻量 Schema 校验器，不安装 benchmark 依赖、不下载或启动大型 server bundles，也不运行 1MCP、Ollama 或 benchmark。可在本地执行同一套检查：
 
 ```bash
+python3 -m pip install -r requirements-ci.txt
+python3 scripts/validate_json_schemas.py
 python3 scripts/validate_ci_assets.py
 python3 -m compileall -q scripts tests
 python3 -m unittest discover -s tests -v
