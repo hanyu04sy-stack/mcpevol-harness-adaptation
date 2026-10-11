@@ -12,6 +12,7 @@
     "validate:stability": ".venv/bin/python scripts/validate_startup_stability.py",
     "smoke": ".venv/bin/python scripts/run_smoke_tests.py",
     "canary:real": ".venv/bin/python scripts/run_real_canary.py",
+    "canary:local": ".venv/bin/python scripts/run_local_canary.py",
     "run:early": ".venv/bin/python scripts/run_benchmark.py --version early",
     "run:middle": ".venv/bin/python scripts/run_benchmark.py --version middle",
     "run:late": ".venv/bin/python scripts/run_benchmark.py --version late",

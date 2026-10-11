@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-11T12:57:55.413494+00:00",
+  "external_api_used": false,
+  "credential_recorded": false,
+  "model": "qwen3.5:4b",
+  "temperature": 0.0,
+  "task_indices": [
+    144,
+    161
+  ],
+  "versions": {
+    "early": {
+      "success": true,
+      "duration_seconds": 504.4,
+      "connected_servers": 3,
+      "available_tools": 28,
+      "tasks": {
+        "144": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 4,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/early/trajectory-144.json"
+        },
+        "161": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 8,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/early/trajectory-161.json"
+        }
+      },
+      "benchmark_log": "reports/canary-local-qwen35-4b-2/early/benchmark.log",
+      "server_log": "reports/canary-local-qwen35-4b-2/early/server.log"
+    },
+    "middle": {
+      "success": true,
+      "duration_seconds": 475.594,
+      "connected_servers": 3,
+      "available_tools": 28,
+      "tasks": {
+        "144": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 3,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/middle/trajectory-144.json"
+        },
+        "161": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 8,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/middle/trajectory-161.json"
+        }
+      },
+      "benchmark_log": "reports/canary-local-qwen35-4b-2/middle/benchmark.log",
+      "server_log": "reports/canary-local-qwen35-4b-2/middle/server.log"
+    },
+    "late": {
+      "success": true,
+      "duration_seconds": 476.352,
+      "connected_servers": 3,
+      "available_tools": 28,
+      "tasks": {
+        "144": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 3,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/late/trajectory-144.json"
+        },
+        "161": {
+          "success": true,
+          "stop": true,
+          "exceeded": false,
+          "tool_message_count": 8,
+          "tool_error_count": 0,
+          "answer_present": true,
+          "trajectory": "reports/canary-local-qwen35-4b-2/late/trajectory-161.json"
+        }
+      },
+      "benchmark_log": "reports/canary-local-qwen35-4b-2/late/benchmark.log",
+      "server_log": "reports/canary-local-qwen35-4b-2/late/server.log"
+    }
+  },
+  "requested_versions_passed": true,
+  "all_passed": true
+}

@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "external/MCPEvol-Bench/src/custom/data/test_cases/test_cases.json"
 OUTPUT = ROOT / "data/subsets/canary-real-2/test_cases.json"
-INDICES = (142, 161)
+INDICES = (144, 161)
 
 
 def main() -> None:

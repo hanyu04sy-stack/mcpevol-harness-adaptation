@@ -86,6 +86,17 @@ OpenRouter 使用 `https://openrouter.ai/api/v1` 和模型 slug `openai/gpt-4o`�
 
 脚本只提交脱敏后的报告；`.env`、原始 `results/` 和生成的 1MCP 配置均被 Git 忽略。任何版本或任务失败时，进程会以非零状态退出，不会把失败误报为通过。
 
+### 免费本地模型 canary（不需要 API Key）
+
+安装 Ollama 后运行一条命令即可；脚本会在本机下载并使用支持 tool calling 的 `qwen3.5:4b`，自动启动模型服务并依次测试三版：
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+.venv/bin/python scripts/run_local_canary.py
+```
+
+本机实测结果位于 [`reports/canary-local-qwen35-4b-2/`](reports/canary-local-qwen35-4b-2/)：Early、Middle、Late 均为 2/2 题成功，3/3 server 连接，28 个 tool 可见，所有 trajectory 合计 34 条 tool message、0 条 tool error。任务 144 验证双时间工具调用，任务 161 验证 LikeC4 文档探索与时区转换。该流程完全在本机运行，`external_api_used=false`，不读取 `.env`。
+
 ## 当前完成度
 
 - [x] 创建公开 GitHub 仓库
@@ -106,6 +117,7 @@ OpenRouter 使用 `https://openrouter.ai/api/v1` 和模型 slug `openai/gpt-4o`�
 - [x] Early/Middle/Late 各完成 3 次独立冷启动，所有 server 稳定连接
 - [x] 建立安全、统一且真正读取配置的 benchmark 运行入口
 - [x] 完成 Early/Middle/Late 小规模端到端 smoke run 并保留 trajectory/log
+- [x] 使用免费本地真实模型完成 Early/Middle/Late 两题 canary 并保留 trajectory/log
 
 ## 安全说明
 

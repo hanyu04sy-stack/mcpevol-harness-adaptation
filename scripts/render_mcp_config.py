@@ -44,6 +44,12 @@ def render_config(
             for name, config in payload["mcpServers"].items()
             if name in required_servers
         }
+    # Some evolved Node servers need more than 1MCP's 30-second default to
+    # initialize on 8 GB Apple Silicon machines. Keep startup deterministic
+    # without weakening the readiness check.
+    for config in payload["mcpServers"].values():
+        config.setdefault("connectionTimeout", 120_000)
+        config.setdefault("requestTimeout", 120_000)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 

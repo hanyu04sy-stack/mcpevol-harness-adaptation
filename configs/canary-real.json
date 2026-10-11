@@ -10,7 +10,7 @@
   "dataset": {
     "mode": "fixed_canary",
     "path": "data/subsets/canary-real-2/test_cases.json",
-    "sha256": "0eccd9d44bce84b9a6377e5170b84aa45bb5d00cb0003a558a5f37669c76267d",
+    "sha256": "464f60fb935e51cfd4481ce9c3983676b8236845fd8098fa01803d7fe3b13a19",
     "size": 2,
     "seed": 6203
   },

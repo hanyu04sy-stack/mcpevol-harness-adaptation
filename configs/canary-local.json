@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "experiment_name": "canary-local-qwen35-4b-2",
+  "benchmark": {
+    "repository": "https://github.com/Octobrist/MCPEvol-Bench.git",
+    "root": "external/MCPEvol-Bench",
+    "commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+    "runner": "src/custom/real_mcp/tool_level_test.py"
+  },
+  "dataset": {
+    "mode": "fixed_canary",
+    "path": "data/subsets/canary-real-2/test_cases.json",
+    "sha256": "464f60fb935e51cfd4481ce9c3983676b8236845fd8098fa01803d7fe3b13a19",
+    "size": 2,
+    "seed": 6203
+  },
+  "model": {
+    "provider": "local_ollama",
+    "name": "qwen3.5:4b",
+    "temperature": 0.0,
+    "max_completion_tokens": 4096,
+    "api_key_env": "MODEL_API_KEY",
+    "base_url_env": "MODEL_BASE_URL"
+  },
+  "judge": {
+    "name": "qwen3.5:4b",
+    "temperature": 0.0,
+    "api_key_env": "JUDGE_API_KEY",
+    "base_url_env": "JUDGE_BASE_URL"
+  },
+  "runner": {
+    "step": 3,
+    "part_num": -1,
+    "part_idx": 0,
+    "fschat": false
+  },
+  "mcp": {
+    "versions": {
+      "early": {
+        "url": "http://127.0.0.1:3351/mcp",
+        "server_config": "generated/1mcp-canary/early.json"
+      },
+      "middle": {
+        "url": "http://127.0.0.1:3352/mcp",
+        "server_config": "generated/1mcp-canary/middle.json"
+      },
+      "late": {
+        "url": "http://127.0.0.1:3353/mcp",
+        "server_config": "generated/1mcp-canary/late.json"
+      }
+    }
+  },
+  "output": {
+    "root": "results",
+    "layout": "{experiment_name}/{version}"
+  },
+  "environment": {
+    "file": ".env"
+  }
+}

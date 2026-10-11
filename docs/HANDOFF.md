@@ -63,3 +63,11 @@ find results/pilot-30 -type f -name '*.json' | sort
 ```
 
 每个正式运行目录必须有 `run-metadata.json`，并核对其 `benchmark_commit`、`task_sha256`、`model_name`、`temperature` 和对应版本的 `mcp_url`。实验数据在 `results/` 中，已提交的环境和 smoke 证据在 `reports/` 中。
+
+不使用外部 API 的真实模型 canary：
+
+```bash
+.venv/bin/python scripts/run_local_canary.py
+```
+
+该命令使用本机 Ollama `qwen3.5:4b`，不读取 `.env`。三版已验证结果和原始 trajectory/log 位于 `reports/canary-local-qwen35-4b-2/`。

@@ -21,8 +21,8 @@ from run_smoke_tests import stop_process_group, wait_for_servers
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = Path("configs/canary-real.json")
-TASK_INDICES = (142, 161)
+DEFAULT_CONFIG = Path("configs/canary-real.json")
+TASK_INDICES = (144, 161)
 
 
 def redact(text: str, secret: str) -> str:
@@ -56,7 +56,7 @@ def validate_trajectory(payload: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def render_configs(python: str) -> None:
+def render_configs(python: str, task_file: str) -> None:
     for version in VERSIONS:
         subprocess.run(
             [
@@ -69,7 +69,7 @@ def render_configs(python: str) -> None:
                 "--version",
                 version,
                 "--test-case-file",
-                "data/subsets/canary-real-2/test_cases.json",
+                task_file,
                 "--output",
                 f"generated/1mcp-canary/{version}.json",
             ],
@@ -80,6 +80,12 @@ def render_configs(python: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument(
+        "--local",
+        action="store_true",
+        help="use MODEL_API_KEY/MODEL_BASE_URL from the process without reading .env",
+    )
     parser.add_argument("--versions", nargs="+", choices=VERSIONS, default=list(VERSIONS))
     parser.add_argument("--startup-timeout", type=int, default=180)
     parser.add_argument("--run-timeout", type=int, default=900)
@@ -90,38 +96,57 @@ def main() -> None:
     )
     args = parser.parse_args()
     os.chdir(ROOT)
+    config_path = args.config
     python = str((ROOT / ".venv/bin/python").resolve())
     one_mcp = (ROOT / "node_modules/.bin/1mcp").resolve()
     if not Path(python).is_file() or not one_mcp.is_file():
         raise SystemExit("Environment is incomplete; run scripts/setup_environment.py")
 
-    env_path = ROOT / ".env"
-    if not env_path.is_file():
-        raise SystemExit("Missing .env; run scripts/configure_api_credentials.py")
-    if stat.S_IMODE(env_path.stat().st_mode) & 0o077:
-        raise SystemExit(".env permissions are too broad; run chmod 600 .env")
-    load_env_file(env_path)
+    if not args.local:
+        env_path = ROOT / ".env"
+        if not env_path.is_file():
+            raise SystemExit("Missing .env; run scripts/configure_api_credentials.py")
+        if stat.S_IMODE(env_path.stat().st_mode) & 0o077:
+            raise SystemExit(".env permissions are too broad; run chmod 600 .env")
+        load_env_file(env_path)
     api_key = os.environ.get("MODEL_API_KEY", "").strip()
     if not api_key:
         raise SystemExit("MODEL_API_KEY is empty")
 
-    render_configs(python)
-    report_root = ROOT / "reports/canary-real-2"
-    result_root = ROOT / "results/canary-real-2"
+    raw_config = json.loads(config_path.read_text(encoding="utf-8"))
+    task_file = str(raw_config["dataset"]["path"])
+    render_configs(python, task_file)
+    first_resolved = load_experiment(config_path, args.versions[0])
+    experiment_name = str(first_resolved["experiment_name"])
+    report_root = ROOT / "reports" / experiment_name
+    result_root = ROOT / "results" / experiment_name
     if args.overwrite:
-        shutil.rmtree(report_root, ignore_errors=True)
-        shutil.rmtree(result_root, ignore_errors=True)
+        for version in args.versions:
+            shutil.rmtree(report_root / version, ignore_errors=True)
+            shutil.rmtree(result_root / version, ignore_errors=True)
     report_root.mkdir(parents=True, exist_ok=True)
-    first_resolved = load_experiment(CONFIG, args.versions[0])
+    previous_summary_path = report_root / "summary.json"
+    previous_versions: dict[str, Any] = {}
+    if previous_summary_path.is_file():
+        try:
+            previous_versions = json.loads(
+                previous_summary_path.read_text(encoding="utf-8")
+            ).get("versions", {})
+        except (OSError, json.JSONDecodeError):
+            previous_versions = {}
     summary: dict[str, Any] = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "external_api_used": True,
+        "external_api_used": not args.local,
         "credential_recorded": False,
         "model": str(first_resolved["model_name"]),
         "temperature": 0.0,
         "task_indices": list(TASK_INDICES),
-        "versions": {},
+        "versions": {
+            version: result
+            for version, result in previous_versions.items()
+            if version not in args.versions
+        },
     }
     run_env = os.environ.copy()
     run_env["PATH"] = os.pathsep.join(
@@ -132,7 +157,7 @@ def main() -> None:
         ]
     )
     for version in args.versions:
-        resolved = load_experiment(CONFIG, version)
+        resolved = load_experiment(config_path, version)
         version_dir = report_root / version
         version_dir.mkdir(parents=True, exist_ok=True)
         server_log_path = version_dir / "server.log"
@@ -185,7 +210,7 @@ def main() -> None:
                         python,
                         "scripts/run_benchmark.py",
                         "--config",
-                        str(CONFIG),
+                        str(config_path),
                         "--version",
                         version,
                     ],
@@ -250,13 +275,18 @@ def main() -> None:
                 stop_process_group(process)
         print(f"{version}: {'passed' if summary['versions'][version]['success'] else 'failed'}")
 
-    summary["all_passed"] = set(summary["versions"]) == set(args.versions) and all(
-        result["success"] for result in summary["versions"].values()
+    summary["requested_versions_passed"] = all(
+        summary["versions"].get(version, {}).get("success", False)
+        for version in args.versions
+    )
+    summary["all_passed"] = set(summary["versions"]) == set(VERSIONS) and all(
+        summary["versions"].get(version, {}).get("success", False)
+        for version in VERSIONS
     )
     (report_root / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    if not summary["all_passed"]:
+    if not summary["requested_versions_passed"]:
         raise SystemExit(1)
 
 

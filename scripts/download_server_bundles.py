@@ -153,6 +153,17 @@ def process_bundle(
 ) -> None:
     spec = BUNDLES[name]
     archive = root / "archives" / str(spec["filename"])
+    if archive.is_file():
+        archive_stat = archive.stat()
+        if (
+            archive_stat.st_size > 0
+            and hasattr(archive_stat, "st_blocks")
+            and archive_stat.st_blocks == 0
+        ):
+            if verify_only:
+                raise ValueError(f"{archive}: macOS dataless placeholder")
+            print(f"Replacing macOS dataless archive: {archive}")
+            archive.unlink()
     if not archive.exists():
         if verify_only:
             raise FileNotFoundError(archive)

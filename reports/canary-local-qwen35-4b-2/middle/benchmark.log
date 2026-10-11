@@ -1,0 +1,31 @@
+{
+  "experiment_name": "canary-local-qwen35-4b-2",
+  "version": "middle",
+  "config_sha256": "b0640588c9e772c481a1cfd35ce8da4a5e1628f434e25fbc0ae3f17bcf4bb36d",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "task_sha256": "464f60fb935e51cfd4481ce9c3983676b8236845fd8098fa01803d7fe3b13a19",
+  "task_count": 2,
+  "runnability_matrix_sha256": null,
+  "startup_stability_report_sha256": null,
+  "model_name": "qwen3.5:4b",
+  "temperature": 0.0,
+  "max_completion_tokens": 4096,
+  "judge_name": "qwen3.5:4b",
+  "judge_temperature": 0.0,
+  "mcp_url": "http://127.0.0.1:3352/mcp",
+  "configured_server_count": 3,
+  "config_path": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/configs/canary-local.json",
+  "task_file": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/data/subsets/canary-real-2/test_cases.json",
+  "runnability_matrix": null,
+  "startup_stability_report": null,
+  "server_config": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-canary/middle.json",
+  "output_dir": "/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/canary-local-qwen35-4b-2/middle"
+}
+Tools Number 28
+Server Number: 3
+Run completed; metadata: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/results/canary-local-qwen35-4b-2/middle/run-metadata.json
+
+测试用例进度:   0%|[34m          [0m| 0/2 [00:00<?, ?case/s]
+测试用例进度:  50%|[34m█████     [0m| 1/2 [11:29<11:29, 689.94s/case]
+测试用例进度: 100%|[34m██████████[0m| 2/2 [4:12:59<00:00, 8807.59s/case]
+测试用例进度: 100%|[34m██████████[0m| 2/2 [4:12:59<00:00, 7589.95s/case]
