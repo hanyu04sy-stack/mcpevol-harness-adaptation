@@ -57,6 +57,7 @@ python3 -m json.tool reports/environment-validation.json >/dev/null
 python3 -m json.tool reports/pilot-30-environment-validation.json >/dev/null
 python3 -m json.tool reports/pilot-30-coverage.json >/dev/null
 python3 -m json.tool reports/pilot-30-runnability-matrix.json >/dev/null
+python3 -m json.tool reports/pilot-30-startup-stability.json >/dev/null
 python3 -m json.tool reports/smoke/summary.json >/dev/null
 find results/pilot-30 -type f -name '*.json' | sort
 ```

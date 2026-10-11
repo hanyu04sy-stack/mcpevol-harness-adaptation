@@ -21,6 +21,7 @@ def main() -> None:
             "task_sha256",
             "task_count",
             "runnability_matrix_sha256",
+            "startup_stability_report_sha256",
             "model_name",
             "temperature",
             "max_completion_tokens",
@@ -42,6 +43,8 @@ def main() -> None:
         if manifest_path.is_file():
             if resolved[0]["runnability_matrix"] is None:
                 raise ConfigError("formal subset requires a runnability matrix")
+            if resolved[0]["startup_stability_report"] is None:
+                raise ConfigError("formal subset requires repeated startup evidence")
             manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
             tasks = json.loads(task_file.read_text(encoding="utf-8"))
             task_ids = [int(task["idx"]) for task in tasks]

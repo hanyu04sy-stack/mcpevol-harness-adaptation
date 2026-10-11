@@ -199,6 +199,49 @@ def load_experiment(
                     f"task {row.get('idx')} has unavailable dependencies in {version}"
                 )
 
+    stability_path: Path | None = None
+    stability_hash: str | None = None
+    stability: dict[str, Any] | None = None
+    stability_raw = dataset.get("startup_stability_report")
+    expected_stability_hash = dataset.get("startup_stability_report_sha256")
+    if (stability_raw is None) != (expected_stability_hash is None):
+        raise ConfigError(
+            "dataset.startup_stability_report and its SHA-256 must be set together"
+        )
+    if stability_raw is not None:
+        if not isinstance(stability_raw, str) or not isinstance(
+            expected_stability_hash, str
+        ):
+            raise ConfigError("startup stability report path and SHA-256 must be strings")
+        stability_path = _path(
+            project_root, stability_raw, "dataset.startup_stability_report"
+        )
+        stability_hash = sha256(stability_path)
+        if stability_hash != expected_stability_hash:
+            raise ConfigError(
+                "startup stability report SHA-256 mismatch: "
+                f"expected {expected_stability_hash}, got {stability_hash}"
+            )
+        try:
+            stability = json.loads(stability_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise ConfigError(f"invalid startup stability report: {exc}") from exc
+        if stability.get("benchmark_commit") != expected_commit:
+            raise ConfigError("startup stability benchmark commit does not match")
+        if stability.get("trial_count", 0) < 3:
+            raise ConfigError("startup stability report requires at least three trials")
+        if stability.get("all_versions_stable") is not True:
+            raise ConfigError("startup stability report contains intermittent failures")
+        version_stability = stability.get("versions", {}).get(version, {}).get(
+            "summary", {}
+        )
+        if (
+            version_stability.get("trial_count", 0) < 3
+            or version_stability.get("all_trials_successful") is not True
+            or version_stability.get("flaky_or_unavailable_servers") != []
+        ):
+            raise ConfigError(f"{version} did not pass repeated startup validation")
+
     model_name = _require(model, "name", str, "model")
     temperature = model.get("temperature")
     if not isinstance(temperature, (int, float)) or not 0 <= temperature <= 2:
@@ -248,6 +291,22 @@ def load_experiment(
         raise ConfigError(
             f"{version} server config is missing task servers: {missing_servers}"
         )
+    if stability is not None:
+        stability_trials = stability["versions"][version].get("trials", [])
+        if not stability_trials:
+            raise ConfigError(f"startup stability report has no {version} trials")
+        for trial in stability_trials:
+            observed = {server["name"] for server in trial.get("servers", [])}
+            if observed != set(configured_servers):
+                raise ConfigError(
+                    f"startup stability {version} trial server set does not match config"
+                )
+        if version_stability.get("configured_server_count") != len(
+            configured_servers
+        ):
+            raise ConfigError(
+                f"startup stability {version} server count does not match config"
+            )
 
     if runner.get("step") != 3:
         raise ConfigError("runner.step must be 3 for benchmark execution")
@@ -293,6 +352,8 @@ def load_experiment(
         "task_count": len(tasks),
         "runnability_matrix": matrix_path,
         "runnability_matrix_sha256": matrix_hash,
+        "startup_stability_report": stability_path,
+        "startup_stability_report_sha256": stability_hash,
         "model_name": model_name,
         "temperature": float(temperature),
         "max_completion_tokens": max_tokens,
@@ -318,6 +379,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "task_sha256",
         "task_count",
         "runnability_matrix_sha256",
+        "startup_stability_report_sha256",
         "model_name",
         "temperature",
         "max_completion_tokens",
@@ -331,6 +393,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "config_path",
         "task_file",
         "runnability_matrix",
+        "startup_stability_report",
         "server_config",
         "output_dir",
     ):

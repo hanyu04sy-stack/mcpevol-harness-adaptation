@@ -59,6 +59,8 @@ python3 scripts/setup_environment.py
 
 任务可运行矩阵位于 [`reports/pilot-30-runnability-matrix.json`](reports/pilot-30-runnability-matrix.json)，记录每道题在 Early/Middle/Late 中的每个 server 依赖状态。配置检查会核对矩阵 SHA-256 和任务 SHA-256；正式运行前还会实时要求所有依赖为 `connected`。
 
+冷启动稳定性报告位于 [`reports/pilot-30-startup-stability.json`](reports/pilot-30-startup-stability.json)。已完成 Early/Middle/Late 各 3 次独立启动，9 次均为 26/26 server 连接、0 失败、0 波动 server。
+
 不需要 API key 的完整端到端自检：
 
 ```bash
@@ -84,6 +86,7 @@ python3 scripts/setup_environment.py
 - [x] 启动并验证 Early/Middle/Late 工具环境
 - [x] 修复 Late bundle 的 dataless 文件，Late 可用 server 从 23 提升到 54
 - [x] 按三版实际连接结果重建 30 题子集，26/26 server 在每个版本全部可用
+- [x] Early/Middle/Late 各完成 3 次独立冷启动，所有 server 稳定连接
 - [x] 建立安全、统一且真正读取配置的 benchmark 运行入口
 - [x] 完成 Early/Middle/Late 小规模端到端 smoke run 并保留 trajectory/log
 

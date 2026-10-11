@@ -9,6 +9,7 @@
     "check:coverage": ".venv/bin/python scripts/validate_subset_coverage.py",
     "check:runnability": ".venv/bin/python scripts/build_runnability_matrix.py",
     "validate:environments": ".venv/bin/python scripts/validate_tool_environments.py",
+    "validate:stability": ".venv/bin/python scripts/validate_startup_stability.py",
     "smoke": ".venv/bin/python scripts/run_smoke_tests.py",
     "run:early": ".venv/bin/python scripts/run_benchmark.py --version early",
     "run:middle": ".venv/bin/python scripts/run_benchmark.py --version middle",

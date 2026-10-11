@@ -13,6 +13,8 @@
     "sha256": "cffb5a709fd707b1db454d07e2ae7cef04393d2a9ee98a9e7c5c6542ad42bd48",
     "runnability_matrix": "reports/pilot-30-runnability-matrix.json",
     "runnability_matrix_sha256": "2a92d9f93ce12057f18d823c083aae9a71e0cd9b8f9a358db7784a5ffff35b3a",
+    "startup_stability_report": "reports/pilot-30-startup-stability.json",
+    "startup_stability_report_sha256": "1b11b6d3b23eca8193772021a603e20ec2aa8a96b651d8fff1fe389cb2e937e7",
     "size": 30,
     "seed": 6203
   },

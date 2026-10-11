@@ -124,6 +124,31 @@ class ExperimentConfigTest(unittest.TestCase):
                     config_path, "early", root=root, verify_checkout=False
                 )
 
+    def test_rejects_unstable_repeated_startup_report(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = self.make_project(root)
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            stability = {
+                "benchmark_commit": "abc",
+                "trial_count": 3,
+                "all_versions_stable": False,
+                "versions": {},
+            }
+            report_path = root / "stability.json"
+            report_path.write_text(json.dumps(stability), encoding="utf-8")
+            config["dataset"]["startup_stability_report"] = "stability.json"
+            config["dataset"]["startup_stability_report_sha256"] = hashlib.sha256(
+                report_path.read_bytes()
+            ).hexdigest()
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with self.assertRaisesRegex(
+                experiment_config.ConfigError, "intermittent failures"
+            ):
+                experiment_config.load_experiment(
+                    config_path, "early", root=root, verify_checkout=False
+                )
+
     def test_dotenv_is_literal_and_does_not_override_environment(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / ".env"
