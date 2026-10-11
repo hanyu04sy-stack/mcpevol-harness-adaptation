@@ -1,5 +1,14 @@
 # B / C / D 交接命令
 
+## 接手前：一键验收 A 的交付物
+
+```bash
+python3 -m pip install -r requirements-ci.txt
+python3 scripts/check_handoff.py
+```
+
+命令会一次性检查 A 的配置、任务集、报告、脚本、测试和文档，并运行所有轻量验证。最外层 `passed` 必须为 `true`；该命令不会下载或启动 server bundles。
+
 ## 所有成员：首次初始化
 
 ```bash

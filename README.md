@@ -65,11 +65,10 @@ GitHub Actions 会在每次 push 和 pull request 时运行轻量级检查：用
 
 ```bash
 python3 -m pip install -r requirements-ci.txt
-python3 scripts/validate_json_schemas.py
-python3 scripts/validate_ci_assets.py
-python3 -m compileall -q scripts tests
-python3 -m unittest discover -s tests -v
+python3 scripts/check_handoff.py
 ```
+
+`check_handoff.py` 是 A 的一键交接门禁：先检查配置、任务集、报告、脚本、测试和文档的必交文件，再运行 Schema 校验、语义一致性检查、Python 编译和全部单元测试。输出为机器可读 JSON，任何一项失败都会以非零状态退出；该命令不下载或启动 server bundles。
 
 冷启动稳定性报告位于 [`reports/pilot-30-startup-stability.json`](reports/pilot-30-startup-stability.json)。已完成 Early/Middle/Late 各 3 次独立启动，9 次均为 26/26 server 连接、0 失败、0 波动 server。
 
