@@ -9,6 +9,7 @@ node_modules/
 external/
 generated/1mcp/
 generated/1mcp-smoke/
+generated/1mcp-canary/
 results/
 logs/
 knowledge_graph/

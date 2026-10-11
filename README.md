@@ -69,6 +69,23 @@ python3 scripts/setup_environment.py
 
 已实测 Early、Middle、Late 全部通过：每个版本 2/2 server 连接、4/4 tool call 完成、0 tool error，完整 trajectory 和原始日志位于 [`reports/smoke/`](reports/smoke/)。
 
+真实模型 canary 使用上游实际运行白名单中的固定 2 题（142、161），不会把 API Key 写入配置、日志或 Git。先通过隐藏输入保存本机凭据，再运行三版：
+
+```bash
+.venv/bin/python scripts/configure_api_credentials.py
+.venv/bin/python scripts/check_experiment_config.py --config configs/canary-real.json
+.venv/bin/python scripts/run_real_canary.py --overwrite
+```
+
+OpenRouter 使用 `https://openrouter.ai/api/v1` 和模型 slug `openai/gpt-4o`。若只需安全更换接口地址，无需重新输入 Key：
+
+```bash
+.venv/bin/python scripts/configure_api_credentials.py \
+  --set-base-url https://openrouter.ai/api/v1
+```
+
+脚本只提交脱敏后的报告；`.env`、原始 `results/` 和生成的 1MCP 配置均被 Git 忽略。任何版本或任务失败时，进程会以非零状态退出，不会把失败误报为通过。
+
 ## 当前完成度
 
 - [x] 创建公开 GitHub 仓库
