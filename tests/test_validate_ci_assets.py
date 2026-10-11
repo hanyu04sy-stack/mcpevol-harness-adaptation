@@ -22,6 +22,8 @@ class ValidateCIAssetsTest(unittest.TestCase):
         self.assertTrue(report["passed"])
         self.assertFalse(report["server_bundles_used"])
         self.assertEqual(report["configs_checked"], 4)
+        self.assertEqual(set(report["tool_schema_counts"]), {"early", "middle", "late"})
+        self.assertGreater(report["tool_schema_counts"]["early"], 0)
 
     def test_rejects_task_hash_mismatch(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

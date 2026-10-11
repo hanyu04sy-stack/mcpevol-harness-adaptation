@@ -218,6 +218,12 @@ def main() -> None:
     parser.add_argument("--one-mcp-cli", type=Path)
     parser.add_argument("--startup-timeout", type=int, default=180)
     parser.add_argument("--run-timeout", type=int, default=300)
+    parser.add_argument(
+        "--harness-dir",
+        type=Path,
+        default=Path("harness/original"),
+        help="Harness knowledge directory passed to the unified runner",
+    )
     args = parser.parse_args()
     os.chdir(ROOT)
     python = str((ROOT / ".venv/bin/python").resolve())
@@ -323,6 +329,8 @@ def main() -> None:
                             str(SMOKE_CONFIG),
                             "--version",
                             version,
+                            "--harness-dir",
+                            str(args.harness_dir),
                         ],
                         cwd=ROOT,
                         env=run_env,

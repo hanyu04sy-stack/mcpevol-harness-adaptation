@@ -51,12 +51,26 @@ pnpm run serve:late
 pnpm run run:late
 ```
 
-Members B and C may modify only their own harness logic. Do not change the model, temperature, task SHA-256, MCP URL, or benchmark commit in `configs/experiment.json`. Before the final comparison, run:
+Members B and C may modify only their own harness knowledge directory. Do not change the upstream source, model, temperature, task SHA-256, MCP URL, or benchmark commit in `configs/experiment.json`.
+
+- No Update: `harness/no_update/`
+- Full Rewrite (B): `harness/full_rewrite/`
+- Selective Patch (C): `harness/selective_patch/`
+
+Each completed strategy directory must contain `system_prompt.md`, `tool_usage_rules.md`, and `manifest.json`. Select it with `--harness-dir`; the runner injects it at runtime and records its hashes. Before the final comparison, run:
 
 ```bash
 .venv/bin/python scripts/validate_subset_coverage.py
 .venv/bin/python scripts/build_runnability_matrix.py
 .venv/bin/python scripts/check_experiment_config.py
+.venv/bin/python scripts/run_benchmark.py --version early --dry-run \
+  --harness-dir harness/no_update --print-resolved-prompt
+```
+
+The exact tool definitions and change inventory are in `reports/tool-schemas/`. Regenerate them only when the pinned server environments change:
+
+```bash
+.venv/bin/python scripts/dump_tool_schemas.py
 ```
 
 The fixed subset has 26/26 connected servers in every version. If a local result differs, rerun `python3 scripts/setup_environment.py`; do not remove tasks or replace the dataset.

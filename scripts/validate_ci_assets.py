@@ -112,6 +112,23 @@ def validate_experiment_config(root: Path, path: Path) -> dict[str, Any]:
     require(config.get("schema_version") == 1, f"{path}: unsupported schema_version")
     benchmark = config.get("benchmark", {})
     require(COMMIT_RE.fullmatch(str(benchmark.get("commit", ""))) is not None, f"{path}: invalid benchmark commit")
+    harness = config.get("harness", {})
+    harness_relative = harness.get("default_dir") if isinstance(harness, dict) else None
+    require(
+        isinstance(harness_relative, str) and harness_relative,
+        f"{path}: missing harness.default_dir",
+    )
+    harness_dir = root / harness_relative
+    for filename in ("system_prompt.md", "tool_usage_rules.md", "manifest.json"):
+        require(
+            (harness_dir / filename).is_file(),
+            f"{path}: harness file is missing: {harness_relative}/{filename}",
+        )
+    harness_manifest = read_json(harness_dir / "manifest.json")
+    require(
+        harness_manifest.get("benchmark_commit") == benchmark.get("commit"),
+        f"{path}: harness benchmark commit mismatch",
+    )
 
     versions = config.get("mcp", {}).get("versions", {})
     require(set(versions) == VERSIONS, f"{path}: MCP versions must be early/middle/late")
@@ -149,10 +166,53 @@ def validate_experiment_config(root: Path, path: Path) -> dict[str, Any]:
     return {"config": str(path.relative_to(root)), "task_file": relative_task_path, "tasks": len(task_ids)}
 
 
+def validate_tool_schema_reports(root: Path, benchmark_commit: str) -> dict[str, int]:
+    directory = root / "reports/tool-schemas"
+    counts: dict[str, int] = {}
+    for version in sorted(VERSIONS):
+        path = directory / f"{version}.json"
+        report = read_json(path)
+        require(report.get("benchmark_commit") == benchmark_commit, f"{path}: benchmark commit mismatch")
+        require(report.get("version") == version, f"{path}: version mismatch")
+        servers = report.get("servers")
+        require(isinstance(servers, list), f"{path}: servers must be a list")
+        require(report.get("server_count") == len(servers), f"{path}: server count mismatch")
+        names = [server.get("name") for server in servers]
+        require(len(names) == len(set(names)), f"{path}: duplicate server name")
+        connected = [server for server in servers if server.get("status") == "connected"]
+        require(
+            report.get("connected_server_count") == len(connected),
+            f"{path}: connected server count mismatch",
+        )
+        tool_count = 0
+        for server in servers:
+            tools = server.get("tools")
+            require(isinstance(tools, list), f"{path}: tools must be a list")
+            require(
+                server.get("status") == "connected" or tools == [],
+                f"{path}: unavailable server contains tools",
+            )
+            for tool in tools:
+                require(isinstance(tool.get("name"), str), f"{path}: invalid tool name")
+                require(isinstance(tool.get("description"), str), f"{path}: invalid description")
+                require(isinstance(tool.get("inputSchema"), dict), f"{path}: invalid inputSchema")
+            tool_count += len(tools)
+        require(report.get("tool_count") == tool_count, f"{path}: tool count mismatch")
+        counts[version] = tool_count
+    diff = read_json(directory / "diff.json")
+    require(diff.get("benchmark_commit") == benchmark_commit, "tool schema diff commit mismatch")
+    require(len(diff.get("comparisons", [])) == 3, "tool schema diff must contain three comparisons")
+    return counts
+
+
 def validate_repository(root: Path) -> dict[str, Any]:
     config_paths = sorted((root / "configs").glob("*.json"))
     require(bool(config_paths), "no JSON configs found")
     configs = [validate_experiment_config(root, path) for path in config_paths]
+    experiment = read_json(root / "configs/experiment.json")
+    tool_schema_counts = validate_tool_schema_reports(
+        root, experiment["benchmark"]["commit"]
+    )
     return {
         "schema_version": 1,
         "passed": True,
@@ -160,6 +220,7 @@ def validate_repository(root: Path) -> dict[str, Any]:
         "server_bundles_used": False,
         "configs_checked": len(configs),
         "configs": configs,
+        "tool_schema_counts": tool_schema_counts,
     }
 
 

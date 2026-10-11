@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "strategy": "original",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "generated_at": "2026-10-12T00:00:00+08:00",
+  "source_files": [
+    {
+      "path": "src/custom/agents/SimpleOpenAIAgent.py",
+      "symbols": [
+        "SINGLE_SERVER_INTERATION_SYSTEM_PROMPT",
+        "ChatModel.__init__",
+        "ChatModel.run_with_server"
+      ]
+    }
+  ]
+}

@@ -107,6 +107,7 @@ def load_experiment(
     experiment_name = _require(raw, "experiment_name", str, "config")
     benchmark = _require(raw, "benchmark", dict, "config")
     dataset = _require(raw, "dataset", dict, "config")
+    harness = _require(raw, "harness", dict, "config")
     model = _require(raw, "model", dict, "config")
     judge = _require(raw, "judge", dict, "config")
     runner = _require(raw, "runner", dict, "config")
@@ -152,6 +153,14 @@ def load_experiment(
     expected_size = _require(dataset, "size", int, "dataset")
     if not isinstance(tasks, list) or len(tasks) != expected_size:
         raise ConfigError(f"dataset must contain exactly {expected_size} tasks")
+
+    harness_dir = _path(
+        project_root,
+        _require(harness, "default_dir", str, "harness"),
+        "harness.default_dir",
+    )
+    if not harness_dir.is_dir():
+        raise ConfigError(f"harness.default_dir is not a directory: {harness_dir}")
 
     matrix_path: Path | None = None
     matrix_hash: str | None = None
@@ -350,6 +359,7 @@ def load_experiment(
         "task_file": task_file,
         "task_sha256": actual_hash,
         "task_count": len(tasks),
+        "harness_dir": harness_dir,
         "runnability_matrix": matrix_path,
         "runnability_matrix_sha256": matrix_hash,
         "startup_stability_report": stability_path,
@@ -378,6 +388,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "benchmark_commit",
         "task_sha256",
         "task_count",
+        "harness_dir",
         "runnability_matrix_sha256",
         "startup_stability_report_sha256",
         "model_name",
@@ -389,9 +400,13 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "configured_server_count",
     )
     result = {key: resolved[key] for key in keys}
+    for key in ("harness_manifest_sha256", "harness_files"):
+        if key in resolved:
+            result[key] = resolved[key]
     for key in (
         "config_path",
         "task_file",
+        "harness_dir",
         "runnability_matrix",
         "startup_stability_report",
         "server_config",

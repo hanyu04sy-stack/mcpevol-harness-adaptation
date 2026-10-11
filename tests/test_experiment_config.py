@@ -32,6 +32,24 @@ class ExperimentConfigTest(unittest.TestCase):
                 "server_config": f"generated/{version}.json",
             }
         task_hash = hashlib.sha256(task_file.read_bytes()).hexdigest()
+        harness = root / "harness/original"
+        harness.mkdir(parents=True)
+        (harness / "system_prompt.md").write_text(
+            "System {SET_TIME}\nFiles: {FILE_EXISTS}\n", encoding="utf-8"
+        )
+        (harness / "tool_usage_rules.md").write_text(
+            "Use the available tools.\n", encoding="utf-8"
+        )
+        (harness / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "benchmark_commit": "abc",
+                    "source_files": [{"path": "src/agent.py"}],
+                }
+            ),
+            encoding="utf-8",
+        )
         config = {
             "schema_version": 1,
             "experiment_name": "test",
@@ -41,6 +59,7 @@ class ExperimentConfigTest(unittest.TestCase):
                 "commit": "abc",
             },
             "dataset": {"path": "data/tasks.json", "sha256": task_hash, "size": 1},
+            "harness": {"default_dir": "harness/original"},
             "model": {
                 "name": "model",
                 "temperature": 0,
@@ -72,6 +91,9 @@ class ExperimentConfigTest(unittest.TestCase):
             )
             self.assertEqual(resolved["temperature"], 0.0)
             self.assertEqual(resolved["task_count"], 1)
+            self.assertEqual(
+                resolved["harness_dir"], (root / "harness/original").resolve()
+            )
             self.assertEqual(resolved["mcp_url"], "http://127.0.0.1:3052/mcp")
             arguments = run_benchmark.upstream_arguments(resolved)
             self.assertIn(str(resolved["task_file"]), arguments)
@@ -185,6 +207,44 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(captured["model_url"], "https://example.invalid/v1")
         self.assertEqual(captured["temperature"], 0.0)
         self.assertEqual(captured["max_new_tokens"], 4096)
+
+    def test_harness_loader_audits_files_and_deduplicates_original_rule(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            harness = root / "harness"
+            harness.mkdir()
+            rule = "Call tools directly."
+            prompt = f"Base prompt.\n{rule}\nTime: {{SET_TIME}}\nFiles: {{FILE_EXISTS}}\n"
+            (harness / "system_prompt.md").write_text(prompt, encoding="utf-8")
+            (harness / "tool_usage_rules.md").write_text(
+                f"# Rules\n\n## Injected rules\n\n{rule}\n\n## Routing reference\n\nAudit only.\n",
+                encoding="utf-8",
+            )
+            (harness / "manifest.json").write_text(
+                json.dumps(
+                    {
+                        "benchmark_commit": "abc",
+                        "source_files": [{"path": "src/agent.py"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            loaded = run_benchmark.load_harness(harness, "abc")
+            self.assertEqual(loaded["harness_prompt"], prompt)
+            self.assertEqual(len(loaded["harness_files"]), 3)
+            self.assertEqual(len(loaded["harness_manifest_sha256"]), 64)
+
+    def test_harness_loader_rejects_wrong_benchmark_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = self.make_project(root)
+            resolved = experiment_config.load_experiment(
+                config, "early", root=root, verify_checkout=False
+            )
+            with self.assertRaisesRegex(
+                experiment_config.ConfigError, "benchmark commit"
+            ):
+                run_benchmark.load_harness(resolved["harness_dir"], "different")
 
     def test_live_mcp_check_rejects_unavailable_dependency(self) -> None:
         class Response:

@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import runpy
+import string
 import sys
 import urllib.request
 from collections.abc import Callable
@@ -20,7 +21,74 @@ from experiment_config import (
     load_env_file,
     load_experiment,
     public_summary,
+    sha256,
 )
+
+
+HARNESS_FILENAMES = ("system_prompt.md", "tool_usage_rules.md", "manifest.json")
+
+
+def injected_tool_rules(document: str) -> str:
+    """Return only the prompt-bearing section of the documented tool rules."""
+    marker = "## Injected rules"
+    if marker not in document:
+        return document.strip()
+    section = document.split(marker, 1)[1]
+    if "\n## " in section:
+        section = section.split("\n## ", 1)[0]
+    return section.strip()
+
+
+def load_harness(harness_dir: Path, benchmark_commit: str) -> dict[str, object]:
+    """Load, validate, and audit a harness-knowledge directory."""
+    directory = harness_dir.resolve()
+    if not directory.is_dir():
+        raise ConfigError(f"harness directory does not exist: {directory}")
+    paths = {name: directory / name for name in HARNESS_FILENAMES}
+    missing = [name for name, path in paths.items() if not path.is_file()]
+    if missing:
+        raise ConfigError(f"harness directory is incomplete; missing={missing}")
+
+    try:
+        manifest = json.loads(paths["manifest.json"].read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ConfigError(f"cannot read harness manifest: {exc}") from exc
+    if manifest.get("benchmark_commit") != benchmark_commit:
+        raise ConfigError(
+            "harness manifest benchmark commit does not match the experiment"
+        )
+    source_files = manifest.get("source_files")
+    if not isinstance(source_files, list) or not source_files:
+        raise ConfigError("harness manifest must record at least one source file")
+
+    system_prompt = paths["system_prompt.md"].read_text(encoding="utf-8")
+    fields = {
+        name
+        for _, name, _, _ in string.Formatter().parse(system_prompt)
+        if name is not None
+    }
+    if fields != {"SET_TIME", "FILE_EXISTS"}:
+        raise ConfigError(
+            "system_prompt.md must contain exactly {SET_TIME} and {FILE_EXISTS}"
+        )
+    rules_document = paths["tool_usage_rules.md"].read_text(encoding="utf-8")
+    rules = injected_tool_rules(rules_document)
+    if not rules:
+        raise ConfigError("tool_usage_rules.md has no injectable rules")
+
+    resolved_prompt = system_prompt
+    if rules not in system_prompt:
+        resolved_prompt = f"{system_prompt.rstrip()}\n\n{rules}\n"
+    files = [
+        {"name": name, "sha256": sha256(path)}
+        for name, path in paths.items()
+    ]
+    return {
+        "harness_dir": directory,
+        "harness_manifest_sha256": sha256(paths["manifest.json"]),
+        "harness_files": files,
+        "harness_prompt": resolved_prompt,
+    }
 
 
 def check_mcp(resolved: dict[str, object]) -> dict[str, int]:
@@ -105,6 +173,7 @@ def run_upstream(
     old_argv = sys.argv[:]
     agent_module = None
     original_init = None
+    original_prompt = None
     annotation_link = benchmark_src / "anotation_path"
     annotation_target = Path(resolved["benchmark_root"]) / "anotation_path"
     if not annotation_link.exists() and annotation_target.is_dir():
@@ -115,6 +184,10 @@ def run_upstream(
         from custom.agents import SimpleOpenAIAgent as agent_module
 
         original_init = agent_module.ChatModel.__init__
+        original_prompt = agent_module.SINGLE_SERVER_INTERATION_SYSTEM_PROMPT
+        agent_module.SINGLE_SERVER_INTERATION_SYSTEM_PROMPT = str(
+            resolved["harness_prompt"]
+        )
         agent_module.ChatModel.__init__ = configured_initializer(
             original_init, resolved, api_key, base_url
         )
@@ -123,6 +196,8 @@ def run_upstream(
     finally:
         if agent_module is not None and original_init is not None:
             agent_module.ChatModel.__init__ = original_init
+        if agent_module is not None and original_prompt is not None:
+            agent_module.SINGLE_SERVER_INTERATION_SYSTEM_PROMPT = original_prompt
         sys.argv = old_argv
         os.chdir(old_cwd)
         if sys.path and sys.path[0] == str(benchmark_src):
@@ -157,6 +232,16 @@ def main() -> None:
     parser.add_argument("--config", type=Path, default=Path("configs/experiment.json"))
     parser.add_argument("--env-file", type=Path)
     parser.add_argument(
+        "--harness-dir",
+        type=Path,
+        help="Harness knowledge directory; overrides harness.default_dir",
+    )
+    parser.add_argument(
+        "--print-resolved-prompt",
+        action="store_true",
+        help="Print the exact harness prompt after validation and deduplication",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Validate and print resolved settings without secrets, MCP, or API calls",
@@ -164,7 +249,21 @@ def main() -> None:
     args = parser.parse_args()
     try:
         resolved = load_experiment(args.config, args.version)
+        if args.harness_dir is not None:
+            override = args.harness_dir
+            if not override.is_absolute():
+                override = Path(resolved["project_root"]) / override
+            resolved["harness_dir"] = override.resolve()
+        resolved.update(
+            load_harness(
+                Path(resolved["harness_dir"]), str(resolved["benchmark_commit"])
+            )
+        )
         print(json.dumps(public_summary(resolved), ensure_ascii=False, indent=2))
+        if args.print_resolved_prompt:
+            print("--- resolved harness prompt ---")
+            print(str(resolved["harness_prompt"]), end="")
+            print("--- end resolved harness prompt ---")
         if args.dry_run:
             return
 

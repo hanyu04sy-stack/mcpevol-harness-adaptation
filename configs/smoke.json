@@ -14,6 +14,9 @@
     "size": 1,
     "seed": 6203
   },
+  "harness": {
+    "default_dir": "harness/original"
+  },
   "model": {
     "provider": "openai_compatible",
     "name": "smoke-local",

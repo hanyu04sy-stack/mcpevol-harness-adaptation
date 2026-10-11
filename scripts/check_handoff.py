@@ -38,6 +38,10 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "reports/pilot-30-startup-stability.json",
         "reports/smoke/summary.json",
         "reports/canary-local-qwen35-4b-2/summary.json",
+        "reports/tool-schemas/early.json",
+        "reports/tool-schemas/middle.json",
+        "reports/tool-schemas/late.json",
+        "reports/tool-schemas/diff.json",
         *[
             f"reports/smoke/{version}/{name}"
             for version in ("early", "middle", "late")
@@ -72,6 +76,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "scripts/validate_ci_assets.py",
         "scripts/validate_json_schemas.py",
         "scripts/check_handoff.py",
+        "scripts/dump_tool_schemas.py",
     ],
     "tests": [
         "tests/test_build_runnability_matrix.py",
@@ -89,6 +94,18 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_validate_tool_environments.py",
         "tests/test_check_handoff.py",
         "tests/test_troubleshooting_doc.py",
+        "tests/test_dump_tool_schemas.py",
+        "tests/test_english_only_repository.py",
+    ],
+    "harness": [
+        "harness/original/system_prompt.md",
+        "harness/original/tool_usage_rules.md",
+        "harness/original/manifest.json",
+        "harness/no_update/system_prompt.md",
+        "harness/no_update/tool_usage_rules.md",
+        "harness/no_update/manifest.json",
+        "harness/full_rewrite/README.md",
+        "harness/selective_patch/README.md",
     ],
     "documentation": [
         "README.md",

@@ -4,7 +4,7 @@
   "title": "MCPEvol experiment configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "experiment_name", "benchmark", "dataset", "model", "judge", "runner", "mcp", "output", "environment"],
+  "required": ["schema_version", "experiment_name", "benchmark", "dataset", "harness", "model", "judge", "runner", "mcp", "output", "environment"],
   "properties": {
     "schema_version": {"const": 1},
     "experiment_name": {"type": "string", "minLength": 1},
@@ -37,6 +37,14 @@
       "dependentRequired": {
         "runnability_matrix": ["runnability_matrix_sha256"],
         "startup_stability_report": ["startup_stability_report_sha256"]
+      }
+    },
+    "harness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_dir"],
+      "properties": {
+        "default_dir": {"type": "string", "minLength": 1}
       }
     },
     "model": {"$ref": "#/$defs/model"},

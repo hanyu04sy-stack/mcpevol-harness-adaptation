@@ -20,6 +20,7 @@ The fixed subset makes an end-to-end run practical with limited compute. The con
 
 ```text
 configs/                  Canonical experiment configurations
+harness/                  Auditable prompt and tool-usage knowledge by strategy
 docs/                     Environment, execution, and handoff guides
 scripts/                  Setup, validation, generation, and run scripts
 tests/                    Local tests that require no API key
@@ -55,6 +56,7 @@ See [environment setup](docs/ENVIRONMENT.md), [troubleshooting](docs/TROUBLESHOO
 .venv/bin/python scripts/build_runnability_matrix.py
 .venv/bin/python scripts/check_experiment_config.py
 .venv/bin/python scripts/run_benchmark.py --version early --dry-run
+.venv/bin/python scripts/run_benchmark.py --version early --dry-run --print-resolved-prompt
 ```
 
 Coverage validation enforces tool, parameter, and description changes plus affected/recovery and retention tasks. It writes `reports/pilot-30-coverage.json` and exits nonzero if any category is missing.
@@ -71,6 +73,25 @@ python3 scripts/check_handoff.py
 `check_handoff.py` is Member A's machine-readable handoff gate. It checks all required configurations, tasks, reports, scripts, tests, and documents, then runs schema validation, semantic consistency checks, Python compilation, and the full lightweight test suite.
 
 The cold-start report is `reports/pilot-30-startup-stability.json`. Early, Middle, and Late each passed three independent starts: 26/26 connected servers, no failures, and no unstable servers in all nine trials.
+
+## Harness knowledge and tool schemas
+
+`harness/original/` is the immutable No Update knowledge snapshot extracted from the pinned upstream agent. `harness/no_update/` aliases that snapshot; B writes a replacement under `harness/full_rewrite/`, and C writes a focused update under `harness/selective_patch/`. The runner injects the selected system prompt and tool rules without modifying the upstream checkout:
+
+```bash
+.venv/bin/python scripts/run_benchmark.py --version early \
+  --harness-dir harness/no_update
+```
+
+Every run records the harness directory, manifest hash, and individual file hashes in `run-metadata.json`. Use `--print-resolved-prompt` with `--dry-run` to audit the exact injected prompt.
+
+Export the exact MCP `tools/list` schemas and a deterministic cross-version diff with:
+
+```bash
+.venv/bin/python scripts/dump_tool_schemas.py
+```
+
+The machine-readable outputs are `reports/tool-schemas/{early,middle,late}.json` and `reports/tool-schemas/diff.json`. Add `--isolated` on resource-constrained machines to start one source server at a time.
 
 ## Deterministic smoke test
 
@@ -124,6 +145,7 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Secure unified benchmark entry point
 - [x] Deterministic smoke evidence and free local-model canary evidence
 - [x] Dual-platform CI, JSON Schemas, final handoff tag, and branch protection
+- [x] Auditable harness injection and Early/Middle/Late tool-schema diff
 
 ## Security
 
