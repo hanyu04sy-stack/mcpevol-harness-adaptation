@@ -59,8 +59,9 @@ def main() -> None:
             "--test-case-file", "data/subsets/smoke-1/test_cases.json",
             "--output", f"generated/1mcp-smoke/{version}.json",
         )
-    run(PYTHON, "scripts/check_experiment_config.py")
     run(PYTHON, "scripts/validate_subset_coverage.py")
+    run(PYTHON, "scripts/build_runnability_matrix.py")
+    run(PYTHON, "scripts/check_experiment_config.py")
     run(PYTHON, "scripts/check_experiment_config.py", "--config", "configs/smoke.json")
     run(PYTHON, "scripts/check_environment.py", "--strict")
 

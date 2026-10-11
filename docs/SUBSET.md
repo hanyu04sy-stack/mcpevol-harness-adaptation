@@ -55,6 +55,14 @@
 
 该命令同时核对任务 ID、required server、affected/retention 标签和汇总计数，产生机器可读的 `reports/pilot-30-coverage.json`。
 
+## 任务可运行矩阵
+
+```bash
+.venv/bin/python scripts/build_runnability_matrix.py
+```
+
+矩阵逐题记录 `required_servers`，以及每个版本中这些 server 的实际状态。任意一题在任意一版有依赖不是 `connected`，命令就会返回失败，且 `check_experiment_config.py` 也会拒绝该配置。
+
 ## 从 30 题升级到全量
 
 只有在 30 题已经完整跑通，并确认预算、运行时间和 server 稳定性以后，才切换为全量。升级后应创建新的 experiment name，不能覆盖 pilot 结果。

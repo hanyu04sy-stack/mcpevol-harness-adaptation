@@ -45,6 +45,16 @@ def check_mcp(resolved: dict[str, object]) -> dict[str, int]:
         raise ConfigError(
             f"MCP server set mismatch; missing={missing}, extra={extra}"
         )
+    unavailable = {
+        server["server"]: server.get("status", "unknown")
+        for server in servers
+        if server.get("status") != "connected" or server.get("available") is not True
+    }
+    if unavailable:
+        detail = ", ".join(
+            f"{name}({status})" for name, status in sorted(unavailable.items())
+        )
+        raise ConfigError(f"MCP task dependencies are unavailable: {detail}")
     return {
         "observed_servers": len(servers),
         "connected_servers": sum(s["status"] == "connected" for s in servers),

@@ -1,0 +1,1044 @@
+{
+  "schema_version": 1,
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "task_count": 30,
+  "all_tasks_runnable_in_all_versions": true,
+  "version_summary": {
+    "early": {
+      "runnable_task_count": 30,
+      "unrunnable_task_count": 0
+    },
+    "middle": {
+      "runnable_task_count": 30,
+      "unrunnable_task_count": 0
+    },
+    "late": {
+      "runnable_task_count": 30,
+      "unrunnable_task_count": 0
+    }
+  },
+  "tasks": [
+    {
+      "idx": 2,
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "pantheon-mcp"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "pantheon-mcp": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 28,
+      "required_servers": [
+        "mcp-filesystem-server",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-filesystem-server": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-filesystem-server": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-filesystem-server": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 34,
+      "required_servers": [
+        "mcp-weather-demo",
+        "pantheon-mcp"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-weather-demo": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-weather-demo": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-weather-demo": "connected",
+            "pantheon-mcp": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 37,
+      "required_servers": [
+        "metatag-genie",
+        "pantheon-mcp"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "metatag-genie": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "metatag-genie": "connected",
+            "pantheon-mcp": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "metatag-genie": "connected",
+            "pantheon-mcp": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 142,
+      "required_servers": [
+        "@regle/mcp-server",
+        "time"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@regle/mcp-server": "connected",
+            "time": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@regle/mcp-server": "connected",
+            "time": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@regle/mcp-server": "connected",
+            "time": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 144,
+      "required_servers": [
+        "time",
+        "time-mcp"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "time": "connected",
+            "time-mcp": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "time": "connected",
+            "time-mcp": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "time": "connected",
+            "time-mcp": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 161,
+      "required_servers": [
+        "@likec4/mcp",
+        "time"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "time": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 162,
+      "required_servers": [
+        "@driflyte/mcp-server",
+        "mcp-calculator"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "mcp-calculator": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "mcp-calculator": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "mcp-calculator": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 177,
+      "required_servers": [
+        "@likec4/mcp",
+        "coffee-mcp-agent"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "coffee-mcp-agent": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "coffee-mcp-agent": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@likec4/mcp": "connected",
+            "coffee-mcp-agent": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 218,
+      "required_servers": [
+        "@rtuin/mcp-mermaid-validator",
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 235,
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 246,
+      "required_servers": [
+        "@magicuidesign/mcp",
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@magicuidesign/mcp": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@magicuidesign/mcp": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@magicuidesign/mcp": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 249,
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 251,
+      "required_servers": [
+        "@rtuin/mcp-mermaid-validator",
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@rtuin/mcp-mermaid-validator": "connected",
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 260,
+      "required_servers": [
+        "interactive-mcp",
+        "time"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "interactive-mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "interactive-mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "interactive-mcp": "connected",
+            "time": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 273,
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 281,
+      "required_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 289,
+      "required_servers": [
+        "@aiuluna/knowledge-graph-mcp",
+        "basic-memory",
+        "nfty-mcp-server"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@aiuluna/knowledge-graph-mcp": "connected",
+            "basic-memory": "connected",
+            "nfty-mcp-server": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@aiuluna/knowledge-graph-mcp": "connected",
+            "basic-memory": "connected",
+            "nfty-mcp-server": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@aiuluna/knowledge-graph-mcp": "connected",
+            "basic-memory": "connected",
+            "nfty-mcp-server": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 291,
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 327,
+      "required_servers": [
+        "bazi-mcp",
+        "time"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "bazi-mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "bazi-mcp": "connected",
+            "time": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "bazi-mcp": "connected",
+            "time": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 358,
+      "required_servers": [
+        "@driflyte/mcp-server",
+        "bazi-mcp",
+        "mcp-server-commands"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "bazi-mcp": "connected",
+            "mcp-server-commands": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "bazi-mcp": "connected",
+            "mcp-server-commands": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@driflyte/mcp-server": "connected",
+            "bazi-mcp": "connected",
+            "mcp-server-commands": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 384,
+      "required_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 385,
+      "required_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@j0kz/orchestrator-mcp": "connected",
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 386,
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 389,
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 403,
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "mcp-shrimp-task-manager": "connected",
+            "mcp-tasks": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 422,
+      "required_servers": [
+        "@kazuph/mcp-taskmanager",
+        "mcp-shrimp-task-manager"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@kazuph/mcp-taskmanager": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@kazuph/mcp-taskmanager": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@kazuph/mcp-taskmanager": "connected",
+            "mcp-shrimp-task-manager": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 434,
+      "required_servers": [
+        "@antv/mcp-server-chart",
+        "mcp-tung-shing"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@antv/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@antv/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@antv/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 445,
+      "required_servers": [
+        "@umengfe/mcp-server-chart",
+        "mcp-tung-shing"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected",
+            "mcp-tung-shing": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    },
+    {
+      "idx": 448,
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ],
+      "versions": {
+        "early": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "middle": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        },
+        "late": {
+          "runnable": true,
+          "unavailable_servers": [],
+          "server_statuses": {
+            "@umengfe/mcp-server-chart": "connected"
+          }
+        }
+      },
+      "runnable_in_all_versions": true
+    }
+  ],
+  "task_file_sha256": "cffb5a709fd707b1db454d07e2ae7cef04393d2a9ee98a9e7c5c6542ad42bd48",
+  "environment_report_sha256": "97d33f0a5457dc348c061653b1ead5f1dda98fb3eab7f417c32265006a4d97ab"
+}

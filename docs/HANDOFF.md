@@ -43,8 +43,9 @@ pnpm run run:late
 B 和 C 只能修改各自的 harness 逻辑；不得修改 `configs/experiment.json` 中的 model、temperature、task SHA-256、MCP URL 和 benchmark commit。正式对比前必须再运行：
 
 ```bash
-.venv/bin/python scripts/check_experiment_config.py
 .venv/bin/python scripts/validate_subset_coverage.py
+.venv/bin/python scripts/build_runnability_matrix.py
+.venv/bin/python scripts/check_experiment_config.py
 ```
 
 当前固定集已实测 Early/Middle/Late 各 26/26 server 连接成功。如果本机启动结果不符，先执行 `python3 scripts/setup_environment.py`，不要自行删题或更换数据集。
@@ -55,6 +56,7 @@ B 和 C 只能修改各自的 harness 逻辑；不得修改 `configs/experiment.
 python3 -m json.tool reports/environment-validation.json >/dev/null
 python3 -m json.tool reports/pilot-30-environment-validation.json >/dev/null
 python3 -m json.tool reports/pilot-30-coverage.json >/dev/null
+python3 -m json.tool reports/pilot-30-runnability-matrix.json >/dev/null
 python3 -m json.tool reports/smoke/summary.json >/dev/null
 find results/pilot-30 -type f -name '*.json' | sort
 ```

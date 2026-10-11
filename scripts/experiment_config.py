@@ -153,6 +153,52 @@ def load_experiment(
     if not isinstance(tasks, list) or len(tasks) != expected_size:
         raise ConfigError(f"dataset must contain exactly {expected_size} tasks")
 
+    matrix_path: Path | None = None
+    matrix_hash: str | None = None
+    matrix_raw = dataset.get("runnability_matrix")
+    expected_matrix_hash = dataset.get("runnability_matrix_sha256")
+    if (matrix_raw is None) != (expected_matrix_hash is None):
+        raise ConfigError(
+            "dataset.runnability_matrix and runnability_matrix_sha256 must be set together"
+        )
+    if matrix_raw is not None:
+        if not isinstance(matrix_raw, str) or not isinstance(expected_matrix_hash, str):
+            raise ConfigError("runnability matrix path and SHA-256 must be strings")
+        matrix_path = _path(
+            project_root, matrix_raw, "dataset.runnability_matrix"
+        )
+        matrix_hash = sha256(matrix_path)
+        if matrix_hash != expected_matrix_hash:
+            raise ConfigError(
+                "runnability matrix SHA-256 mismatch: "
+                f"expected {expected_matrix_hash}, got {matrix_hash}"
+            )
+        try:
+            matrix = json.loads(matrix_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise ConfigError(f"invalid runnability matrix: {exc}") from exc
+        if matrix.get("task_file_sha256") != actual_hash:
+            raise ConfigError("runnability matrix was built for a different task file")
+        if matrix.get("benchmark_commit") != expected_commit:
+            raise ConfigError("runnability matrix benchmark commit does not match")
+        rows = matrix.get("tasks")
+        if not isinstance(rows, list) or len(rows) != len(tasks):
+            raise ConfigError("runnability matrix must contain one row per task")
+        task_ids = [int(task["idx"]) for task in tasks]
+        if [int(row.get("idx", -1)) for row in rows] != task_ids:
+            raise ConfigError("runnability matrix task IDs do not match the dataset")
+        if matrix.get("all_tasks_runnable_in_all_versions") is not True:
+            raise ConfigError("runnability matrix contains unavailable task dependencies")
+        for row in rows:
+            version_result = row.get("versions", {}).get(version, {})
+            if (
+                version_result.get("runnable") is not True
+                or version_result.get("unavailable_servers") != []
+            ):
+                raise ConfigError(
+                    f"task {row.get('idx')} has unavailable dependencies in {version}"
+                )
+
     model_name = _require(model, "name", str, "model")
     temperature = model.get("temperature")
     if not isinstance(temperature, (int, float)) or not 0 <= temperature <= 2:
@@ -245,6 +291,8 @@ def load_experiment(
         "task_file": task_file,
         "task_sha256": actual_hash,
         "task_count": len(tasks),
+        "runnability_matrix": matrix_path,
+        "runnability_matrix_sha256": matrix_hash,
         "model_name": model_name,
         "temperature": float(temperature),
         "max_completion_tokens": max_tokens,
@@ -269,6 +317,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "benchmark_commit",
         "task_sha256",
         "task_count",
+        "runnability_matrix_sha256",
         "model_name",
         "temperature",
         "max_completion_tokens",
@@ -278,6 +327,12 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "configured_server_count",
     )
     result = {key: resolved[key] for key in keys}
-    for key in ("config_path", "task_file", "server_config", "output_dir"):
-        result[key] = str(resolved[key])
+    for key in (
+        "config_path",
+        "task_file",
+        "runnability_matrix",
+        "server_config",
+        "output_dir",
+    ):
+        result[key] = str(resolved[key]) if resolved[key] is not None else None
     return result

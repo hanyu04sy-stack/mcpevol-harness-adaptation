@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 
 SCRIPTS = Path(__file__).parents[1] / "scripts"
@@ -86,6 +87,43 @@ class ExperimentConfigTest(unittest.TestCase):
                     config, "early", root=root, verify_checkout=False
                 )
 
+    def test_rejects_matrix_with_unavailable_dependency(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path = self.make_project(root)
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            task_hash = config["dataset"]["sha256"]
+            matrix = {
+                "benchmark_commit": "abc",
+                "task_file_sha256": task_hash,
+                "all_tasks_runnable_in_all_versions": False,
+                "tasks": [
+                    {
+                        "idx": 1,
+                        "versions": {
+                            version: {
+                                "runnable": False,
+                                "unavailable_servers": ["example"],
+                            }
+                            for version in experiment_config.VERSIONS
+                        },
+                    }
+                ],
+            }
+            matrix_path = root / "matrix.json"
+            matrix_path.write_text(json.dumps(matrix), encoding="utf-8")
+            config["dataset"]["runnability_matrix"] = "matrix.json"
+            config["dataset"]["runnability_matrix_sha256"] = hashlib.sha256(
+                matrix_path.read_bytes()
+            ).hexdigest()
+            config_path.write_text(json.dumps(config), encoding="utf-8")
+            with self.assertRaisesRegex(
+                experiment_config.ConfigError, "unavailable task dependencies"
+            ):
+                experiment_config.load_experiment(
+                    config_path, "early", root=root, verify_checkout=False
+                )
+
     def test_dotenv_is_literal_and_does_not_override_environment(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / ".env"
@@ -122,6 +160,41 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(captured["model_url"], "https://example.invalid/v1")
         self.assertEqual(captured["temperature"], 0.0)
         self.assertEqual(captured["max_new_tokens"], 4096)
+
+    def test_live_mcp_check_rejects_unavailable_dependency(self) -> None:
+        class Response:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return None
+
+            def read(self):
+                return json.dumps(
+                    {
+                        "servers": [
+                            {
+                                "server": "example",
+                                "status": "failed",
+                                "available": False,
+                                "toolCount": 0,
+                            }
+                        ]
+                    }
+                ).encode()
+
+        with tempfile.TemporaryDirectory() as directory:
+            config = Path(directory) / "servers.json"
+            config.write_text('{"mcpServers":{"example":{}}}', encoding="utf-8")
+            resolved = {
+                "mcp_url": "http://127.0.0.1:3051/mcp",
+                "server_config": config,
+            }
+            with patch("run_benchmark.urllib.request.urlopen", return_value=Response()):
+                with self.assertRaisesRegex(
+                    experiment_config.ConfigError, "example\\(failed\\)"
+                ):
+                    run_benchmark.check_mcp(resolved)
 
 
 if __name__ == "__main__":
