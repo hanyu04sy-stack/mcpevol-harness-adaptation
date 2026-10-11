@@ -49,7 +49,7 @@
       "role": "assistant",
       "tool_calls": [
         {
-          "id": "smoke-aadd78b674ef",
+          "id": "smoke-d62b3b2578c7",
           "function": {
             "arguments": "{}",
             "name": "list-projects"
@@ -60,14 +60,14 @@
     },
     {
       "role": "tool",
-      "tool_call_id": "smoke-aadd78b674ef",
+      "tool_call_id": "smoke-d62b3b2578c7",
       "content": "[]..."
     },
     {
       "role": "assistant",
       "tool_calls": [
         {
-          "id": "smoke-37278bb3d518",
+          "id": "smoke-dfed1baac74d",
           "function": {
             "arguments": "{}",
             "name": "read-project-summary"
@@ -78,14 +78,14 @@
     },
     {
       "role": "tool",
-      "tool_call_id": "smoke-37278bb3d518",
+      "tool_call_id": "smoke-dfed1baac74d",
       "content": "[]..."
     },
     {
       "role": "assistant",
       "tool_calls": [
         {
-          "id": "smoke-4595208d1a88",
+          "id": "smoke-37abef1e36be",
           "function": {
             "arguments": "{\"search\": \"payment\"}",
             "name": "search-element"
@@ -96,14 +96,14 @@
     },
     {
       "role": "tool",
-      "tool_call_id": "smoke-4595208d1a88",
+      "tool_call_id": "smoke-37abef1e36be",
       "content": "[]..."
     },
     {
       "role": "assistant",
       "tool_calls": [
         {
-          "id": "smoke-0c4712a7c46e",
+          "id": "smoke-f53341cca383",
           "function": {
             "arguments": "{\"source_timezone\": \"Asia/Tokyo\", \"target_timezone\": \"America/New_York\", \"time\": \"14:00\"}",
             "name": "convert_time"
@@ -114,7 +114,7 @@
     },
     {
       "role": "tool",
-      "tool_call_id": "smoke-0c4712a7c46e",
+      "tool_call_id": "smoke-f53341cca383",
       "content": "[TextContent(type='text', text='{\\n  \"source\": {\\n    \"timezone\": \"Asia/Tokyo\",\\n    \"datetime\": \"2026-10-11T14:00:00+09:00\",\\n    \"day_of_week\": \"Sunday\",\\n    \"is_dst\": false\\n  },\\n  \"target\": {\\n    \"timezone\": \"America/New_York\",\\n    \"datetime\": \"2026-10-11T01:00:00-04:00\",\\n    \"day_of_week\": \"Sunday\",\\n    \"is_dst\": true\\n  },\\n  \"time_difference\": \"-13.0h\"\\n}', annotations=None, meta=None)]..."
     },
     {

@@ -1,8 +1,3 @@
-Progress: resolved 1, reused 0, downloaded 0, added 0
-[WARN] 1 deprecated subdependencies found: @modelcontextprotocol/server-legacy@2.0.0
-Packages: +198
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Progress: resolved 198, reused 198, downloaded 0, added 1, done
 
 ╭──────────────────────────────────────────────────────────────────────────────╮
 │                                                                              │
@@ -26,232 +21,232 @@ Progress: resolved 198, reused 198, downloaded 0, added 1, done
 │                                                                              │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
-2026-10-11T01:11:19.092Z [INFO] message="Configuration loaded successfully with environment variable substitution"
-2026-10-11T01:11:19.095Z [INFO] message="Started watching configuration directory: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke for file: early.json"
-2026-10-11T01:11:19.095Z [INFO] message="ConfigManager initialized"
-2026-10-11T01:11:19.096Z [INFO] message="ConfigChangeHandler initialized"
-2026-10-11T01:11:19.100Z [INFO] message="PresetManager initialized successfully" presetsLoaded=0 configPath="/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/presets.json"
-2026-10-11T01:11:19.100Z [INFO] message="Preset management system initialized successfully"
-2026-10-11T01:11:19.101Z [WARN] message="Transport type is missing for time, inferring type..."
-2026-10-11T01:11:19.101Z [INFO] message="Inferred transport type for time as stdio"
-2026-10-11T01:11:19.102Z [WARN] message="Transport type is missing for @likec4/mcp, inferring type..."
-2026-10-11T01:11:19.102Z [INFO] message="Inferred transport type for @likec4/mcp as stdio"
-2026-10-11T01:11:19.102Z [INFO] message="Created 2 static transports (template servers will be created per-client)"
-2026-10-11T01:11:19.103Z [INFO] message="Instruction aggregator initialized"
-2026-10-11T01:11:19.103Z [INFO] message="Initialized client storage for 2 transports"
-2026-10-11T01:11:19.103Z [INFO] message="Initialized storage for 2 MCP servers"
-2026-10-11T01:11:19.104Z [INFO] message="Initializing AsyncLoadingOrchestrator..."
-2026-10-11T01:11:19.104Z [INFO] message="1mcp capabilities provider initialized"
-2026-10-11T01:11:19.104Z [INFO] message="AsyncLoadingOrchestrator initialized successfully"
-2026-10-11T01:11:19.104Z [INFO] message="Starting async loading of 2 MCP servers"
-2026-10-11T01:11:19.104Z [INFO] message="Started tracking loading for 2 servers"
-2026-10-11T01:11:19.105Z [INFO] message="Async server setup completed - HTTP server ready, MCP servers loading in background"
-2026-10-11T01:11:19.106Z [INFO] message="Creating client for time"
-2026-10-11T01:11:19.117Z [INFO] message="Creating client for @likec4/mcp"
-2026-10-11T01:11:19.118Z [INFO] message="All MCP servers finished loading (successfully or failed)"
-2026-10-11T01:11:19.119Z [INFO] message="Template index rebuilt"
-2026-10-11T01:11:19.119Z [INFO] message="Using async loading mode - HTTP server will start immediately, MCP servers load in background"
-2026-10-11T01:11:19.122Z [INFO] message="Configuration loaded successfully with environment variable substitution"
-2026-10-11T01:11:19.164Z [INFO] message="Authentication disabled - all endpoints accessible without auth"
-2026-10-11T01:11:19.176Z [INFO] message="PID file written: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/server.pid"
-2026-10-11T01:11:19.179Z [INFO] message="Server is running on port 3151 with HTTP/SSE and Streamable HTTP transport without authentication"
-2026-10-11T01:11:19.179Z [INFO] message="📋 OAuth Management Dashboard: http://127.0.0.1:3151/oauth"
-2026-10-11T01:11:19.786Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:19.790Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="6ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:20.797Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:20.799Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="2ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:21.249Z [INFO] message="Successfully connected to time with server mcp-time version 1.30.0"
-2026-10-11T01:11:21.250Z [INFO] message="Client created for time"
-2026-10-11T01:11:21.250Z [INFO] message="Instructions changed. Total servers with instructions: 0"
-2026-10-11T01:11:21.250Z [INFO] message="Server instructions have changed. Active sessions: 0"
-2026-10-11T01:11:21.251Z [INFO] message="MCP loading progress: 1/2 servers ready (1 loading, 0 failed)"
-2026-10-11T01:11:21.251Z [INFO] message="Successfully loaded MCP server: time (0 retries)"
-2026-10-11T01:11:21.805Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:21.810Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="5ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:22.815Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:22.821Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="6ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:23.824Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:23.827Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="3ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:24.833Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:24.835Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="2ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:25.841Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:25.843Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="2ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:26.063Z [WARN] message="[@likec4/mcp] 01:11:26.060 INF likec4·mcp Loading LikeC4 from workspace: '/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path'" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=1 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.063Z [WARN] message="[@likec4/mcp] 01:11:26.061 INF likec4·lang layout wasm" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=2 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.066Z [WARN] message="[@likec4/mcp] 01:11:26.066 INF likec4·lang workspace: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=3 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.069Z [WARN] message="[@likec4/mcp] 01:11:26.069 WRN likec4·server·workspace No likec4 documents found in workspace" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=4 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.208Z [WARN] message="[@likec4/mcp] 01:11:26.208 ERR likec4·lang no LikeC4 sources found" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=5 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.209Z [WARN] message="[@likec4/mcp] 01:11:26.208 INF likec4·lang workspace: found 0 source files" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=6 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.209Z [WARN] message="[@likec4/mcp] 01:11:26.209 INF likec4·mcp Starting MCP stdio server" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=7 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.214Z [WARN] message="[@likec4/mcp] 01:11:26.214 INF likec4·mcp LikeC4 MCP Server running on stdio" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=8 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
-2026-10-11T01:11:26.224Z [INFO] message="Successfully connected to @likec4/mcp with server LikeC4 version 1.59.4"
-2026-10-11T01:11:26.224Z [INFO] message="Client created for @likec4/mcp"
-2026-10-11T01:11:26.224Z [INFO] message="Instructions changed. Total servers with instructions: 1"
-2026-10-11T01:11:26.224Z [INFO] message="Server instructions have changed. Active sessions: 0"
-2026-10-11T01:11:26.224Z [INFO] message="MCP loading progress: 2/2 servers ready (0 loading, 0 failed)"
-2026-10-11T01:11:26.224Z [INFO] message="Loading complete: 2/2 servers ready (100.0% success rate)"
-2026-10-11T01:11:26.224Z [INFO] message="MCP loading complete: 2/2 servers ready (100.0% success rate)"
-2026-10-11T01:11:26.224Z [INFO] message="Background retry enabled for failed servers"
-2026-10-11T01:11:26.224Z [INFO] message="Successfully loaded MCP server: @likec4/mcp (0 retries)"
-2026-10-11T01:11:26.228Z [INFO] message="Initial server loading phase completed"
-2026-10-11T01:11:26.259Z [INFO] message="Capability update complete: 22 tools, 2 resources, 1 prompts from 2 servers"
-2026-10-11T01:11:26.260Z [INFO] message="Loading cycle complete: 22 tools, 2 resources, 1 prompts now available"
-2026-10-11T01:11:26.849Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:26.875Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="26ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:27.001Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
-2026-10-11T01:11:27.011Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="10ms" contentType="application/json; charset=utf-8"
-2026-10-11T01:11:31.229Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.245Z [INFO] message="Server instructions have changed. Active sessions: 0"
-2026-10-11T01:11:31.245Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
-2026-10-11T01:11:31.259Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
-2026-10-11T01:11:31.259Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
-2026-10-11T01:11:31.260Z [INFO] message="Connected transport for session stream-a967a50f-773e-42a9-ad51-531c8bdf8b97"
-2026-10-11T01:11:31.261Z [INFO] message="Created streamable session with persistence: stream-a967a50f-773e-42a9-ad51-531c8bdf8b97"
-2026-10-11T01:11:31.261Z [INFO] message="AsyncLoadingOrchestrator notification manager initialized"
-2026-10-11T01:11:31.266Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="37ms" contentType="text/event-stream"
-2026-10-11T01:11:31.270Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-a967a50f-773e-42a9-ad51-531c8bdf8b97","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.272Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="2ms" contentType=undefined
-2026-10-11T01:11:31.272Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-a967a50f-773e-42a9-ad51-531c8bdf8b97","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.274Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-a967a50f-773e-42a9-ad51-531c8bdf8b97","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.276Z [INFO] message="MCP Request" requestId="9434f28e-d6ee-45d6-a161-9796acc27b1f" method="unknown" params=undefined
-2026-10-11T01:11:31.303Z [INFO] message="MCP Response" requestId="9434f28e-d6ee-45d6-a161-9796acc27b1f" duration=27
-2026-10-11T01:11:31.304Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="30ms" contentType="text/event-stream"
-2026-10-11T01:11:31.309Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-a967a50f-773e-42a9-ad51-531c8bdf8b97","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.310Z [INFO] message="Removing client from 0 template instances" sessionId="stream-a967a50f-773e-42a9-ad51-531c8bdf8b97" instancesToCleanup=[]
-2026-10-11T01:11:31.310Z [INFO] message="Cleaned up template client instances for session stream-a967a50f-773e-42a9-ad51-531c8bdf8b97" instancesCleaned=0
-2026-10-11T01:11:31.310Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="38ms" contentType="text/event-stream"
-2026-10-11T01:11:31.310Z [INFO] message="Disconnected transport for session stream-a967a50f-773e-42a9-ad51-531c8bdf8b97"
-2026-10-11T01:11:31.311Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="2ms" contentType=undefined
-2026-10-11T01:11:31.311Z [INFO] message="Deleted streamable session: stream-a967a50f-773e-42a9-ad51-531c8bdf8b97"
-2026-10-11T01:11:31.311Z [INFO] message="Removing client from 0 template instances" sessionId="stream-a967a50f-773e-42a9-ad51-531c8bdf8b97" instancesToCleanup=[]
-2026-10-11T01:11:31.311Z [INFO] message="Cleaned up template client instances for session stream-a967a50f-773e-42a9-ad51-531c8bdf8b97" instancesCleaned=0
-2026-10-11T01:11:31.573Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.574Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
-2026-10-11T01:11:31.579Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
-2026-10-11T01:11:31.579Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
-2026-10-11T01:11:31.579Z [INFO] message="Connected transport for session stream-26f63273-da32-4b12-80b5-baede8599105"
-2026-10-11T01:11:31.580Z [INFO] message="Created streamable session with persistence: stream-26f63273-da32-4b12-80b5-baede8599105"
-2026-10-11T01:11:31.580Z [WARN] message="NotificationManager already initialized"
-2026-10-11T01:11:31.581Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="8ms" contentType="text/event-stream"
-2026-10-11T01:11:31.592Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-26f63273-da32-4b12-80b5-baede8599105","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.594Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="2ms" contentType=undefined
-2026-10-11T01:11:31.594Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-26f63273-da32-4b12-80b5-baede8599105","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.596Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-26f63273-da32-4b12-80b5-baede8599105","mcp-protocol-version":"2025-11-25","content-length":"112"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.597Z [INFO] message="MCP Request" requestId="961e0fbe-5ec9-4fd9-9b4e-a82d71b80492" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_list-projects\",\"arguments\":{}}"
-2026-10-11T01:11:31.623Z [INFO] message="MCP Response" requestId="961e0fbe-5ec9-4fd9-9b4e-a82d71b80492" duration=26
-2026-10-11T01:11:31.623Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="27ms" contentType="text/event-stream"
-2026-10-11T01:11:31.625Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-26f63273-da32-4b12-80b5-baede8599105","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.626Z [INFO] message="MCP Request" requestId="2a8693b6-1f51-49ff-a131-fe5f4bf29eec" method="unknown" params=undefined
-2026-10-11T01:11:31.645Z [INFO] message="MCP Response" requestId="2a8693b6-1f51-49ff-a131-fe5f4bf29eec" duration=19
-2026-10-11T01:11:31.646Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="21ms" contentType="text/event-stream"
-2026-10-11T01:11:31.653Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-26f63273-da32-4b12-80b5-baede8599105","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.653Z [INFO] message="Removing client from 0 template instances" sessionId="stream-26f63273-da32-4b12-80b5-baede8599105" instancesToCleanup=[]
-2026-10-11T01:11:31.653Z [INFO] message="Cleaned up template client instances for session stream-26f63273-da32-4b12-80b5-baede8599105" instancesCleaned=0
-2026-10-11T01:11:31.653Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="59ms" contentType="text/event-stream"
-2026-10-11T01:11:31.653Z [INFO] message="Disconnected transport for session stream-26f63273-da32-4b12-80b5-baede8599105"
-2026-10-11T01:11:31.653Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="0ms" contentType=undefined
-2026-10-11T01:11:31.654Z [INFO] message="Deleted streamable session: stream-26f63273-da32-4b12-80b5-baede8599105"
-2026-10-11T01:11:31.654Z [INFO] message="Removing client from 0 template instances" sessionId="stream-26f63273-da32-4b12-80b5-baede8599105" instancesToCleanup=[]
-2026-10-11T01:11:31.654Z [INFO] message="Cleaned up template client instances for session stream-26f63273-da32-4b12-80b5-baede8599105" instancesCleaned=0
-2026-10-11T01:11:31.662Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.663Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
-2026-10-11T01:11:31.665Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
-2026-10-11T01:11:31.665Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
-2026-10-11T01:11:31.665Z [INFO] message="Connected transport for session stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c"
-2026-10-11T01:11:31.666Z [INFO] message="Created streamable session with persistence: stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c"
-2026-10-11T01:11:31.666Z [WARN] message="NotificationManager already initialized"
-2026-10-11T01:11:31.667Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="5ms" contentType="text/event-stream"
-2026-10-11T01:11:31.669Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.672Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="3ms" contentType=undefined
-2026-10-11T01:11:31.672Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.673Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c","mcp-protocol-version":"2025-11-25","content-length":"119"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.674Z [INFO] message="MCP Request" requestId="5afc3541-b158-467a-8de4-ca871070d3df" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_read-project-summary\",\"arguments\":{}}"
-2026-10-11T01:11:31.696Z [INFO] message="MCP Response" requestId="5afc3541-b158-467a-8de4-ca871070d3df" duration=22
-2026-10-11T01:11:31.696Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="23ms" contentType="text/event-stream"
-2026-10-11T01:11:31.699Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.701Z [INFO] message="MCP Request" requestId="6865916a-9e5c-4865-b05d-dd64e94c0eb2" method="unknown" params=undefined
-2026-10-11T01:11:31.719Z [INFO] message="MCP Response" requestId="6865916a-9e5c-4865-b05d-dd64e94c0eb2" duration=18
-2026-10-11T01:11:31.720Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="21ms" contentType="text/event-stream"
-2026-10-11T01:11:31.748Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.749Z [INFO] message="Removing client from 0 template instances" sessionId="stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c" instancesToCleanup=[]
-2026-10-11T01:11:31.749Z [INFO] message="Cleaned up template client instances for session stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c" instancesCleaned=0
-2026-10-11T01:11:31.749Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="77ms" contentType="text/event-stream"
-2026-10-11T01:11:31.749Z [INFO] message="Disconnected transport for session stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c"
-2026-10-11T01:11:31.749Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="1ms" contentType=undefined
-2026-10-11T01:11:31.749Z [INFO] message="Deleted streamable session: stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c"
-2026-10-11T01:11:31.749Z [INFO] message="Removing client from 0 template instances" sessionId="stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c" instancesToCleanup=[]
-2026-10-11T01:11:31.749Z [INFO] message="Cleaned up template client instances for session stream-77c82771-9f01-45d2-9b86-f3a7a85aac5c" instancesCleaned=0
-2026-10-11T01:11:31.757Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.758Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
-2026-10-11T01:11:31.760Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
-2026-10-11T01:11:31.760Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
-2026-10-11T01:11:31.760Z [INFO] message="Connected transport for session stream-cbcf7e32-d545-4400-aec9-6516d1d76652"
-2026-10-11T01:11:31.761Z [INFO] message="Created streamable session with persistence: stream-cbcf7e32-d545-4400-aec9-6516d1d76652"
-2026-10-11T01:11:31.761Z [WARN] message="NotificationManager already initialized"
-2026-10-11T01:11:31.761Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="4ms" contentType="text/event-stream"
-2026-10-11T01:11:31.764Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-cbcf7e32-d545-4400-aec9-6516d1d76652","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.765Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="1ms" contentType=undefined
-2026-10-11T01:11:31.765Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-cbcf7e32-d545-4400-aec9-6516d1d76652","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.767Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-cbcf7e32-d545-4400-aec9-6516d1d76652","mcp-protocol-version":"2025-11-25","content-length":"131"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.768Z [INFO] message="MCP Request" requestId="1b2fea9b-e3e9-4fff-8dba-96e175d82660" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_search-element\",\"arguments\":{\"search\":\"payment\"}}"
-2026-10-11T01:11:31.786Z [INFO] message="MCP Response" requestId="1b2fea9b-e3e9-4fff-8dba-96e175d82660" duration=18
-2026-10-11T01:11:31.786Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="19ms" contentType="text/event-stream"
-2026-10-11T01:11:31.787Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-cbcf7e32-d545-4400-aec9-6516d1d76652","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.788Z [INFO] message="MCP Request" requestId="491b3e9b-255a-49ff-97a3-a49b7c785a69" method="unknown" params=undefined
-2026-10-11T01:11:31.807Z [INFO] message="MCP Response" requestId="491b3e9b-255a-49ff-97a3-a49b7c785a69" duration=19
-2026-10-11T01:11:31.808Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="21ms" contentType="text/event-stream"
-2026-10-11T01:11:31.820Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-cbcf7e32-d545-4400-aec9-6516d1d76652","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.820Z [INFO] message="Removing client from 0 template instances" sessionId="stream-cbcf7e32-d545-4400-aec9-6516d1d76652" instancesToCleanup=[]
-2026-10-11T01:11:31.820Z [INFO] message="Cleaned up template client instances for session stream-cbcf7e32-d545-4400-aec9-6516d1d76652" instancesCleaned=0
-2026-10-11T01:11:31.820Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="55ms" contentType="text/event-stream"
-2026-10-11T01:11:31.820Z [INFO] message="Disconnected transport for session stream-cbcf7e32-d545-4400-aec9-6516d1d76652"
-2026-10-11T01:11:31.820Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="0ms" contentType=undefined
-2026-10-11T01:11:31.821Z [INFO] message="Deleted streamable session: stream-cbcf7e32-d545-4400-aec9-6516d1d76652"
-2026-10-11T01:11:31.821Z [INFO] message="Removing client from 0 template instances" sessionId="stream-cbcf7e32-d545-4400-aec9-6516d1d76652" instancesToCleanup=[]
-2026-10-11T01:11:31.821Z [INFO] message="Cleaned up template client instances for session stream-cbcf7e32-d545-4400-aec9-6516d1d76652" instancesCleaned=0
-2026-10-11T01:11:31.828Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.829Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
-2026-10-11T01:11:31.832Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
-2026-10-11T01:11:31.832Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
-2026-10-11T01:11:31.832Z [INFO] message="Connected transport for session stream-6aa90830-9399-4e50-a6bd-f2462120759a"
-2026-10-11T01:11:31.833Z [INFO] message="Created streamable session with persistence: stream-6aa90830-9399-4e50-a6bd-f2462120759a"
-2026-10-11T01:11:31.833Z [WARN] message="NotificationManager already initialized"
-2026-10-11T01:11:31.834Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="6ms" contentType="text/event-stream"
-2026-10-11T01:11:31.836Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-6aa90830-9399-4e50-a6bd-f2462120759a","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.837Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="1ms" contentType=undefined
-2026-10-11T01:11:31.837Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-6aa90830-9399-4e50-a6bd-f2462120759a","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.838Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-6aa90830-9399-4e50-a6bd-f2462120759a","mcp-protocol-version":"2025-11-25","content-length":"186"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.839Z [INFO] message="MCP Request" requestId="68bc34a5-30b2-4d36-af62-b1de54862af0" method="unknown" params="{\"name\":\"time_1mcp_convert_time\",\"arguments\":{\"source_timezone\":\"Asia/Tokyo\",\"target_timezone\":\"America/New_York\",\"time\":\"14:00\"}}"
-2026-10-11T01:11:31.901Z [INFO] message="MCP Response" requestId="68bc34a5-30b2-4d36-af62-b1de54862af0" duration=62
-2026-10-11T01:11:31.902Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="64ms" contentType="text/event-stream"
-2026-10-11T01:11:31.904Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-6aa90830-9399-4e50-a6bd-f2462120759a","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.905Z [INFO] message="MCP Request" requestId="6e20171d-e946-443d-8cc7-4c0f373a0d5f" method="unknown" params=undefined
-2026-10-11T01:11:31.926Z [INFO] message="MCP Response" requestId="6e20171d-e946-443d-8cc7-4c0f373a0d5f" duration=21
-2026-10-11T01:11:31.926Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="22ms" contentType="text/event-stream"
-2026-10-11T01:11:31.931Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-6aa90830-9399-4e50-a6bd-f2462120759a","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
-2026-10-11T01:11:31.932Z [INFO] message="Removing client from 0 template instances" sessionId="stream-6aa90830-9399-4e50-a6bd-f2462120759a" instancesToCleanup=[]
-2026-10-11T01:11:31.932Z [INFO] message="Cleaned up template client instances for session stream-6aa90830-9399-4e50-a6bd-f2462120759a" instancesCleaned=0
-2026-10-11T01:11:31.932Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="95ms" contentType="text/event-stream"
-2026-10-11T01:11:31.932Z [INFO] message="Disconnected transport for session stream-6aa90830-9399-4e50-a6bd-f2462120759a"
-2026-10-11T01:11:31.932Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="1ms" contentType=undefined
-2026-10-11T01:11:31.932Z [INFO] message="Deleted streamable session: stream-6aa90830-9399-4e50-a6bd-f2462120759a"
-2026-10-11T01:11:31.932Z [INFO] message="Removing client from 0 template instances" sessionId="stream-6aa90830-9399-4e50-a6bd-f2462120759a" instancesToCleanup=[]
-2026-10-11T01:11:31.932Z [INFO] message="Cleaned up template client instances for session stream-6aa90830-9399-4e50-a6bd-f2462120759a" instancesCleaned=0
-2026-10-11T01:11:32.478Z [INFO] message="Shutting down server..."
-2026-10-11T01:11:32.478Z [INFO] message="MCP loading manager shutdown complete"
-2026-10-11T01:11:32.478Z [INFO] message="Loading manager shutdown complete"
-2026-10-11T01:11:32.501Z [INFO] message="Removed server instructions: @likec4/mcp. Remaining servers: 0"
-2026-10-11T01:11:32.501Z [INFO] message="Server instructions have changed. Active sessions: 0"
-2026-10-11T01:11:32.501Z [INFO] message="ClientManager shutdown complete"
-2026-10-11T01:11:32.501Z [INFO] message="ClientManager shutdown complete"
-2026-10-11T01:11:32.501Z [INFO] message="ServerManager cleanup completed"
-2026-10-11T01:11:32.501Z [INFO] message="ServerManager cleanup complete"
-2026-10-11T01:11:32.502Z [INFO] message="FileStorageService cleanup interval stopped"
-2026-10-11T01:11:32.502Z [INFO] message="Stopped periodic flush and flushed remaining dirty sessions"
-2026-10-11T01:11:32.503Z [INFO] message="ExpressServer shutdown complete"
-2026-10-11T01:11:32.503Z [INFO] message="InstructionAggregator: Cleanup completed - all listeners cleared"
-2026-10-11T01:11:32.503Z [INFO] message="InstructionAggregator cleanup complete"
-2026-10-11T01:11:32.503Z [INFO] message="PresetManager cleanup complete"
-2026-10-11T01:11:32.503Z [INFO] message="PID file cleaned up: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/server.pid"
-2026-10-11T01:11:32.503Z [INFO] message="PID file cleanup complete"
-2026-10-11T01:11:32.504Z [INFO] message="Server shutdown complete"
+2026-10-11T14:32:54.890Z [INFO] message="Configuration loaded successfully with environment variable substitution"
+2026-10-11T14:32:54.891Z [INFO] message="Started watching configuration directory: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke for file: early.json"
+2026-10-11T14:32:54.891Z [INFO] message="ConfigManager initialized"
+2026-10-11T14:32:54.891Z [INFO] message="ConfigChangeHandler initialized"
+2026-10-11T14:32:54.892Z [INFO] message="PresetManager initialized successfully" presetsLoaded=0 configPath="/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/presets.json"
+2026-10-11T14:32:54.892Z [INFO] message="Preset management system initialized successfully"
+2026-10-11T14:32:54.892Z [WARN] message="Transport type is missing for time, inferring type..."
+2026-10-11T14:32:54.892Z [INFO] message="Inferred transport type for time as stdio"
+2026-10-11T14:32:54.893Z [WARN] message="Transport type is missing for @likec4/mcp, inferring type..."
+2026-10-11T14:32:54.893Z [INFO] message="Inferred transport type for @likec4/mcp as stdio"
+2026-10-11T14:32:54.893Z [INFO] message="Created 2 static transports (template servers will be created per-client)"
+2026-10-11T14:32:54.893Z [INFO] message="Instruction aggregator initialized"
+2026-10-11T14:32:54.894Z [INFO] message="Initialized client storage for 2 transports"
+2026-10-11T14:32:54.894Z [INFO] message="Initialized storage for 2 MCP servers"
+2026-10-11T14:32:54.894Z [INFO] message="Initializing AsyncLoadingOrchestrator..."
+2026-10-11T14:32:54.894Z [INFO] message="1mcp capabilities provider initialized"
+2026-10-11T14:32:54.894Z [INFO] message="AsyncLoadingOrchestrator initialized successfully"
+2026-10-11T14:32:54.894Z [INFO] message="Starting async loading of 2 MCP servers"
+2026-10-11T14:32:54.894Z [INFO] message="Started tracking loading for 2 servers"
+2026-10-11T14:32:54.895Z [INFO] message="Async server setup completed - HTTP server ready, MCP servers loading in background"
+2026-10-11T14:32:54.896Z [INFO] message="Creating client for time"
+2026-10-11T14:32:54.898Z [INFO] message="Creating client for @likec4/mcp"
+2026-10-11T14:32:54.899Z [INFO] message="All MCP servers finished loading (successfully or failed)"
+2026-10-11T14:32:54.899Z [INFO] message="Template index rebuilt"
+2026-10-11T14:32:54.899Z [INFO] message="Using async loading mode - HTTP server will start immediately, MCP servers load in background"
+2026-10-11T14:32:54.902Z [INFO] message="Configuration loaded successfully with environment variable substitution"
+2026-10-11T14:32:54.932Z [INFO] message="Authentication disabled - all endpoints accessible without auth"
+2026-10-11T14:32:54.938Z [INFO] message="PID file written: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/server.pid"
+2026-10-11T14:32:54.941Z [INFO] message="Server is running on port 3151 with HTTP/SSE and Streamable HTTP transport without authentication"
+2026-10-11T14:32:54.941Z [INFO] message="📋 OAuth Management Dashboard: http://127.0.0.1:3151/oauth"
+2026-10-11T14:32:55.724Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:32:55.727Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="3ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:32:56.544Z [INFO] message="Successfully connected to time with server mcp-time version 2026.10.10"
+2026-10-11T14:32:56.545Z [INFO] message="Client created for time"
+2026-10-11T14:32:56.545Z [INFO] message="Instructions changed. Total servers with instructions: 0"
+2026-10-11T14:32:56.545Z [INFO] message="Server instructions have changed. Active sessions: 0"
+2026-10-11T14:32:56.546Z [INFO] message="MCP loading progress: 1/2 servers ready (1 loading, 0 failed)"
+2026-10-11T14:32:56.546Z [INFO] message="Successfully loaded MCP server: time (0 retries)"
+2026-10-11T14:32:56.736Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:32:56.744Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="8ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:32:57.748Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:32:57.750Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="2ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:32:58.756Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:32:58.758Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="2ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:32:59.765Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:32:59.772Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="7ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:33:00.777Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:33:00.780Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="3ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:33:01.786Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:33:01.787Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="1ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:33:01.805Z [WARN] message="[@likec4/mcp] 14:33:01.804 INF likec4·mcp Loading LikeC4 from workspace: '/Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path'" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=1 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.806Z [WARN] message="[@likec4/mcp] 14:33:01.805 INF likec4·lang layout wasm" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=2 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.809Z [WARN] message="[@likec4/mcp] 14:33:01.809 INF likec4·lang workspace: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/external/MCPEvol-Bench/anotation_path" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=3 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.819Z [WARN] message="[@likec4/mcp] 14:33:01.818 WRN likec4·server·workspace No likec4 documents found in workspace" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=4 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.970Z [WARN] message="[@likec4/mcp] 14:33:01.970 ERR likec4·lang no LikeC4 sources found" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=5 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.970Z [WARN] message="[@likec4/mcp] 14:33:01.970 INF likec4·lang workspace: found 0 source files" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=6 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.970Z [WARN] message="[@likec4/mcp] 14:33:01.970 INF likec4·mcp Starting MCP stdio server" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=7 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.975Z [WARN] message="[@likec4/mcp] 14:33:01.975 INF likec4·mcp LikeC4 MCP Server running on stdio" serverName="@likec4/mcp" source="backend-stderr" backendLogSequence=8 backendLogSourceId="static:@likec4/mcp" backendLogEventKind="line"
+2026-10-11T14:33:01.980Z [INFO] message="Successfully connected to @likec4/mcp with server LikeC4 version 1.59.4"
+2026-10-11T14:33:01.980Z [INFO] message="Client created for @likec4/mcp"
+2026-10-11T14:33:01.980Z [INFO] message="Instructions changed. Total servers with instructions: 1"
+2026-10-11T14:33:01.980Z [INFO] message="Server instructions have changed. Active sessions: 0"
+2026-10-11T14:33:01.980Z [INFO] message="MCP loading progress: 2/2 servers ready (0 loading, 0 failed)"
+2026-10-11T14:33:01.980Z [INFO] message="Loading complete: 2/2 servers ready (100.0% success rate)"
+2026-10-11T14:33:01.981Z [INFO] message="MCP loading complete: 2/2 servers ready (100.0% success rate)"
+2026-10-11T14:33:01.981Z [INFO] message="Background retry enabled for failed servers"
+2026-10-11T14:33:01.981Z [INFO] message="Successfully loaded MCP server: @likec4/mcp (0 retries)"
+2026-10-11T14:33:01.981Z [INFO] message="Initial server loading phase completed"
+2026-10-11T14:33:02.015Z [INFO] message="Capability update complete: 22 tools, 2 resources, 1 prompts from 2 servers"
+2026-10-11T14:33:02.015Z [INFO] message="Loading cycle complete: 22 tools, 2 resources, 1 prompts now available"
+2026-10-11T14:33:02.795Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:33:02.819Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="24ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:33:02.917Z [INFO] message="[GET] /api/v1/inspect" query={} body=undefined headers={"accept-encoding":"identity","host":"127.0.0.1:3151","user-agent":"Python-urllib/3.12","connection":"close"} userAgent="Python-urllib/3.12" ip="127.0.0.1"
+2026-10-11T14:33:02.926Z [INFO] message="[GET] /inspect completed" statusCode=200 duration="9ms" contentType="application/json; charset=utf-8"
+2026-10-11T14:33:06.169Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.177Z [INFO] message="Server instructions have changed. Active sessions: 0"
+2026-10-11T14:33:06.178Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
+2026-10-11T14:33:06.189Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
+2026-10-11T14:33:06.189Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
+2026-10-11T14:33:06.190Z [INFO] message="Connected transport for session stream-994d09e8-4837-4c17-9e68-520b308aa587"
+2026-10-11T14:33:06.191Z [INFO] message="Created streamable session with persistence: stream-994d09e8-4837-4c17-9e68-520b308aa587"
+2026-10-11T14:33:06.191Z [INFO] message="AsyncLoadingOrchestrator notification manager initialized"
+2026-10-11T14:33:06.195Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="26ms" contentType="text/event-stream"
+2026-10-11T14:33:06.198Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-994d09e8-4837-4c17-9e68-520b308aa587","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.201Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="3ms" contentType=undefined
+2026-10-11T14:33:06.201Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-994d09e8-4837-4c17-9e68-520b308aa587","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.202Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-994d09e8-4837-4c17-9e68-520b308aa587","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.203Z [INFO] message="MCP Request" requestId="bcf9911e-306b-4d85-bb5d-0c2b992dc3ec" method="unknown" params=undefined
+2026-10-11T14:33:06.220Z [INFO] message="MCP Response" requestId="bcf9911e-306b-4d85-bb5d-0c2b992dc3ec" duration=17
+2026-10-11T14:33:06.220Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="18ms" contentType="text/event-stream"
+2026-10-11T14:33:06.228Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-994d09e8-4837-4c17-9e68-520b308aa587","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.230Z [INFO] message="Removing client from 0 template instances" sessionId="stream-994d09e8-4837-4c17-9e68-520b308aa587" instancesToCleanup=[]
+2026-10-11T14:33:06.230Z [INFO] message="Cleaned up template client instances for session stream-994d09e8-4837-4c17-9e68-520b308aa587" instancesCleaned=0
+2026-10-11T14:33:06.230Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="29ms" contentType="text/event-stream"
+2026-10-11T14:33:06.231Z [INFO] message="Disconnected transport for session stream-994d09e8-4837-4c17-9e68-520b308aa587"
+2026-10-11T14:33:06.231Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="3ms" contentType=undefined
+2026-10-11T14:33:06.232Z [INFO] message="Deleted streamable session: stream-994d09e8-4837-4c17-9e68-520b308aa587"
+2026-10-11T14:33:06.232Z [INFO] message="Removing client from 0 template instances" sessionId="stream-994d09e8-4837-4c17-9e68-520b308aa587" instancesToCleanup=[]
+2026-10-11T14:33:06.232Z [INFO] message="Cleaned up template client instances for session stream-994d09e8-4837-4c17-9e68-520b308aa587" instancesCleaned=0
+2026-10-11T14:33:06.424Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.425Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
+2026-10-11T14:33:06.430Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
+2026-10-11T14:33:06.430Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
+2026-10-11T14:33:06.430Z [INFO] message="Connected transport for session stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35"
+2026-10-11T14:33:06.430Z [INFO] message="Created streamable session with persistence: stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35"
+2026-10-11T14:33:06.430Z [WARN] message="NotificationManager already initialized"
+2026-10-11T14:33:06.431Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="7ms" contentType="text/event-stream"
+2026-10-11T14:33:06.433Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.435Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="2ms" contentType=undefined
+2026-10-11T14:33:06.435Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.436Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35","mcp-protocol-version":"2025-11-25","content-length":"112"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.437Z [INFO] message="MCP Request" requestId="042c527a-fdaf-4c75-9e81-e620d2d942d5" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_list-projects\",\"arguments\":{}}"
+2026-10-11T14:33:06.454Z [INFO] message="MCP Response" requestId="042c527a-fdaf-4c75-9e81-e620d2d942d5" duration=17
+2026-10-11T14:33:06.455Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="19ms" contentType="text/event-stream"
+2026-10-11T14:33:06.456Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.457Z [INFO] message="MCP Request" requestId="a6247248-5d4b-4b0f-b4af-24617f0a2e9b" method="unknown" params=undefined
+2026-10-11T14:33:06.471Z [INFO] message="MCP Response" requestId="a6247248-5d4b-4b0f-b4af-24617f0a2e9b" duration=14
+2026-10-11T14:33:06.472Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="16ms" contentType="text/event-stream"
+2026-10-11T14:33:06.480Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.480Z [INFO] message="Removing client from 0 template instances" sessionId="stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35" instancesToCleanup=[]
+2026-10-11T14:33:06.480Z [INFO] message="Cleaned up template client instances for session stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35" instancesCleaned=0
+2026-10-11T14:33:06.480Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="45ms" contentType="text/event-stream"
+2026-10-11T14:33:06.482Z [INFO] message="Disconnected transport for session stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35"
+2026-10-11T14:33:06.482Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="2ms" contentType=undefined
+2026-10-11T14:33:06.482Z [INFO] message="Deleted streamable session: stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35"
+2026-10-11T14:33:06.482Z [INFO] message="Removing client from 0 template instances" sessionId="stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35" instancesToCleanup=[]
+2026-10-11T14:33:06.482Z [INFO] message="Cleaned up template client instances for session stream-45d8cd49-443a-4d5c-9aa4-ed3dd8fe8c35" instancesCleaned=0
+2026-10-11T14:33:06.490Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.491Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
+2026-10-11T14:33:06.493Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
+2026-10-11T14:33:06.493Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
+2026-10-11T14:33:06.494Z [INFO] message="Connected transport for session stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684"
+2026-10-11T14:33:06.494Z [INFO] message="Created streamable session with persistence: stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684"
+2026-10-11T14:33:06.494Z [WARN] message="NotificationManager already initialized"
+2026-10-11T14:33:06.495Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="5ms" contentType="text/event-stream"
+2026-10-11T14:33:06.497Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.498Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.499Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.500Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684","mcp-protocol-version":"2025-11-25","content-length":"119"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.501Z [INFO] message="MCP Request" requestId="3ab952e4-648f-4096-9480-462505473a1b" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_read-project-summary\",\"arguments\":{}}"
+2026-10-11T14:33:06.519Z [INFO] message="MCP Response" requestId="3ab952e4-648f-4096-9480-462505473a1b" duration=18
+2026-10-11T14:33:06.519Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="19ms" contentType="text/event-stream"
+2026-10-11T14:33:06.521Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.522Z [INFO] message="MCP Request" requestId="95b5bb89-0b9b-43ee-8e08-9055af75c035" method="unknown" params=undefined
+2026-10-11T14:33:06.537Z [INFO] message="MCP Response" requestId="95b5bb89-0b9b-43ee-8e08-9055af75c035" duration=15
+2026-10-11T14:33:06.538Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="17ms" contentType="text/event-stream"
+2026-10-11T14:33:06.552Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.553Z [INFO] message="Removing client from 0 template instances" sessionId="stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684" instancesToCleanup=[]
+2026-10-11T14:33:06.553Z [INFO] message="Cleaned up template client instances for session stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684" instancesCleaned=0
+2026-10-11T14:33:06.553Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="54ms" contentType="text/event-stream"
+2026-10-11T14:33:06.553Z [INFO] message="Disconnected transport for session stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684"
+2026-10-11T14:33:06.553Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.553Z [INFO] message="Deleted streamable session: stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684"
+2026-10-11T14:33:06.553Z [INFO] message="Removing client from 0 template instances" sessionId="stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684" instancesToCleanup=[]
+2026-10-11T14:33:06.553Z [INFO] message="Cleaned up template client instances for session stream-4bbcafa7-3ec5-41d1-8e7e-b497303a4684" instancesCleaned=0
+2026-10-11T14:33:06.561Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.562Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
+2026-10-11T14:33:06.564Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
+2026-10-11T14:33:06.564Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
+2026-10-11T14:33:06.564Z [INFO] message="Connected transport for session stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284"
+2026-10-11T14:33:06.565Z [INFO] message="Created streamable session with persistence: stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284"
+2026-10-11T14:33:06.565Z [WARN] message="NotificationManager already initialized"
+2026-10-11T14:33:06.565Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="4ms" contentType="text/event-stream"
+2026-10-11T14:33:06.568Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.569Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.569Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.570Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284","mcp-protocol-version":"2025-11-25","content-length":"131"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.571Z [INFO] message="MCP Request" requestId="981b599b-40d2-4eab-b22a-a85bbd7d5e34" method="unknown" params="{\"name\":\"@likec4/mcp_1mcp_search-element\",\"arguments\":{\"search\":\"payment\"}}"
+2026-10-11T14:33:06.604Z [INFO] message="MCP Response" requestId="981b599b-40d2-4eab-b22a-a85bbd7d5e34" duration=33
+2026-10-11T14:33:06.605Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="35ms" contentType="text/event-stream"
+2026-10-11T14:33:06.607Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.608Z [INFO] message="MCP Request" requestId="36684efe-5af9-4fd2-ab14-c9709937b499" method="unknown" params=undefined
+2026-10-11T14:33:06.626Z [INFO] message="MCP Response" requestId="36684efe-5af9-4fd2-ab14-c9709937b499" duration=18
+2026-10-11T14:33:06.627Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="20ms" contentType="text/event-stream"
+2026-10-11T14:33:06.638Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.639Z [INFO] message="Removing client from 0 template instances" sessionId="stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284" instancesToCleanup=[]
+2026-10-11T14:33:06.639Z [INFO] message="Cleaned up template client instances for session stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284" instancesCleaned=0
+2026-10-11T14:33:06.639Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="70ms" contentType="text/event-stream"
+2026-10-11T14:33:06.639Z [INFO] message="Disconnected transport for session stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284"
+2026-10-11T14:33:06.639Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.639Z [INFO] message="Deleted streamable session: stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284"
+2026-10-11T14:33:06.639Z [INFO] message="Removing client from 0 template instances" sessionId="stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284" instancesToCleanup=[]
+2026-10-11T14:33:06.639Z [INFO] message="Cleaned up template client instances for session stream-0e3ad32e-cae1-4d6f-89f3-248b512ea284" instancesCleaned=0
+2026-10-11T14:33:06.647Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","content-length":"152"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.648Z [INFO] message="InstructionAggregator: Filtering applied" original=2 filtered=2 removed=0 filterType="simple-or" filteredNames=["@likec4/mcp","time"] removedNames=[]
+2026-10-11T14:33:06.650Z [WARN] message="Capability conflict in tools.listChanged: client @likec4/mcp overriding existing value"
+2026-10-11T14:33:06.650Z [INFO] message="Client @likec4/mcp has 1 tools capability conflicts: listChanged"
+2026-10-11T14:33:06.651Z [INFO] message="Connected transport for session stream-f2303fe7-01af-4d4d-9cf4-3183b5729429"
+2026-10-11T14:33:06.653Z [INFO] message="Created streamable session with persistence: stream-f2303fe7-01af-4d4d-9cf4-3183b5729429"
+2026-10-11T14:33:06.653Z [WARN] message="NotificationManager already initialized"
+2026-10-11T14:33:06.653Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="6ms" contentType="text/event-stream"
+2026-10-11T14:33:06.656Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-f2303fe7-01af-4d4d-9cf4-3183b5729429","mcp-protocol-version":"2025-11-25","content-length":"54"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.657Z [INFO] message="[POST] /mcp completed" statusCode=202 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.657Z [INFO] message="[GET] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream, text/event-stream","content-type":"application/json","mcp-session-id":"stream-f2303fe7-01af-4d4d-9cf4-3183b5729429","mcp-protocol-version":"2025-11-25","cache-control":"no-store"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.658Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-f2303fe7-01af-4d4d-9cf4-3183b5729429","mcp-protocol-version":"2025-11-25","content-length":"186"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.659Z [INFO] message="MCP Request" requestId="6a0ee7a6-5bf1-4d5c-b614-78549a28c70d" method="unknown" params="{\"name\":\"time_1mcp_convert_time\",\"arguments\":{\"source_timezone\":\"Asia/Tokyo\",\"target_timezone\":\"America/New_York\",\"time\":\"14:00\"}}"
+2026-10-11T14:33:06.681Z [INFO] message="MCP Response" requestId="6a0ee7a6-5bf1-4d5c-b614-78549a28c70d" duration=22
+2026-10-11T14:33:06.682Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="24ms" contentType="text/event-stream"
+2026-10-11T14:33:06.683Z [INFO] message="[POST] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-f2303fe7-01af-4d4d-9cf4-3183b5729429","mcp-protocol-version":"2025-11-25","content-length":"46"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.684Z [INFO] message="MCP Request" requestId="590ab0ed-dfc9-49df-9b5b-a1dacf962a67" method="unknown" params=undefined
+2026-10-11T14:33:06.698Z [INFO] message="MCP Response" requestId="590ab0ed-dfc9-49df-9b5b-a1dacf962a67" duration=14
+2026-10-11T14:33:06.699Z [INFO] message="[POST] /mcp completed" statusCode=200 duration="16ms" contentType="text/event-stream"
+2026-10-11T14:33:06.704Z [INFO] message="[DELETE] /mcp" query={} body=undefined headers={"host":"127.0.0.1:3151","accept-encoding":"gzip, deflate","connection":"keep-alive","user-agent":"python-httpx/0.28.1","accept":"application/json, text/event-stream","content-type":"application/json","mcp-session-id":"stream-f2303fe7-01af-4d4d-9cf4-3183b5729429","mcp-protocol-version":"2025-11-25"} userAgent="python-httpx/0.28.1" ip="127.0.0.1"
+2026-10-11T14:33:06.705Z [INFO] message="Removing client from 0 template instances" sessionId="stream-f2303fe7-01af-4d4d-9cf4-3183b5729429" instancesToCleanup=[]
+2026-10-11T14:33:06.705Z [INFO] message="Cleaned up template client instances for session stream-f2303fe7-01af-4d4d-9cf4-3183b5729429" instancesCleaned=0
+2026-10-11T14:33:06.705Z [INFO] message="[GET] /mcp completed" statusCode=200 duration="48ms" contentType="text/event-stream"
+2026-10-11T14:33:06.705Z [INFO] message="Disconnected transport for session stream-f2303fe7-01af-4d4d-9cf4-3183b5729429"
+2026-10-11T14:33:06.705Z [INFO] message="[DELETE] /mcp completed" statusCode=200 duration="1ms" contentType=undefined
+2026-10-11T14:33:06.705Z [INFO] message="Deleted streamable session: stream-f2303fe7-01af-4d4d-9cf4-3183b5729429"
+2026-10-11T14:33:06.705Z [INFO] message="Removing client from 0 template instances" sessionId="stream-f2303fe7-01af-4d4d-9cf4-3183b5729429" instancesToCleanup=[]
+2026-10-11T14:33:06.705Z [INFO] message="Cleaned up template client instances for session stream-f2303fe7-01af-4d4d-9cf4-3183b5729429" instancesCleaned=0
+2026-10-11T14:33:07.213Z [INFO] message="Shutting down server..."
+2026-10-11T14:33:07.214Z [INFO] message="MCP loading manager shutdown complete"
+2026-10-11T14:33:07.214Z [INFO] message="Loading manager shutdown complete"
+2026-10-11T14:33:07.230Z [INFO] message="Removed server instructions: @likec4/mcp. Remaining servers: 0"
+2026-10-11T14:33:07.230Z [INFO] message="Server instructions have changed. Active sessions: 0"
+2026-10-11T14:33:07.230Z [INFO] message="ClientManager shutdown complete"
+2026-10-11T14:33:07.230Z [INFO] message="ClientManager shutdown complete"
+2026-10-11T14:33:07.231Z [INFO] message="ServerManager cleanup completed"
+2026-10-11T14:33:07.231Z [INFO] message="ServerManager cleanup complete"
+2026-10-11T14:33:07.231Z [INFO] message="FileStorageService cleanup interval stopped"
+2026-10-11T14:33:07.232Z [INFO] message="Stopped periodic flush and flushed remaining dirty sessions"
+2026-10-11T14:33:07.232Z [INFO] message="ExpressServer shutdown complete"
+2026-10-11T14:33:07.232Z [INFO] message="InstructionAggregator: Cleanup completed - all listeners cleared"
+2026-10-11T14:33:07.232Z [INFO] message="InstructionAggregator cleanup complete"
+2026-10-11T14:33:07.232Z [INFO] message="PresetManager cleanup complete"
+2026-10-11T14:33:07.232Z [INFO] message="PID file cleaned up: /Users/apple/Desktop/6203下半学期/mcpevol-harness-adaptation/generated/1mcp-smoke/server.pid"
+2026-10-11T14:33:07.232Z [INFO] message="PID file cleanup complete"
+2026-10-11T14:33:07.233Z [INFO] message="Server shutdown complete"

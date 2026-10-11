@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-11T01:11:13.667043+00:00",
+  "generated_at": "2026-10-11T14:32:53.640130+00:00",
   "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
   "model_mode": "deterministic_local_openai_compatible_smoke",
   "external_api_used": false,
@@ -10,7 +10,7 @@
   "versions": {
     "early": {
       "success": true,
-      "duration_seconds": 18.738,
+      "duration_seconds": 13.521,
       "configured_servers": 2,
       "connected_servers": 2,
       "available_tools": 22,
@@ -25,7 +25,7 @@
     },
     "middle": {
       "success": true,
-      "duration_seconds": 10.374,
+      "duration_seconds": 11.103,
       "configured_servers": 2,
       "connected_servers": 2,
       "available_tools": 22,
@@ -40,7 +40,7 @@
     },
     "late": {
       "success": true,
-      "duration_seconds": 10.138,
+      "duration_seconds": 11.201,
       "configured_servers": 2,
       "connected_servers": 2,
       "available_tools": 22,
