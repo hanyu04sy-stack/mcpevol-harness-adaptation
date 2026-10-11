@@ -28,6 +28,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements-ci.txt
 
       # Only the small JSON Schema validator is installed. There is deliberately
       # no benchmark dependency, bundle download, 1MCP, Ollama, or benchmark run.
