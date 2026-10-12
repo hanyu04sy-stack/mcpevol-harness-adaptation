@@ -19,6 +19,7 @@ SCHEMA_FILES = {
     "report": "validation-report.schema.json",
     "tool_schema": "tool-schema-report.schema.json",
     "tool_changes": "tool-changes.schema.json",
+    "summary": "summary.schema.json",
 }
 
 
@@ -28,7 +29,11 @@ def read_json(path: Path) -> Any:
 
 def validation_targets(root: Path) -> list[tuple[str, Path]]:
     targets: list[tuple[str, Path]] = []
-    targets.extend(("experiment", path) for path in sorted((root / "configs").glob("*.json")))
+    targets.extend(
+        ("experiment", path)
+        for path in sorted((root / "configs").glob("*.json"))
+        if "experiment_name" in read_json(path)
+    )
     targets.extend(("tasks", path) for path in sorted((root / "data/subsets").glob("*/test_cases.json")))
     targets.extend(("manifest", path) for path in sorted((root / "data/subsets").glob("*/manifest.json")))
     targets.extend(
@@ -48,6 +53,9 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
         for version in ("early", "middle", "late")
     )
     targets.append(("tool_changes", root / "reports/tool-changes.json"))
+    result_summary = root / "results/summary.json"
+    if result_summary.is_file():
+        targets.append(("summary", result_summary))
     return targets
 
 

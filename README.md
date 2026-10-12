@@ -47,7 +47,7 @@ Run the complete environment check:
 .venv/bin/python scripts/check_environment.py --strict
 ```
 
-See [environment setup](docs/ENVIRONMENT.md), [troubleshooting](docs/TROUBLESHOOTING.md), [task subset](docs/SUBSET.md), [unified execution](docs/RUNNING.md), [smoke results](docs/SMOKE_TEST.md), and the [B/C/D handoff](docs/HANDOFF.md).
+See [environment setup](docs/ENVIRONMENT.md), [troubleshooting](docs/TROUBLESHOOTING.md), [task subset](docs/SUBSET.md), [unified execution](docs/RUNNING.md), [judge integration](docs/JUDGE.md), [smoke results](docs/SMOKE_TEST.md), and the [B/C/D handoff](docs/HANDOFF.md).
 
 ## Validation and unified execution
 
@@ -146,7 +146,7 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Early/Middle/Late generation and environment validation
 - [x] Cross-platform installer and verified bundle downloader
 - [x] Pinned 1MCP 0.38.2 and benchmark dependencies
-- [x] Unified model and judge configuration using `gpt-4o`
+- [x] Unified `gpt-4o` agent configuration plus a separate configured judge phase
 - [x] Repaired Late dataless files, increasing usable servers from 23 to 54
 - [x] Fixed 30-task set with 26/26 dependencies available in all versions
 - [x] Three independent cold starts per version
@@ -154,6 +154,9 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Deterministic smoke evidence and free local-model canary evidence
 - [x] Dual-platform CI, JSON Schemas, final handoff tag, and branch protection
 - [x] Auditable harness injection and Early/Middle/Late tool-schema diff
+- [x] Judge adapter, TF/PE/ECS result collection, and formal result schema
+- [x] Pre-run fairness guard and config-driven upstream runner arguments
+- [x] Idempotent Late dataless repair with dry-run and fixture tests
 
 ## Security
 

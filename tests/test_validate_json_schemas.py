@@ -21,7 +21,7 @@ class ValidateJSONSchemasTest(unittest.TestCase):
     def test_all_tracked_documents_match_their_schemas(self) -> None:
         report = validate_json_schemas.validate_repository(ROOT)
         self.assertTrue(report["passed"], report["errors"])
-        self.assertEqual(report["schemas_checked"], 6)
+        self.assertEqual(report["schemas_checked"], 7)
         self.assertEqual(report["documents_checked"], 19)
 
     def test_config_schema_rejects_missing_late_version(self) -> None:

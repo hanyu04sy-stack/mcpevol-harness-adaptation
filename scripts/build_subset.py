@@ -7,13 +7,16 @@ import argparse
 import hashlib
 import json
 import random
+import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from experiment_config import VERSIONS  # noqa: E402
+
 PINNED_COMMIT = "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701"
 CHANGE_TYPES = ("tool", "parameter", "description")
-VERSIONS = ("early", "middle", "late")
 
 
 def read_json(path: Path) -> Any:

@@ -46,7 +46,7 @@ pnpm exec 1mcp serve --config generated/1mcp/early.json --host 127.0.0.1 --port 
 Run the benchmark in another terminal:
 
 ```bash
-.venv/bin/python scripts/run_benchmark.py --version early
+.venv/bin/python scripts/run_benchmark.py --version early --run-id 1
 ```
 
 The default comes from `harness.default_dir`. B and C can override only the harness knowledge while leaving every fairness-critical setting unchanged:
@@ -61,12 +61,49 @@ The default comes from `harness.default_dir`. B and C can override only the harn
 Use `middle`/`3052` or `late`/`3053` for the other versions. The entry point checks the MCP server set before injecting the configured API key, base URL, and temperature into the upstream runner. Metadata is written to:
 
 ```text
-results/pilot-30/<early|middle|late>/run-metadata.json
+results/<strategy>/<early|middle|late>/run-XX/run-metadata.json
 ```
 
 Metadata never contains credentials. It does contain `harness_dir`, `harness_manifest_sha256`, and the SHA-256 of each injected harness file for auditability.
 
-## 5. Export tool definitions
+## 5. Run IDs and fairness check
+
+Use the same positive `--run-id` for the three versions that form one repeat.
+Before a real benchmark call, the runner automatically verifies the upstream
+checkout, task SHA-256, and pinned model/judge settings. It writes the audit to
+`reports/fairness-check.json`. The same check can be run directly:
+
+```bash
+.venv/bin/python scripts/verify_untouched.py
+```
+
+The check must pass before B or C compares strategies.
+
+## 6. Judge
+
+The pinned upstream runner creates trajectories but does not automatically
+score them. Configure `JUDGE_API_KEY` and optional `JUDGE_BASE_URL` in `.env`,
+then run the separate judge phase with the same version, strategy, and run ID:
+
+```bash
+.venv/bin/python scripts/run_judge.py \
+  --version early --harness-dir harness/no_update --run-id 1
+```
+
+Normalized scores are written to `judge-results.json`: TF is `tasks[].tf`, PE
+is `tasks[].pe`, and ECS is calculated after all three versions are available.
+See [Judge Integration](JUDGE.md) for the exact upstream source locations.
+
+Collect every completed formal run with:
+
+```bash
+.venv/bin/python scripts/collect_results.py
+```
+
+This creates `results/summary.csv` and `results/summary.json`, including TF, PE,
+ECS, recovery, retention, token totals, and timing.
+
+## 7. Export tool definitions
 
 ```bash
 .venv/bin/python scripts/dump_tool_schemas.py
@@ -83,7 +120,7 @@ Build the detailed change report after schema export:
 
 The first command writes `reports/tool-changes.json` and `reports/tool-changes.md`; the second verifies that both remain consistent with the three source snapshots and requires non-empty tool, description, and parameter change evidence.
 
-## 6. Zero-cost end-to-end smoke test
+## 8. Zero-cost end-to-end smoke test
 
 ```bash
 .venv/bin/python scripts/run_smoke_tests.py

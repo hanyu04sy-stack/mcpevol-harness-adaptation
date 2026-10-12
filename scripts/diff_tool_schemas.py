@@ -12,9 +12,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from experiment_config import VERSIONS
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSIONS = ("early", "middle", "late")
 COMPARISONS = (("early", "middle"), ("middle", "late"), ("early", "late"))
 DESCRIPTION_PREFIX_LENGTH = 40
 

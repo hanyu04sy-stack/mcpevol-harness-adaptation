@@ -6,11 +6,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
-
-VERSIONS = ("early", "middle", "late")
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from experiment_config import VERSIONS  # noqa: E402
 
 
 def sha256(path: Path) -> str:

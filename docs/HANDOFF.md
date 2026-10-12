@@ -18,6 +18,7 @@ git clone https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation.git
 cd mcpevol-harness-adaptation
 python3 scripts/setup_environment.py
 .venv/bin/python scripts/check_experiment_config.py
+.venv/bin/python scripts/verify_untouched.py
 .venv/bin/python scripts/run_smoke_tests.py
 ```
 
@@ -76,6 +77,18 @@ The exact tool definitions and change inventory are in `reports/tool-schemas/`. 
 
 The fixed subset has 26/26 connected servers in every version. If a local result differs, rerun `python3 scripts/setup_environment.py`; do not remove tasks or replace the dataset.
 
+For each strategy and repeat, run the same ID across all versions, then score
+each run separately:
+
+```bash
+.venv/bin/python scripts/run_benchmark.py --version early --harness-dir harness/no_update --run-id 1
+.venv/bin/python scripts/run_judge.py --version early --harness-dir harness/no_update --run-id 1
+```
+
+B uses `harness/full_rewrite`; C uses `harness/selective_patch`. Repeat the two
+commands for Middle and Late. Always run `scripts/verify_untouched.py` before a
+formal batch.
+
 ## Member D: collect and verify output
 
 ```bash
@@ -85,10 +98,11 @@ python3 -m json.tool reports/pilot-30-coverage.json >/dev/null
 python3 -m json.tool reports/pilot-30-runnability-matrix.json >/dev/null
 python3 -m json.tool reports/pilot-30-startup-stability.json >/dev/null
 python3 -m json.tool reports/smoke/summary.json >/dev/null
-find results/pilot-30 -type f -name '*.json' | sort
+.venv/bin/python scripts/collect_results.py
+python3 -m json.tool results/summary.json >/dev/null
 ```
 
-Every formal run directory must contain `run-metadata.json`. Verify its `benchmark_commit`, `task_sha256`, `model_name`, `temperature`, and version-specific `mcp_url`. Experiment data is under `results/`; committed environment and smoke evidence is under `reports/`.
+Every formal run directory must contain `run-metadata.json`, `judge-results.json`, and `judge-metadata.json`. Verify its `benchmark_commit`, `task_sha256`, model, judge, harness hashes, and version-specific `mcp_url`. Experiment data is under `results/`; committed environment and smoke evidence is under `reports/`.
 
 Run the local-model canary without an external API:
 

@@ -10,6 +10,7 @@ import runpy
 import string
 import sys
 import urllib.request
+import time
 from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
@@ -133,10 +134,10 @@ def check_mcp(resolved: dict[str, object]) -> dict[str, int]:
 
 
 def upstream_arguments(resolved: dict[str, object]) -> list[str]:
-    return [
+    arguments = [
         str(resolved["benchmark_runner"]),
         "--step",
-        "3",
+        str(resolved["runner_step"]),
         "--model_name",
         str(resolved["model_name"]),
         "--test_case_file",
@@ -145,7 +146,28 @@ def upstream_arguments(resolved: dict[str, object]) -> list[str]:
         str(resolved["mcp_url"]),
         "--output_path",
         str(resolved["output_dir"]),
+        "--part_num",
+        str(resolved["runner_part_num"]),
+        "--part_idx",
+        str(resolved["runner_part_idx"]),
     ]
+    if resolved["runner_fschat"]:
+        arguments.append("--fschat_flag")
+    return arguments
+
+
+def resolve_run_output(resolved: dict[str, object], run_id: int) -> Path:
+    """Use the shared strategy/version/run-NN layout for formal runs."""
+    if run_id < 1:
+        raise ConfigError("run-id must be positive")
+    strategy = Path(resolved["harness_dir"]).name
+    if not strategy or strategy in {".", ".."}:
+        raise ConfigError("cannot derive a strategy name from harness directory")
+    output = Path(resolved["output_root"]) / strategy / str(resolved["version"]) / f"run-{run_id:02d}"
+    resolved["strategy"] = strategy
+    resolved["run_id"] = run_id
+    resolved["output_dir"] = output.resolve()
+    return output.resolve()
 
 
 def configured_initializer(
@@ -174,10 +196,14 @@ def run_upstream(
     agent_module = None
     original_init = None
     original_prompt = None
+    created_annotation_link = False
+    old_dont_write_bytecode = sys.dont_write_bytecode
     annotation_link = benchmark_src / "anotation_path"
     annotation_target = Path(resolved["benchmark_root"]) / "anotation_path"
     if not annotation_link.exists() and annotation_target.is_dir():
         annotation_link.symlink_to(Path("..") / "anotation_path", target_is_directory=True)
+        created_annotation_link = True
+    sys.dont_write_bytecode = True
     sys.path.insert(0, str(benchmark_src))
     os.chdir(benchmark_src)
     try:
@@ -202,10 +228,17 @@ def run_upstream(
         os.chdir(old_cwd)
         if sys.path and sys.path[0] == str(benchmark_src):
             sys.path.pop(0)
+        sys.dont_write_bytecode = old_dont_write_bytecode
+        if created_annotation_link and annotation_link.is_symlink():
+            annotation_link.unlink()
 
 
 def write_metadata(
-    resolved: dict[str, object], mcp_status: dict[str, int], status: str
+    resolved: dict[str, object],
+    mcp_status: dict[str, int],
+    status: str,
+    *,
+    wall_clock_seconds: float | None = None,
 ) -> Path:
     output_dir = Path(resolved["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -213,9 +246,25 @@ def write_metadata(
     payload = public_summary(resolved)
     payload.update(
         {
+            "strategy": resolved["strategy"],
+            "run_id": resolved["run_id"],
+            "model": {
+                "name": resolved["model_name"],
+                "temperature": resolved["temperature"],
+                "max_completion_tokens": resolved["max_completion_tokens"],
+                "api_key_env": resolved["model_api_key_env"],
+            },
+            "judge": {
+                "name": resolved["judge_name"],
+                "temperature": resolved["judge_temperature"],
+                "api_key_env": resolved["judge_api_key_env"],
+            },
             "status": status,
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "mcp_status_at_start": mcp_status,
+            "total_prompt_tokens": None,
+            "total_completion_tokens": None,
+            "wall_clock_seconds": wall_clock_seconds,
             "secrets_recorded": False,
         }
     )
@@ -231,6 +280,7 @@ def main() -> None:
     parser.add_argument("--version", choices=VERSIONS, required=True)
     parser.add_argument("--config", type=Path, default=Path("configs/experiment.json"))
     parser.add_argument("--env-file", type=Path)
+    parser.add_argument("--run-id", type=int, default=1)
     parser.add_argument(
         "--harness-dir",
         type=Path,
@@ -259,7 +309,14 @@ def main() -> None:
                 Path(resolved["harness_dir"]), str(resolved["benchmark_commit"])
             )
         )
+        formal_run = Path(resolved["config_path"]).name == "experiment.json"
+        if formal_run:
+            resolve_run_output(resolved, args.run_id)
+        else:
+            resolved["strategy"] = Path(resolved["harness_dir"]).name
+            resolved["run_id"] = args.run_id
         print(json.dumps(public_summary(resolved), ensure_ascii=False, indent=2))
+        print("upstream_argv=" + json.dumps(upstream_arguments(resolved)))
         if args.print_resolved_prompt:
             print("--- resolved harness prompt ---")
             print(str(resolved["harness_prompt"]), end="")
@@ -277,15 +334,42 @@ def main() -> None:
             raise ConfigError(
                 f"missing {key_name}; copy .env.example to .env and fill it locally"
             )
+        if formal_run:
+            from verify_untouched import check_fairness
+
+            fairness = check_fairness(
+                config_path=Path(resolved["config_path"]),
+                pins_path=Path(resolved["project_root"]) / "configs/fairness-pins.json",
+                report_path=Path(resolved["project_root"]) / "reports/fairness-check.json",
+                root=Path(resolved["project_root"]),
+            )
+            if not fairness["passed"]:
+                raise ConfigError("fairness guard failed; see reports/fairness-check.json")
         mcp_status = check_mcp(resolved)
+        started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")
         try:
             run_upstream(resolved, api_key, base_url)
         except BaseException:
-            write_metadata(resolved, mcp_status, "failed")
+            write_metadata(
+                resolved,
+                mcp_status,
+                "failed",
+                wall_clock_seconds=round(time.monotonic() - started, 3),
+            )
             raise
-        write_metadata(resolved, mcp_status, "completed")
+        write_metadata(
+            resolved,
+            mcp_status,
+            "completed",
+            wall_clock_seconds=round(time.monotonic() - started, 3),
+        )
         print(f"Run completed; metadata: {metadata}")
+        print(
+            "Now run: .venv/bin/python scripts/run_judge.py "
+            f"--version {resolved['version']} --harness-dir {resolved['harness_dir']} "
+            f"--run-id {resolved['run_id']}"
+        )
     except ConfigError as exc:
         raise SystemExit(f"CONFIG ERROR: {exc}") from exc
 

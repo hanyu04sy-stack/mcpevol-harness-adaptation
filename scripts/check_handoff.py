@@ -8,6 +8,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -19,12 +20,14 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "configs/smoke.json",
         "configs/canary-real.json",
         "configs/canary-local.json",
+        "configs/fairness-pins.json",
         "schemas/experiment-config.schema.json",
         "schemas/task-list.schema.json",
         "schemas/subset-manifest.schema.json",
         "schemas/validation-report.schema.json",
         "schemas/tool-schema-report.schema.json",
         "schemas/tool-changes.schema.json",
+        "schemas/summary.schema.json",
     ],
     "task_sets": [
         "data/subsets/pilot-30/test_cases.json",
@@ -46,6 +49,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "reports/tool-schemas/diff.json",
         "reports/tool-changes.json",
         "reports/tool-changes.md",
+        "reports/fairness-check.json",
         *[
             f"reports/smoke/{version}/{name}"
             for version in ("early", "middle", "late")
@@ -82,6 +86,10 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "scripts/check_handoff.py",
         "scripts/dump_tool_schemas.py",
         "scripts/diff_tool_schemas.py",
+        "scripts/run_judge.py",
+        "scripts/collect_results.py",
+        "scripts/verify_untouched.py",
+        "scripts/repair_late_dataless.py",
     ],
     "tests": [
         "tests/test_build_runnability_matrix.py",
@@ -102,6 +110,10 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_dump_tool_schemas.py",
         "tests/test_diff_tool_schemas.py",
         "tests/test_english_only_repository.py",
+        "tests/test_collect_results.py",
+        "tests/test_no_hardcode.py",
+        "tests/test_verify_untouched.py",
+        "tests/test_repair_late_dataless.py",
     ],
     "harness": [
         "harness/original/system_prompt.md",
@@ -122,6 +134,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "docs/SMOKE_TEST.md",
         "docs/HANDOFF.md",
         "docs/TROUBLESHOOTING.md",
+        "docs/JUDGE.md",
         "requirements-ci.txt",
     ],
 }
@@ -168,7 +181,9 @@ def run_check(name: str, command: list[str], cwd: Path) -> dict[str, Any]:
     return result
 
 
-def run_handoff(root: Path, inventory_only: bool = False) -> dict[str, Any]:
+def run_handoff(
+    root: Path, inventory_only: bool = False, skip_results: bool = False
+) -> dict[str, Any]:
     inventory = check_inventory(root)
     checks: list[dict[str, Any]] = []
     if inventory["passed"] and not inventory_only:
@@ -180,6 +195,25 @@ def run_handoff(root: Path, inventory_only: bool = False) -> dict[str, Any]:
             run_check("python_compilation", [python, "-m", "compileall", "-q", "scripts", "tests"], root),
             run_check("unit_tests", [python, "-m", "unittest", "discover", "-s", "tests", "-v"], root),
         ]
+        formal_runs = list((root / "results").rglob("run-[0-9][0-9]"))
+        if formal_runs and not skip_results:
+            with tempfile.TemporaryDirectory() as directory:
+                checks.append(
+                    run_check(
+                        "result_collection",
+                        [
+                            python,
+                            "scripts/collect_results.py",
+                            "--results-root",
+                            "results",
+                            "--output-csv",
+                            f"{directory}/summary.csv",
+                            "--output-json",
+                            f"{directory}/summary.json",
+                        ],
+                        root,
+                    )
+                )
     passed = inventory["passed"] and all(check["passed"] for check in checks)
     return {
         "schema_version": 1,
@@ -195,9 +229,14 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--inventory-only", action="store_true")
+    parser.add_argument("--skip-results", action="store_true")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
-    report = run_handoff(args.root.resolve(), inventory_only=args.inventory_only)
+    report = run_handoff(
+        args.root.resolve(),
+        inventory_only=args.inventory_only,
+        skip_results=args.skip_results,
+    )
     rendered = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

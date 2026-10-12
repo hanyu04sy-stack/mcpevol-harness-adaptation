@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "checked_at": "2026-10-12T07:02:33.517462+00:00",
+  "upstream_clean": true,
+  "upstream_status": "",
+  "task_sha256_match": true,
+  "expected_task_sha256": "9e7ab1d858ae8d8df2808e46d804d94baf13a3e94ca6c57755d246c3a30f4d92",
+  "actual_task_sha256": "9e7ab1d858ae8d8df2808e46d804d94baf13a3e94ca6c57755d246c3a30f4d92",
+  "pinned_config_match": true,
+  "pinned_mismatches": [],
+  "warnings": []
+}

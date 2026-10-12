@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/summary.schema.json",
+  "title": "Collected MCPEvol experiment results",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "success_threshold", "details", "aggregates"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "success_threshold": {"type": "number", "minimum": 1, "maximum": 10},
+    "details": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/detail"}
+    },
+    "aggregates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/aggregate"}
+    }
+  },
+  "$defs": {
+    "nullableNumber": {"type": ["number", "null"]},
+    "detail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "version", "run_id", "task_idx", "tf", "pe", "ecs", "success", "failure_category", "prompt_tokens", "completion_tokens", "wall_clock_s", "task_status", "model", "judge", "mcp_status_at_start"],
+      "properties": {
+        "strategy": {"type": "string", "minLength": 1},
+        "version": {"enum": ["early", "middle", "late"]},
+        "run_id": {"type": "integer", "minimum": 1},
+        "task_idx": {"type": "integer", "minimum": 0},
+        "tf": {"type": "number", "minimum": 1, "maximum": 10},
+        "pe": {"type": "number", "minimum": 1, "maximum": 10},
+        "ecs": {"$ref": "#/$defs/nullableNumber"},
+        "success": {"type": "boolean"},
+        "failure_category": {"enum": ["", "under_update", "over_update", "other", "unknown"]},
+        "prompt_tokens": {"$ref": "#/$defs/nullableNumber"},
+        "completion_tokens": {"$ref": "#/$defs/nullableNumber"},
+        "wall_clock_s": {"$ref": "#/$defs/nullableNumber"},
+        "task_status": {"enum": ["affected", "retention", "unknown"]},
+        "model": {"type": "string"},
+        "judge": {"type": "string"},
+        "mcp_status_at_start": {"type": ["object", "null"]}
+      }
+    },
+    "aggregate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy", "version", "mean_tf", "mean_pe", "mean_ecs", "recovery_rate", "retention_rate", "total_cost_tokens", "n_runs", "n_tasks"],
+      "properties": {
+        "strategy": {"type": "string", "minLength": 1},
+        "version": {"enum": ["early", "middle", "late"]},
+        "mean_tf": {"type": "number"},
+        "mean_pe": {"type": "number"},
+        "mean_ecs": {"$ref": "#/$defs/nullableNumber"},
+        "recovery_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
+        "retention_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
+        "total_cost_tokens": {"type": "integer", "minimum": 0},
+        "n_runs": {"type": "integer", "minimum": 1},
+        "n_tasks": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

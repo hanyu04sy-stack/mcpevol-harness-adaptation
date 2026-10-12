@@ -18,8 +18,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-
-VERSIONS = ("early", "middle", "late")
+from experiment_config import VERSIONS
 TERMINAL_STATUSES = {"connected", "failed"}
 
 

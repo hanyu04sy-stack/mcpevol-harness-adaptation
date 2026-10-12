@@ -317,8 +317,9 @@ def load_experiment(
                 f"startup stability {version} server count does not match config"
             )
 
-    if runner.get("step") != 3:
-        raise ConfigError("runner.step must be 3 for benchmark execution")
+    runner_step = runner.get("step")
+    if not isinstance(runner_step, int) or runner_step < 1:
+        raise ConfigError("runner.step must be a positive integer")
     if runner.get("part_num") != -1 or runner.get("part_idx") != 0:
         raise ConfigError("pilot configuration must run the complete fixed subset")
     if runner.get("fschat") is not False:
@@ -371,10 +372,17 @@ def load_experiment(
         "model_base_url_env": _require(model, "base_url_env", str, "model"),
         "judge_name": judge["name"],
         "judge_temperature": float(judge_temperature),
+        "judge_api_key_env": _require(judge, "api_key_env", str, "judge"),
+        "judge_base_url_env": _require(judge, "base_url_env", str, "judge"),
+        "runner_step": runner_step,
+        "runner_part_num": runner["part_num"],
+        "runner_part_idx": runner["part_idx"],
+        "runner_fschat": runner["fschat"],
         "mcp_url": mcp_url,
         "server_config": server_config,
         "configured_server_count": len(configured_servers),
         "output_dir": output_dir.resolve(),
+        "output_root": output_root.resolve(),
         "env_file": env_file,
     }
 
@@ -396,10 +404,16 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "max_completion_tokens",
         "judge_name",
         "judge_temperature",
+        "judge_api_key_env",
+        "judge_base_url_env",
+        "runner_step",
         "mcp_url",
         "configured_server_count",
     )
     result = {key: resolved[key] for key in keys}
+    for key in ("strategy", "run_id"):
+        if key in resolved:
+            result[key] = resolved[key]
     for key in ("harness_manifest_sha256", "harness_files"):
         if key in resolved:
             result[key] = resolved[key]
@@ -411,6 +425,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "startup_stability_report",
         "server_config",
         "output_dir",
+        "output_root",
     ):
         result[key] = str(resolved[key]) if resolved[key] is not None else None
     return result

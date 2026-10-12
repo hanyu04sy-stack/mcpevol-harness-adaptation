@@ -11,8 +11,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from experiment_config import VERSIONS
 
-VERSIONS = {"early", "middle", "late"}
+VERSION_SET = set(VERSIONS)
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
@@ -131,7 +132,7 @@ def validate_experiment_config(root: Path, path: Path) -> dict[str, Any]:
     )
 
     versions = config.get("mcp", {}).get("versions", {})
-    require(set(versions) == VERSIONS, f"{path}: MCP versions must be early/middle/late")
+    require(set(versions) == VERSION_SET, f"{path}: MCP versions must be early/middle/late")
     urls: list[str] = []
     for version in sorted(VERSIONS):
         entry = versions[version]
@@ -161,7 +162,7 @@ def validate_experiment_config(root: Path, path: Path) -> dict[str, Any]:
         stability = validate_linked_report(root, dataset, "startup_stability_report")
         require(stability.get("all_versions_stable") is True, "startup stability report failed")
         require(int(stability.get("trial_count", 0)) >= 2, "fewer than two startup trials")
-        require(set(stability.get("versions", {})) == VERSIONS, "stability report versions mismatch")
+        require(set(stability.get("versions", {})) == VERSION_SET, "stability report versions mismatch")
 
     return {"config": str(path.relative_to(root)), "task_file": relative_task_path, "tasks": len(task_ids)}
 
@@ -206,7 +207,11 @@ def validate_tool_schema_reports(root: Path, benchmark_commit: str) -> dict[str,
 
 
 def validate_repository(root: Path) -> dict[str, Any]:
-    config_paths = sorted((root / "configs").glob("*.json"))
+    config_paths = [
+        path
+        for path in sorted((root / "configs").glob("*.json"))
+        if isinstance(read_json(path), dict) and "experiment_name" in read_json(path)
+    ]
     require(bool(config_paths), "no JSON configs found")
     configs = [validate_experiment_config(root, path) for path in config_paths]
     experiment = read_json(root / "configs/experiment.json")
