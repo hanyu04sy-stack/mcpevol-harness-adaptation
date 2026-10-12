@@ -1,7 +1,8 @@
 import io
+import json
 import sys
+import tempfile
 import unittest
-from contextlib import redirect_stdout
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -10,174 +11,139 @@ sys.path.insert(0, str(Path(__file__).parents[1] / "scripts"))
 import check_model_connection  # noqa: E402
 
 
-class FakeCompletions:
-    def __init__(self, outcome):
-        self.outcome = outcome
-
-    def create(self, **kwargs):
-        if isinstance(self.outcome, list):
-            outcome = self.outcome.pop(0)
-            if isinstance(outcome, BaseException):
-                raise outcome
-            return outcome
-        if isinstance(self.outcome, BaseException):
-            raise self.outcome
-        return self.outcome
-
-
-def factory_for(outcome):
-    def factory(**kwargs):
-        return SimpleNamespace(
-            chat=SimpleNamespace(completions=FakeCompletions(outcome))
-        )
-
-    return factory
-
-
 class StatusError(Exception):
     def __init__(self, message, status_code):
         super().__init__(message)
         self.status_code = status_code
 
 
+def chat_response():
+    return SimpleNamespace(
+        model="deepseek-chat",
+        choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))],
+        usage=SimpleNamespace(prompt_tokens=5, completion_tokens=1),
+    )
+
+
+def tool_response(arguments='{"city": "Beijing"}'):
+    call = SimpleNamespace(
+        function=SimpleNamespace(name="get_weather", arguments=arguments)
+    )
+    return SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(content=None, tool_calls=[call])
+            )
+        ]
+    )
+
+
+def client_factory(chat_outcome=None, tool_outcome=None):
+    def factory(**kwargs):
+        class Completions:
+            def create(self, **request):
+                outcome = tool_outcome if "tools" in request else chat_outcome
+                if isinstance(outcome, BaseException):
+                    raise outcome
+                return outcome
+
+        return SimpleNamespace(chat=SimpleNamespace(completions=Completions()))
+
+    return factory
+
+
 class CheckModelConnectionTest(unittest.TestCase):
-    def run_case(self, outcome):
-        output = io.StringIO()
-        with redirect_stdout(output):
-            passed = check_model_connection.check_target(
-                label="agent",
-                model="configured-model",
-                api_key="secret",
-                base_url="https://example.invalid",
-                credential_source="MODEL_API_KEY",
-                client_factory=factory_for(outcome),
-                connectivity_checker=lambda url: None,
-            )
-        return passed, output.getvalue()
-
-    def test_success_prints_usage_and_returns_true(self):
-        response = SimpleNamespace(
-            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))],
-            usage=SimpleNamespace(prompt_tokens=8, completion_tokens=1),
-        )
-        passed, output = self.run_case(response)
-        self.assertTrue(passed)
-        self.assertIn("HTTP connectivity: ok", output)
-        self.assertIn("prompt_tokens: 8", output)
-
-    def test_401_has_actionable_advice(self):
-        passed, output = self.run_case(StatusError("bad key", 401))
-        self.assertFalse(passed)
-        self.assertIn("replace the API key", output)
-
-    def test_model_not_found_has_actionable_advice(self):
-        passed, output = self.run_case(Exception("model not found"))
-        self.assertFalse(passed)
-        self.assertIn("verify model.name", output)
-
-    def test_timeout_has_actionable_advice(self):
-        passed, output = self.run_case(TimeoutError("timed out"))
-        self.assertFalse(passed)
-        self.assertIn("network/proxy", output)
-
-    def test_tool_call_self_test_passes_for_valid_arguments(self):
-        tool_call = SimpleNamespace(
-            function=SimpleNamespace(
-                name="get_weather", arguments='{"city": "Beijing"}'
-            )
-        )
-        response = SimpleNamespace(
-            choices=[
-                SimpleNamespace(
-                    message=SimpleNamespace(
-                        content=None, tool_calls=[tool_call]
-                    )
-                )
-            ]
-        )
-        output = io.StringIO()
-        with redirect_stdout(output):
-            passed = check_model_connection.tool_call_self_test(
-                factory_for(response)(), "deepseek-chat"
-            )
-        self.assertTrue(passed)
-        self.assertIn("Tool-calling self-test: PASS", output.getvalue())
-        self.assertIn('"city": "Beijing"', output.getvalue())
-
-    def test_tool_call_self_test_reports_malformed_json_as_compatibility_issue(self):
-        tool_call = SimpleNamespace(
-            function=SimpleNamespace(
-                name="get_weather", arguments='{city: "Beijing"}'
-            )
-        )
-        response = SimpleNamespace(
-            choices=[
-                SimpleNamespace(
-                    message=SimpleNamespace(
-                        content=None, tool_calls=[tool_call]
-                    )
-                )
-            ]
-        )
-        output = io.StringIO()
-        with redirect_stdout(output):
-            passed = check_model_connection.tool_call_self_test(
-                factory_for(response)(), "deepseek-chat"
-            )
-        self.assertFalse(passed)
-        self.assertIn("malformed tool arguments", output.getvalue())
-        self.assertIn("DeepSeek compatibility issue", output.getvalue())
-
-    def test_bare_deepseek_url_probes_plain_then_v1(self):
-        self.assertEqual(
-            check_model_connection.endpoint_candidates("https://api.deepseek.com"),
-            ["https://api.deepseek.com", "https://api.deepseek.com/v1"],
-        )
-        self.assertEqual(
-            check_model_connection.endpoint_candidates(
-                "https://api.deepseek.com/v1"
+    def make_files(self, root: Path) -> tuple[Path, Path]:
+        (root / "configs").mkdir()
+        config = {
+            "model": {
+                "name": "deepseek-chat",
+                "api_key_env": "MODEL_API_KEY",
+                "base_url_env": "MODEL_BASE_URL",
+                "max_completion_tokens": 100,
+            },
+            "judge": {"name": "deepseek-chat"},
+            "dataset": {"size": 30},
+        }
+        config_path = root / "configs/experiment.json"
+        config_path.write_text(json.dumps(config), encoding="utf-8")
+        (root / "configs/pricing.json").write_text(
+            json.dumps(
+                {
+                    "models": {
+                        "deepseek-chat": {
+                            "prompt_per_mtok_usd": 0.27,
+                            "completion_per_mtok_usd": 1.10,
+                        }
+                    }
+                }
             ),
-            ["https://api.deepseek.com/v1"],
+            encoding="utf-8",
         )
-
-    def test_probe_uses_v1_when_plain_endpoint_fails(self):
-        attempted = []
-        success = SimpleNamespace(
-            choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))],
-            usage=SimpleNamespace(prompt_tokens=8, completion_tokens=1),
+        env_path = root / ".env"
+        env_path.write_text(
+            "MODEL_API_KEY=secret\nMODEL_BASE_URL=https://api.deepseek.com\n",
+            encoding="utf-8",
         )
+        return config_path, env_path
 
-        def factory(**kwargs):
-            attempted.append(kwargs["base_url"])
-            outcome = (
-                Exception("404 not found")
-                if kwargs["base_url"] == "https://api.deepseek.com"
-                else success
-            )
-            return SimpleNamespace(
-                chat=SimpleNamespace(completions=FakeCompletions(outcome))
-            )
-
+    def run_case(self, root: Path, factory):
+        config, env = self.make_files(root)
         output = io.StringIO()
-        with redirect_stdout(output):
-            passed = check_model_connection.check_target(
-                label="agent",
-                model="deepseek-chat",
-                api_key="secret",
-                base_url="https://api.deepseek.com",
-                credential_source="MODEL_API_KEY",
-                client_factory=factory,
-                connectivity_checker=lambda url: None,
+        code = check_model_connection.run_self_check(
+            config_path=config,
+            env_file=env,
+            client_factory=factory,
+            environ={},
+            stream=output,
+        )
+        return code, output.getvalue()
+
+    def test_all_four_checks_pass_and_exit_zero(self):
+        with tempfile.TemporaryDirectory() as directory:
+            code, output = self.run_case(
+                Path(directory),
+                client_factory(chat_response(), tool_response()),
             )
-        self.assertTrue(passed)
-        self.assertEqual(
-            attempted,
-            ["https://api.deepseek.com", "https://api.deepseek.com/v1"],
-        )
-        self.assertIn(
-            "Detected DeepSeek endpoint: https://api.deepseek.com/v1",
-            output.getvalue(),
-        )
+        self.assertEqual(code, 0)
+        self.assertIn("[PASS] 1. Chat completion", output)
+        self.assertIn("[PASS] 4. Tool calling", output)
+        self.assertIn("All checks passed", output)
+        self.assertNotIn("secret", output)
+
+    def test_chat_401_exits_one_with_fix(self):
+        with tempfile.TemporaryDirectory() as directory:
+            code, output = self.run_case(
+                Path(directory),
+                client_factory(StatusError("Invalid API key", 401), tool_response()),
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("[FAIL] 1. Chat completion", output)
+        self.assertIn("Fix: open .env", output)
+
+    def test_malformed_tool_arguments_exits_one_with_compatibility_advice(self):
+        with tempfile.TemporaryDirectory() as directory:
+            code, output = self.run_case(
+                Path(directory),
+                client_factory(chat_response(), tool_response("{city: Beijing}")),
+            )
+        self.assertEqual(code, 1)
+        self.assertIn("[FAIL] 4. Tool calling", output)
+        self.assertIn("DeepSeek tool calling compatibility", output)
+
+    def test_missing_env_exits_two(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = io.StringIO()
+            code = check_model_connection.run_self_check(
+                config_path=root / "configs/experiment.json",
+                env_file=root / ".env",
+                client_factory=client_factory(None, None),
+                environ={},
+                stream=output,
+            )
+        self.assertEqual(code, 2)
+        self.assertIn("cp .env.example .env first", output.getvalue())
 
 
 if __name__ == "__main__":
