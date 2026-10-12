@@ -9,7 +9,7 @@ import run_judge  # noqa: E402
 
 
 class RunJudgeTest(unittest.TestCase):
-    def test_deepseek_judge_uses_non_thinking_json_output(self) -> None:
+    def test_judge_uses_configured_model_and_token_limit(self) -> None:
         calls = []
 
         class Completions:
@@ -30,8 +30,7 @@ class RunJudgeTest(unittest.TestCase):
             {"question": "q", "answer": "a", "trajectory_messages": []},
             client=client,
             prompt_builder=lambda *args, **kwargs: "Return JSON.",
-            model="deepseek-flash",
-            provider="deepseek",
+            model="deepseek-chat",
             temperature=0.0,
             max_tokens=4096,
             num_runs=1,
@@ -39,10 +38,7 @@ class RunJudgeTest(unittest.TestCase):
         )
         self.assertEqual(result["aggregate"]["successful_runs"], 1)
         self.assertEqual(calls[0]["max_tokens"], 4096)
-        self.assertEqual(calls[0]["response_format"], {"type": "json_object"})
-        self.assertEqual(
-            calls[0]["extra_body"], {"thinking": {"type": "disabled"}}
-        )
+        self.assertNotIn("response_format", calls[0])
 
 
 if __name__ == "__main__":

@@ -71,6 +71,48 @@ def load_env_file(
     return loaded
 
 
+def resolve_runtime_credentials(
+    resolved: dict[str, Any],
+    environ: MutableMapping[str, str] | None = None,
+) -> dict[str, Any]:
+    """Resolve model credentials and safe same-model judge fallbacks."""
+    source = os.environ if environ is None else environ
+    model_key_name = str(resolved["model_api_key_env"])
+    model_url_name = str(resolved["model_base_url_env"])
+    judge_key_name = str(resolved["judge_api_key_env"])
+    judge_url_name = str(resolved["judge_base_url_env"])
+    model_key = source.get(model_key_name, "").strip()
+    model_url = source.get(model_url_name, "").strip()
+    judge_key = source.get(judge_key_name, "").strip()
+    judge_url = source.get(judge_url_name, "").strip()
+    same_model = resolved["model_name"] == resolved["judge_name"]
+    if same_model and not judge_key:
+        judge_key = model_key
+        judge_key_source = f"{model_key_name} (fallback)"
+    else:
+        judge_key_source = judge_key_name
+    if same_model and not judge_url:
+        judge_url = model_url
+        judge_url_source = f"{model_url_name} (fallback)"
+    else:
+        judge_url_source = judge_url_name
+    resolved.update(
+        {
+            "model_api_key_resolved": model_key,
+            "model_base_url_resolved": model_url,
+            "judge_api_key_resolved": judge_key,
+            "judge_base_url_resolved": judge_url,
+            "judge_api_key_source": judge_key_source,
+            "judge_base_url_source": judge_url_source,
+        }
+    )
+    if same_model and model_url and judge_url and model_url.rstrip("/") != judge_url.rstrip("/"):
+        raise ConfigError(
+            "model and judge must use the same base URL when their model names match"
+        )
+    return resolved
+
+
 def _require(mapping: dict[str, Any], key: str, kind: type, where: str) -> Any:
     value = mapping.get(key)
     if not isinstance(value, kind):
@@ -110,6 +152,9 @@ def load_experiment(
     harness = _require(raw, "harness", dict, "config")
     model = _require(raw, "model", dict, "config")
     judge = _require(raw, "judge", dict, "config")
+    openai_client = raw.get("openai_client", {})
+    if not isinstance(openai_client, dict):
+        raise ConfigError("config.openai_client must be dict")
     runner = _require(raw, "runner", dict, "config")
     mcp = _require(raw, "mcp", dict, "config")
     output = _require(raw, "output", dict, "config")
@@ -252,7 +297,7 @@ def load_experiment(
             raise ConfigError(f"{version} did not pass repeated startup validation")
 
     model_provider = _require(model, "provider", str, "model")
-    if model_provider not in {"openai_compatible", "deepseek", "local_ollama"}:
+    if model_provider not in {"openai_compatible", "local_ollama"}:
         raise ConfigError("model.provider is unsupported")
     model_name = _require(model, "name", str, "model")
     temperature = model.get("temperature")
@@ -274,6 +319,16 @@ def load_experiment(
     ):
         if not ENV_NAME.fullmatch(name):
             raise ConfigError(f"{where} is not a valid environment variable name")
+    timeout_seconds = openai_client.get("timeout_seconds", 120)
+    max_retries = openai_client.get("max_retries", 3)
+    if (
+        not isinstance(timeout_seconds, (int, float))
+        or isinstance(timeout_seconds, bool)
+        or timeout_seconds <= 0
+    ):
+        raise ConfigError("openai_client.timeout_seconds must be positive")
+    if not isinstance(max_retries, int) or isinstance(max_retries, bool) or max_retries < 0:
+        raise ConfigError("openai_client.max_retries must be a non-negative integer")
 
     versions = _require(mcp, "versions", dict, "mcp")
     if set(versions) != set(VERSIONS):
@@ -351,7 +406,7 @@ def load_experiment(
         must_exist=False,
     )
 
-    return {
+    resolved = {
         "project_root": project_root,
         "config_path": config_path.resolve(),
         "config_sha256": sha256(config_path),
@@ -378,6 +433,8 @@ def load_experiment(
         "judge_temperature": float(judge_temperature),
         "judge_api_key_env": _require(judge, "api_key_env", str, "judge"),
         "judge_base_url_env": _require(judge, "base_url_env", str, "judge"),
+        "openai_timeout_seconds": float(timeout_seconds),
+        "openai_max_retries": max_retries,
         "runner_step": runner_step,
         "runner_part_num": runner["part_num"],
         "runner_part_idx": runner["part_idx"],
@@ -389,6 +446,7 @@ def load_experiment(
         "output_root": output_root.resolve(),
         "env_file": env_file,
     }
+    return resolve_runtime_credentials(resolved)
 
 
 def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
@@ -411,6 +469,8 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "judge_temperature",
         "judge_api_key_env",
         "judge_base_url_env",
+        "openai_timeout_seconds",
+        "openai_max_retries",
         "runner_step",
         "mcp_url",
         "configured_server_count",

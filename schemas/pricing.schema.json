@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/pricing.schema.json",
+  "title": "Model pricing configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "models"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "models": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prompt_per_mtok_usd", "completion_per_mtok_usd"],
+        "properties": {
+          "prompt_per_mtok_usd": {"type": "number", "minimum": 0},
+          "completion_per_mtok_usd": {"type": "number", "minimum": 0},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}

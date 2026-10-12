@@ -4,7 +4,7 @@
   "title": "MCPEvol experiment configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "experiment_name", "benchmark", "dataset", "harness", "model", "judge", "runner", "mcp", "output", "environment"],
+  "required": ["schema_version", "experiment_name", "benchmark", "dataset", "harness", "model", "judge", "openai_client", "runner", "mcp", "output", "environment"],
   "properties": {
     "schema_version": {"const": 1},
     "experiment_name": {"type": "string", "minLength": 1},
@@ -49,6 +49,7 @@
     },
     "model": {"$ref": "#/$defs/model"},
     "judge": {"$ref": "#/$defs/judge"},
+    "openai_client": {"$ref": "#/$defs/openaiClient"},
     "runner": {
       "type": "object",
       "additionalProperties": false,
@@ -100,7 +101,7 @@
       "additionalProperties": false,
       "required": ["provider", "name", "temperature", "max_completion_tokens", "api_key_env", "base_url_env"],
       "properties": {
-        "provider": {"enum": ["openai_compatible", "deepseek", "local_ollama"]},
+        "provider": {"enum": ["openai_compatible", "local_ollama"]},
         "name": {"type": "string", "minLength": 1},
         "temperature": {"type": "number", "minimum": 0},
         "max_completion_tokens": {"type": "integer", "minimum": 1},
@@ -117,6 +118,15 @@
         "temperature": {"type": "number", "minimum": 0},
         "api_key_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
         "base_url_env": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+      }
+    },
+    "openaiClient": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["timeout_seconds", "max_retries"],
+      "properties": {
+        "timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "max_retries": {"type": "integer", "minimum": 0}
       }
     },
     "mcpVersion": {

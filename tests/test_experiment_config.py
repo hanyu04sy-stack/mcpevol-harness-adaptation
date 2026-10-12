@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 
@@ -14,16 +15,16 @@ import run_benchmark  # noqa: E402
 
 
 class ExperimentConfigTest(unittest.TestCase):
-    def test_repository_external_configs_pin_deepseek_flash(self) -> None:
+    def test_repository_external_configs_pin_deepseek_chat(self) -> None:
         root = SCRIPTS.parent
         for relative in ("configs/experiment.json", "configs/canary-real.json"):
             config = json.loads((root / relative).read_text(encoding="utf-8"))
-            self.assertEqual(config["model"]["provider"], "deepseek")
-            self.assertEqual(config["model"]["name"], "deepseek-flash")
-            self.assertEqual(config["judge"]["name"], "deepseek-flash")
+            self.assertEqual(config["model"]["provider"], "openai_compatible")
+            self.assertEqual(config["model"]["name"], "deepseek-chat")
+            self.assertEqual(config["judge"]["name"], "deepseek-chat")
         env_example = (root / ".env.example").read_text(encoding="utf-8")
         self.assertIn("MODEL_BASE_URL=https://api.deepseek.com", env_example)
-        self.assertIn("JUDGE_BASE_URL=https://api.deepseek.com", env_example)
+        self.assertIn("JUDGE_BASE_URL=", env_example)
 
     def make_project(self, root: Path) -> Path:
         (root / "benchmark/src").mkdir(parents=True)
@@ -85,6 +86,7 @@ class ExperimentConfigTest(unittest.TestCase):
                 "api_key_env": "JUDGE_API_KEY",
                 "base_url_env": "JUDGE_BASE_URL",
             },
+            "openai_client": {"timeout_seconds": 120, "max_retries": 3},
             "runner": {"step": 3, "part_num": -1, "part_idx": 0, "fschat": False},
             "mcp": {"versions": versions},
             "output": {"root": "results", "layout": "{experiment_name}/{version}"},
@@ -201,15 +203,28 @@ class ExperimentConfigTest(unittest.TestCase):
 
         def upstream_init(instance: object, **kwargs: object) -> None:
             captured.update(kwargs)
+            instance.client = SimpleNamespace(
+                timeout=None,
+                max_retries=None,
+                chat=SimpleNamespace(
+                    completions=SimpleNamespace(create=lambda **request: request)
+                ),
+            )
+            instance.model_name = "model"
 
         configured = run_benchmark.configured_initializer(
             upstream_init,
-            {"temperature": 0.0, "max_completion_tokens": 4096},
+            {
+                "temperature": 0.0,
+                "max_completion_tokens": 4096,
+                "openai_timeout_seconds": 120.0,
+                "openai_max_retries": 3,
+            },
             "secret",
             "https://example.invalid/v1",
         )
         configured(
-            object(),
+            SimpleNamespace(),
             api_key="your api key",
             model_url="your api base url",
             temperature=0.2,
@@ -220,7 +235,7 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(captured["temperature"], 0.0)
         self.assertEqual(captured["max_new_tokens"], 4096)
 
-    def test_deepseek_initializer_uses_supported_non_thinking_request(self) -> None:
+    def test_initializer_applies_timeout_retry_and_max_tokens(self) -> None:
         class Completions:
             def create(self, **kwargs: object) -> object:
                 return kwargs
@@ -230,20 +245,23 @@ class ExperimentConfigTest(unittest.TestCase):
                 completions = Completions()
 
             chat = Chat()
+            timeout = None
+            max_retries = None
 
         class Instance:
             pass
 
         def upstream_init(instance: object, **kwargs: object) -> None:
             instance.client = Client()
-            instance.model_name = "deepseek-flash"
+            instance.model_name = "deepseek-chat"
 
         configured = run_benchmark.configured_initializer(
             upstream_init,
             {
-                "model_provider": "deepseek",
                 "temperature": 0.0,
                 "max_completion_tokens": 4096,
+                "openai_timeout_seconds": 120.0,
+                "openai_max_retries": 3,
             },
             "secret",
             "https://api.deepseek.com",
@@ -252,18 +270,31 @@ class ExperimentConfigTest(unittest.TestCase):
         configured(instance)
         self.assertEqual(instance.chat.keywords["max_tokens"], 4096)
         self.assertNotIn("max_completion_tokens", instance.chat.keywords)
-        self.assertEqual(
-            instance.chat.keywords["extra_body"],
-            {"thinking": {"type": "disabled"}},
-        )
+        self.assertEqual(instance.client.timeout, 120.0)
+        self.assertEqual(instance.client.max_retries, 3)
 
-    def test_deepseek_endpoint_guard_rejects_openrouter(self) -> None:
-        resolved = {"model_provider": "deepseek"}
-        run_benchmark.validate_model_endpoint(resolved, "https://api.deepseek.com")
-        with self.assertRaisesRegex(experiment_config.ConfigError, "official endpoint"):
-            run_benchmark.validate_model_endpoint(
-                resolved, "https://openrouter.ai/api/v1"
-            )
+    def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
+        resolved = {
+            "model_name": "deepseek-chat",
+            "judge_name": "deepseek-chat",
+            "model_api_key_env": "MODEL_API_KEY",
+            "model_base_url_env": "MODEL_BASE_URL",
+            "judge_api_key_env": "JUDGE_API_KEY",
+            "judge_base_url_env": "JUDGE_BASE_URL",
+        }
+        experiment_config.resolve_runtime_credentials(
+            resolved,
+            {
+                "MODEL_API_KEY": "model-secret",
+                "MODEL_BASE_URL": "https://provider.invalid",
+                "JUDGE_API_KEY": "",
+                "JUDGE_BASE_URL": "",
+            },
+        )
+        self.assertEqual(resolved["judge_api_key_resolved"], "model-secret")
+        self.assertEqual(
+            resolved["judge_base_url_resolved"], "https://provider.invalid"
+        )
 
     def test_harness_loader_audits_files_and_deduplicates_original_rule(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

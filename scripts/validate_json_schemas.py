@@ -20,6 +20,7 @@ SCHEMA_FILES = {
     "tool_schema": "tool-schema-report.schema.json",
     "tool_changes": "tool-changes.schema.json",
     "summary": "summary.schema.json",
+    "pricing": "pricing.schema.json",
 }
 
 
@@ -34,6 +35,7 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
         for path in sorted((root / "configs").glob("*.json"))
         if "experiment_name" in read_json(path)
     )
+    targets.append(("pricing", root / "configs/pricing.json"))
     targets.extend(("tasks", path) for path in sorted((root / "data/subsets").glob("*/test_cases.json")))
     targets.extend(("manifest", path) for path in sorted((root / "data/subsets").glob("*/manifest.json")))
     targets.extend(

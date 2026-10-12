@@ -14,14 +14,20 @@ cp .env.example .env
 
 Set `MODEL_API_KEY` only in the local `.env`; the checked-in example already
 sets `MODEL_BASE_URL=https://api.deepseek.com` for the pinned
-`deepseek-flash` model. Git ignores `.env`. The runner parses `NAME=value`
+`deepseek-chat` model. Git ignores `.env`. The runner parses `NAME=value`
 directly; it never executes the file through a shell, overwrites pre-existing
 environment variables, or writes credentials to logs or metadata.
 
-The runner rejects a missing or non-official DeepSeek endpoint before starting
-a paid run. It sends DeepSeek's supported `max_tokens` parameter and explicitly
-uses non-thinking mode, which keeps the pinned multi-turn tool loop compatible
-and limits reasoning-token cost.
+Leave `JUDGE_API_KEY` and `JUDGE_BASE_URL` blank when judge and agent use the
+same model; the judge safely inherits `MODEL_*`. Client timeout and retry values
+come from `openai_client` in the experiment config.
+
+## Model provider notes
+
+- DeepSeek endpoint: `https://api.deepseek.com`; do not append `/v1` unless the provider requires it.
+- The configured V3 slug is `deepseek-chat`. Do not use `deepseek-reasoner` as the tool-calling agent.
+- Run `.venv/bin/python scripts/check_model_connection.py` before any paid batch.
+- Provider slugs and prices change. A model-not-found result means the config must be updated before continuing.
 
 ## 3. Preflight checks
 
@@ -91,9 +97,8 @@ The check must pass before B or C compares strategies.
 ## 6. Judge
 
 The pinned upstream runner creates trajectories but does not automatically
-score them. Configure `JUDGE_API_KEY` in `.env`; keep the example's
-`JUDGE_BASE_URL=https://api.deepseek.com`,
-then run the separate judge phase with the same version, strategy, and run ID:
+score them. The judge inherits the agent key and endpoint by default. Run the
+separate judge phase with the same version, strategy, and run ID:
 
 ```bash
 .venv/bin/python scripts/run_judge.py \

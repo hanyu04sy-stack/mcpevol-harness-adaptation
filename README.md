@@ -115,11 +115,12 @@ The external-model canary uses fixed upstream runnable tasks 144 and 161. Creden
 
 ```bash
 .venv/bin/python scripts/configure_api_credentials.py
+.venv/bin/python scripts/check_model_connection.py
 .venv/bin/python scripts/check_experiment_config.py --config configs/canary-real.json
 .venv/bin/python scripts/run_real_canary.py --overwrite
 ```
 
-The shared external model is `deepseek-flash`, using DeepSeek's official
+The shared external model is `deepseek-chat`, using DeepSeek's official
 OpenAI-compatible endpoint. Enter a DeepSeek API key and accept the default
 endpoint when prompted:
 
@@ -130,16 +131,21 @@ endpoint when prompted:
 The resulting local `.env` uses `https://api.deepseek.com`. To update only the
 agent endpoint in an existing credential file, run
 `.venv/bin/python scripts/configure_api_credentials.py --set-base-url https://api.deepseek.com`.
-The credential helper reuses the same key for `JUDGE_API_KEY` because the
-agent and judge are pinned to the same provider. You may replace it locally
-with a separate DeepSeek key. Credentials are never committed.
-
-DeepSeek enables thinking by default. The adapters explicitly disable it for
-both the agent and judge: this avoids unsupported multi-turn reasoning-history
-requirements in the pinned upstream harness and prevents unnecessary reasoning
-token cost. The judge also requests native JSON output to reduce paid retries.
+Leave `JUDGE_API_KEY` and `JUDGE_BASE_URL` blank to inherit `MODEL_*`.
+Credentials are never committed. The V3 slug and prices can change; always run
+the connection check and verify `configs/pricing.json` before a paid run.
 
 Only redacted reports are committed. `.env`, raw `results/`, and generated 1MCP configurations are ignored. Any failed version or task produces a nonzero exit status.
+
+## Switching models
+
+The default is `deepseek-chat` for lower experimental cost. To switch models,
+update both model names in `configs/experiment.json` and
+`configs/canary-real.json`, update `configs/fairness-pins.json`, add current
+rates to `configs/pricing.json`, and point the local `.env` at the matching
+OpenAI-compatible endpoint. Agent and judge must remain identical across all
+three harness strategies. Run `scripts/check_model_connection.py` and
+`scripts/check_handoff.py` after every switch.
 
 ### Free local-model canary
 
@@ -159,7 +165,7 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Early/Middle/Late generation and environment validation
 - [x] Cross-platform installer and verified bundle downloader
 - [x] Pinned 1MCP 0.38.2 and benchmark dependencies
-- [x] Unified `deepseek-flash` agent and judge configuration
+- [x] Unified `deepseek-chat` agent and judge configuration (OpenAI-compatible and config-driven)
 - [x] Repaired Late dataless files, increasing usable servers from 23 to 54
 - [x] Fixed 30-task set with 26/26 dependencies available in all versions
 - [x] Three independent cold starts per version

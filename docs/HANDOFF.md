@@ -32,6 +32,15 @@ Create the local credential file:
 cp .env.example .env
 ```
 
+First verify the configured key, endpoint, model, and judge fallback:
+
+```bash
+.venv/bin/python scripts/check_model_connection.py
+```
+
+If this passes, the credentials are ready. If it fails, follow the actionable
+error before starting 1MCP or a paid benchmark run.
+
 Each version uses two terminals. For Early:
 
 ```bash

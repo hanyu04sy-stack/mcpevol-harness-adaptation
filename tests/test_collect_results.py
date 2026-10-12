@@ -21,8 +21,8 @@ class CollectResultsTest(unittest.TestCase):
                     "strategy": strategy,
                     "version": "late",
                     "run_id": 1,
-                    "model": {"name": "gpt-4o"},
-                    "judge": {"name": "gpt-4o"},
+                    "model": {"name": "deepseek-chat"},
+                    "judge": {"name": "deepseek-chat"},
                     "mcp_status_at_start": {"connected_servers": 26},
                     "total_prompt_tokens": 100,
                     "total_completion_tokens": 20,
@@ -69,6 +69,7 @@ class CollectResultsTest(unittest.TestCase):
             original = next(item for item in aggregates if item["strategy"] == "original")
             self.assertEqual(original["mean_tf"], 8.0)
             self.assertEqual(original["total_cost_tokens"], 120)
+            self.assertAlmostEqual(original["est_cost_usd"], 0.000049)
 
 
 if __name__ == "__main__":

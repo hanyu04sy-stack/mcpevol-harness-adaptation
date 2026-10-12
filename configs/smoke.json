@@ -31,6 +31,10 @@
     "api_key_env": "JUDGE_API_KEY",
     "base_url_env": "JUDGE_BASE_URL"
   },
+  "openai_client": {
+    "timeout_seconds": 120,
+    "max_retries": 3
+  },
   "runner": {
     "step": 3,
     "part_num": -1,

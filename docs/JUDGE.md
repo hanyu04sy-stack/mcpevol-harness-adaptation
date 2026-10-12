@@ -59,8 +59,10 @@ A benchmark run directory contains:
 ```
 
 `JUDGE_API_KEY` and `JUDGE_BASE_URL` are loaded from `.env` or the process
-environment. The shared configuration pins `deepseek-flash`, and the example
-environment uses DeepSeek's official `https://api.deepseek.com` endpoint.
-The adapter explicitly disables thinking and enables DeepSeek JSON Output,
-reducing invalid-response retries. Credential values are never written to
-metadata, results, or logs.
+environment. When blank and `judge.name == model.name`, they inherit `MODEL_*`.
+The shared configuration pins `deepseek-chat` and uses DeepSeek's official
+endpoint. Credential values are never written to metadata, results, or logs.
+
+JSON mode is intentionally not forced because provider behavior can vary. If
+JSON parsing repeatedly fails, retry with `--num-runs 3`; the existing parser
+accepts plain or fenced JSON and records every failed attempt for audit.

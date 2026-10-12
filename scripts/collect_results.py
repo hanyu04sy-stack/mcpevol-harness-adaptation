@@ -7,6 +7,7 @@ import argparse
 import csv
 import json
 import statistics
+import warnings
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -79,11 +80,20 @@ def metadata_name(value: Any) -> str:
     return str(value or "")
 
 
-def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def collect(
+    results_root: Path,
+    success_threshold: float,
+    pricing_path: Path | None = None,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     project_root = Path(__file__).resolve().parents[1]
+    pricing_path = pricing_path or project_root / "configs/pricing.json"
+    pricing = read_json(pricing_path).get("models", {})
+    if not isinstance(pricing, dict):
+        raise ValueError(f"{pricing_path}: models must be an object")
     statuses = manifest_statuses(project_root)
     details: list[dict[str, Any]] = []
-    run_costs: dict[tuple[str, str, int], dict[str, float]] = {}
+    run_costs: dict[tuple[str, str, int], dict[str, Any]] = {}
+    warned_models: set[str] = set()
 
     for run_dir in sorted(path for path in results_root.rglob("run-[0-9][0-9]") if path.is_dir()):
         metadata_path = run_dir / "run-metadata.json"
@@ -101,9 +111,27 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
         prompt_tokens = numeric(metadata.get("total_prompt_tokens"))
         completion_tokens = numeric(metadata.get("total_completion_tokens"))
         wall_clock = numeric(metadata.get("wall_clock_seconds"))
+        model_name = metadata_name(metadata.get("model") or metadata.get("model_name"))
+        rate = pricing.get(model_name)
+        est_cost: float | None = None
+        if rate is None:
+            if model_name not in warned_models:
+                warnings.warn(
+                    f"No price configured for model {model_name!r}; estimated cost is null",
+                    stacklevel=2,
+                )
+                warned_models.add(model_name)
+        elif prompt_tokens is not None and completion_tokens is not None:
+            est_cost = (
+                prompt_tokens / 1_000_000 * float(rate["prompt_per_mtok_usd"])
+                + completion_tokens
+                / 1_000_000
+                * float(rate["completion_per_mtok_usd"])
+            )
         run_costs[(strategy, version, run_id)] = {
-            "prompt": prompt_tokens or 0.0,
-            "completion": completion_tokens or 0.0,
+            "prompt": prompt_tokens,
+            "completion": completion_tokens,
+            "est_cost_usd": est_cost,
         }
         for task in rows:
             idx = int(task["task_idx"])
@@ -132,7 +160,7 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
                     "completion_tokens": completion_tokens,
                     "wall_clock_s": wall_clock,
                     "task_status": statuses.get(idx, "unknown"),
-                    "model": metadata_name(metadata.get("model") or metadata.get("model_name")),
+                    "model": model_name,
                     "judge": metadata_name(metadata.get("judge") or metadata.get("judge_name")),
                     "mcp_status_at_start": metadata.get("mcp_status_at_start"),
                 }
@@ -159,6 +187,7 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
         retention = [row for row in rows if row["task_status"] == "retention"]
         ecs_values = [row["ecs"] for row in rows if row["ecs"] is not None]
         keys = {key for key in run_costs if key[0] == strategy and key[1] == version}
+        costs = [run_costs[key]["est_cost_usd"] for key in keys]
         aggregates.append(
             {
                 "strategy": strategy,
@@ -173,8 +202,13 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
                     sum(row["success"] for row in retention) / len(retention) if retention else None
                 ),
                 "total_cost_tokens": int(
-                    sum(run_costs[key]["prompt"] + run_costs[key]["completion"] for key in keys)
+                    sum(
+                        (run_costs[key]["prompt"] or 0)
+                        + (run_costs[key]["completion"] or 0)
+                        for key in keys
+                    )
                 ),
+                "est_cost_usd": sum(costs) if costs and all(cost is not None for cost in costs) else None,
                 "n_runs": len({row["run_id"] for row in rows}),
                 "n_tasks": len(rows),
             }
@@ -219,9 +253,12 @@ def main() -> None:
     parser.add_argument("--output-csv", type=Path, default=Path("results/summary.csv"))
     parser.add_argument("--output-json", type=Path, default=Path("results/summary.json"))
     parser.add_argument("--success-threshold", type=float, default=6.0)
+    parser.add_argument("--pricing", type=Path, default=Path("configs/pricing.json"))
     args = parser.parse_args()
     try:
-        details, aggregates = collect(args.results_root, args.success_threshold)
+        details, aggregates = collect(
+            args.results_root, args.success_threshold, args.pricing
+        )
         write_outputs(
             details,
             aggregates,

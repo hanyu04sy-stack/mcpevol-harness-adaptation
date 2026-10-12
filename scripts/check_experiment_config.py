@@ -26,6 +26,8 @@ def main() -> None:
             "model_name",
             "temperature",
             "max_completion_tokens",
+            "openai_timeout_seconds",
+            "openai_max_retries",
             "judge_name",
             "judge_temperature",
         )

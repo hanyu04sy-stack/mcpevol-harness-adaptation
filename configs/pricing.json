@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "models": {
+    "deepseek-chat": {
+      "prompt_per_mtok_usd": 0.27,
+      "completion_per_mtok_usd": 1.10,
+      "note": "Historical DeepSeek V3 cache-miss price from the official V3 release. Prices and model availability can change; verify the official pricing page before every paid run."
+    },
+    "gpt-4o": {
+      "prompt_per_mtok_usd": 2.50,
+      "completion_per_mtok_usd": 10.00,
+      "note": "Reference price only; verify the provider price before use."
+    }
+  }
+}

@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import random
 import re
 import statistics
@@ -14,8 +13,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from experiment_config import ConfigError, VERSIONS, load_env_file, load_experiment
-from run_benchmark import load_harness, resolve_run_output, validate_model_endpoint
+from experiment_config import (
+    ConfigError,
+    VERSIONS,
+    load_env_file,
+    load_experiment,
+    resolve_runtime_credentials,
+)
+from run_benchmark import load_harness, resolve_run_output
 
 
 def extract_json(text: str) -> dict[str, Any]:
@@ -89,7 +94,6 @@ def judge_case(
     client: Any,
     prompt_builder: Any,
     model: str,
-    provider: str,
     temperature: float,
     max_tokens: int,
     num_runs: int,
@@ -115,9 +119,6 @@ def judge_case(
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        if provider == "deepseek":
-            request["extra_body"] = {"thinking": {"type": "disabled"}}
-            request["response_format"] = {"type": "json_object"}
         response = client.chat.completions.create(
             **request,
         )
@@ -166,7 +167,6 @@ def main() -> None:
             "run_dir": str(run_dir),
             "trajectory_files": [str(path.relative_to(run_dir)) for path in trajectories],
             "judge": {
-                "provider": resolved["model_provider"],
                 "name": resolved["judge_name"],
                 "temperature": resolved["judge_temperature"],
                 "api_key_env": resolved["judge_api_key_env"],
@@ -179,15 +179,23 @@ def main() -> None:
         if not trajectories:
             raise ConfigError(f"no upstream trajectories found under {run_dir}")
         load_env_file((args.env_file or Path(resolved["env_file"])).resolve())
-        key = os.environ.get(str(resolved["judge_api_key_env"]), "").strip()
-        base_url = os.environ.get(str(resolved["judge_base_url_env"]), "").strip() or None
+        resolve_runtime_credentials(resolved)
+        key = str(resolved["judge_api_key_resolved"])
+        base_url = str(resolved["judge_base_url_resolved"]) or None
         if not key:
-            raise ConfigError(f"missing {resolved['judge_api_key_env']}")
-        validate_model_endpoint(resolved, base_url)
+            raise ConfigError(
+                "Missing JUDGE_API_KEY (or MODEL_API_KEY as fallback). Since "
+                "model.name == judge.name, you can just fill MODEL_API_KEY."
+            )
 
         from openai import OpenAI
 
-        client = OpenAI(api_key=key, base_url=base_url)
+        client = OpenAI(
+            api_key=key,
+            base_url=base_url,
+            timeout=float(resolved["openai_timeout_seconds"]),
+            max_retries=int(resolved["openai_max_retries"]),
+        )
         prompt_builder = load_prompt_builder(Path(resolved["benchmark_root"]))
         task_dir = run_dir / "judge-tasks"
         task_dir.mkdir(parents=True, exist_ok=True)
@@ -200,7 +208,6 @@ def main() -> None:
                 client=client,
                 prompt_builder=prompt_builder,
                 model=str(resolved["judge_name"]),
-                provider=str(resolved["model_provider"]),
                 temperature=float(resolved["judge_temperature"]),
                 max_tokens=int(resolved["max_completion_tokens"]),
                 num_runs=max(1, args.num_runs),

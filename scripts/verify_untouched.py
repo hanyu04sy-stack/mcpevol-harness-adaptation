@@ -38,6 +38,19 @@ def git(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
+def verify_run_metadata_model(metadata_path: Path, pins_path: Path) -> None:
+    """Ensure recorded runtime metadata uses the fairness-pinned model."""
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    pins = json.loads(pins_path.read_text(encoding="utf-8"))
+    expected = pins["model.name"]
+    model = metadata.get("model")
+    actual = model.get("name") if isinstance(model, dict) else metadata.get("model_name")
+    if actual != expected:
+        raise ValueError(
+            f"run metadata model mismatch: expected {expected!r}, got {actual!r}"
+        )
+
+
 def check_fairness(
     *,
     config_path: Path,

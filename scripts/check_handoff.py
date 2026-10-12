@@ -21,7 +21,9 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "configs/canary-real.json",
         "configs/canary-local.json",
         "configs/fairness-pins.json",
+        "configs/pricing.json",
         "schemas/experiment-config.schema.json",
+        "schemas/pricing.schema.json",
         "schemas/task-list.schema.json",
         "schemas/subset-manifest.schema.json",
         "schemas/validation-report.schema.json",
@@ -74,6 +76,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "scripts/validate_subset_coverage.py",
         "scripts/build_runnability_matrix.py",
         "scripts/check_experiment_config.py",
+        "scripts/check_model_connection.py",
         "scripts/experiment_config.py",
         "scripts/run_benchmark.py",
         "scripts/run_smoke_tests.py",
@@ -95,6 +98,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_build_runnability_matrix.py",
         "tests/test_build_subset.py",
         "tests/test_ci_workflow.py",
+        "tests/test_check_model_connection.py",
         "tests/test_download_server_bundles.py",
         "tests/test_experiment_config.py",
         "tests/test_local_canary_report.py",
@@ -183,7 +187,10 @@ def run_check(name: str, command: list[str], cwd: Path) -> dict[str, Any]:
 
 
 def run_handoff(
-    root: Path, inventory_only: bool = False, skip_results: bool = False
+    root: Path,
+    inventory_only: bool = False,
+    skip_results: bool = False,
+    with_model_check: bool = False,
 ) -> dict[str, Any]:
     inventory = check_inventory(root)
     checks: list[dict[str, Any]] = []
@@ -196,6 +203,14 @@ def run_handoff(
             run_check("python_compilation", [python, "-m", "compileall", "-q", "scripts", "tests"], root),
             run_check("unit_tests", [python, "-m", "unittest", "discover", "-s", "tests", "-v"], root),
         ]
+        if with_model_check:
+            checks.append(
+                run_check(
+                    "model_connection",
+                    [python, "scripts/check_model_connection.py"],
+                    root,
+                )
+            )
         formal_runs = list((root / "results").rglob("run-[0-9][0-9]"))
         if formal_runs and not skip_results:
             with tempfile.TemporaryDirectory() as directory:
@@ -231,12 +246,18 @@ def main() -> None:
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--inventory-only", action="store_true")
     parser.add_argument("--skip-results", action="store_true")
+    parser.add_argument(
+        "--with-model-check",
+        action="store_true",
+        help="make minimal live agent and judge API requests using the local .env",
+    )
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     report = run_handoff(
         args.root.resolve(),
         inventory_only=args.inventory_only,
         skip_results=args.skip_results,
+        with_model_check=args.with_model_check,
     )
     rendered = json.dumps(report, ensure_ascii=False, indent=2) + "\n"
     if args.output:

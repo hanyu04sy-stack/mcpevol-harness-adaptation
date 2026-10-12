@@ -23,6 +23,7 @@ from experiment_config import (
     load_env_file,
     load_experiment,
     public_summary,
+    resolve_runtime_credentials,
     sha256,
 )
 
@@ -184,35 +185,16 @@ def configured_initializer(
         kwargs["temperature"] = resolved["temperature"]
         kwargs["max_new_tokens"] = resolved["max_completion_tokens"]
         original_init(instance, *args, **kwargs)
-        if resolved.get("model_provider") == "deepseek":
-            # DeepSeek Chat Completions uses max_tokens, and thinking is enabled
-            # by default. Explicit non-thinking mode keeps tool-call history
-            # compatible with the pinned upstream agent and controls cost.
-            instance.chat = partial(
-                instance.client.chat.completions.create,
-                model=instance.model_name,
-                temperature=resolved["temperature"],
-                max_tokens=resolved["max_completion_tokens"],
-                extra_body={"thinking": {"type": "disabled"}},
-            )
+        instance.client.timeout = resolved["openai_timeout_seconds"]
+        instance.client.max_retries = resolved["openai_max_retries"]
+        instance.chat = partial(
+            instance.client.chat.completions.create,
+            model=instance.model_name,
+            temperature=resolved["temperature"],
+            max_tokens=resolved["max_completion_tokens"],
+        )
 
     return configured_init
-
-
-def validate_model_endpoint(resolved: dict[str, object], base_url: str | None) -> None:
-    """Reject provider/model combinations that would fail after servers start."""
-    if resolved.get("model_provider") != "deepseek":
-        return
-    if not base_url:
-        raise ConfigError(
-            "MODEL_BASE_URL is required for DeepSeek; use https://api.deepseek.com"
-        )
-    parsed = urlsplit(base_url)
-    if parsed.scheme != "https" or parsed.hostname != "api.deepseek.com":
-        raise ConfigError(
-            "deepseek-flash is pinned to the official endpoint "
-            "https://api.deepseek.com; update the local .env"
-        )
 
 
 def run_upstream(
@@ -282,6 +264,8 @@ def write_metadata(
                 "temperature": resolved["temperature"],
                 "max_completion_tokens": resolved["max_completion_tokens"],
                 "api_key_env": resolved["model_api_key_env"],
+                "timeout_seconds": resolved["openai_timeout_seconds"],
+                "max_retries": resolved["openai_max_retries"],
             },
             "judge": {
                 "name": resolved["judge_name"],
@@ -355,17 +339,16 @@ def main() -> None:
 
         env_file = (args.env_file or Path(resolved["env_file"])).resolve()
         load_env_file(env_file)
+        resolve_runtime_credentials(resolved)
         key_name = str(resolved["model_api_key_env"])
-        base_name = str(resolved["model_base_url_env"])
-        api_key = os.environ.get(key_name, "").strip()
-        base_url = os.environ.get(base_name, "").strip() or None
+        api_key = str(resolved["model_api_key_resolved"])
+        base_url = str(resolved["model_base_url_resolved"]) or None
         if not api_key:
             raise ConfigError(
                 f"missing {key_name}; copy .env.example to .env and fill it locally"
             )
-        validate_model_endpoint(resolved, base_url)
         if formal_run:
-            from verify_untouched import check_fairness
+            from verify_untouched import check_fairness, verify_run_metadata_model
 
             fairness = check_fairness(
                 config_path=Path(resolved["config_path"]),
@@ -378,6 +361,11 @@ def main() -> None:
         mcp_status = check_mcp(resolved)
         started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")
+        if formal_run:
+            verify_run_metadata_model(
+                metadata,
+                Path(resolved["project_root"]) / "configs/fairness-pins.json",
+            )
         try:
             run_upstream(resolved, api_key, base_url)
         except BaseException:
