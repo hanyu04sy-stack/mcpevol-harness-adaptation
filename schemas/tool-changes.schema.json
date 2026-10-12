@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/tool-changes.schema.json",
+  "title": "Cross-version MCP tool changes",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_commit", "generated_at", "description_prefix_length", "source_files", "comparisons", "totals", "manifest_alignment"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "benchmark_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "description_prefix_length": {"type": "integer", "minimum": 1},
+    "source_files": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "path", "sha256"],
+        "properties": {
+          "version": {"enum": ["early", "middle", "late"]},
+          "path": {"type": "string", "minLength": 1},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "comparisons": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/comparison"}
+    },
+    "totals": {"$ref": "#/$defs/counts"},
+    "manifest_alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest_affected_servers", "detected_change_servers", "unavailable_schema_servers", "unmatched_manifest_servers"],
+      "properties": {
+        "manifest_affected_servers": {"$ref": "#/$defs/names"},
+        "detected_change_servers": {"$ref": "#/$defs/names"},
+        "unavailable_schema_servers": {"$ref": "#/$defs/names"},
+        "unmatched_manifest_servers": {"$ref": "#/$defs/names"}
+      }
+    }
+  },
+  "$defs": {
+    "names": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "inputSchema"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "description": {"type": "string"},
+        "inputSchema": {"type": "object"}
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["added_tools", "removed_tools", "renamed_tools", "changed_descriptions", "changed_parameters"],
+      "properties": {
+        "added_tools": {"type": "integer", "minimum": 0},
+        "removed_tools": {"type": "integer", "minimum": 0},
+        "renamed_tools": {"type": "integer", "minimum": 0},
+        "changed_descriptions": {"type": "integer", "minimum": 0},
+        "changed_parameters": {"type": "integer", "minimum": 0}
+      }
+    },
+    "serverChanges": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["server", "added_tools", "removed_tools", "renamed_tools", "changed_descriptions", "changed_parameters"],
+      "properties": {
+        "server": {"type": "string", "minLength": 1},
+        "added_tools": {"type": "array", "items": {"$ref": "#/$defs/tool"}},
+        "removed_tools": {"type": "array", "items": {"$ref": "#/$defs/tool"}},
+        "renamed_tools": {"type": "array", "items": {"type": "object", "required": ["before", "after", "evidence"]}},
+        "changed_descriptions": {"type": "array", "items": {"type": "object", "required": ["name", "before", "after"]}},
+        "changed_parameters": {"type": "array", "items": {"type": "object", "required": ["name", "before", "after", "parameters"]}}
+      }
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["from_version", "to_version", "compared_servers", "unavailable_in_from_version", "unavailable_in_to_version", "servers", "summary"],
+      "properties": {
+        "from_version": {"enum": ["early", "middle", "late"]},
+        "to_version": {"enum": ["early", "middle", "late"]},
+        "compared_servers": {"$ref": "#/$defs/names"},
+        "unavailable_in_from_version": {"$ref": "#/$defs/names"},
+        "unavailable_in_to_version": {"$ref": "#/$defs/names"},
+        "servers": {"type": "array", "items": {"$ref": "#/$defs/serverChanges"}},
+        "summary": {
+          "type": "object",
+          "required": ["added_tools_count", "removed_tools_count", "renamed_tools_count", "changed_descriptions_count", "changed_parameters_count", "changed_server_count", "compared_server_count"],
+          "properties": {
+            "added_tools_count": {"type": "integer", "minimum": 0},
+            "removed_tools_count": {"type": "integer", "minimum": 0},
+            "renamed_tools_count": {"type": "integer", "minimum": 0},
+            "changed_descriptions_count": {"type": "integer", "minimum": 0},
+            "changed_parameters_count": {"type": "integer", "minimum": 0},
+            "changed_server_count": {"type": "integer", "minimum": 0},
+            "compared_server_count": {"type": "integer", "minimum": 0}
+          }
+        }
+      }
+    }
+  }
+}

@@ -74,6 +74,15 @@ Metadata never contains credentials. It does contain `harness_dir`, `harness_man
 
 This starts the configured Early, Middle, and Late 1MCP environments, calls MCP `tools/list`, preserves each tool description and `inputSchema`, and writes a deterministic diff under `reports/tool-schemas/`. If concurrent startup is unreliable on a small machine, add `--isolated`.
 
+Build the detailed change report after schema export:
+
+```bash
+.venv/bin/python scripts/diff_tool_schemas.py
+.venv/bin/python scripts/diff_tool_schemas.py --check
+```
+
+The first command writes `reports/tool-changes.json` and `reports/tool-changes.md`; the second verifies that both remain consistent with the three source snapshots and requires non-empty tool, description, and parameter change evidence.
+
 ## 6. Zero-cost end-to-end smoke test
 
 ```bash

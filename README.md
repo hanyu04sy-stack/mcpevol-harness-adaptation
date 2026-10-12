@@ -93,6 +93,14 @@ Export the exact MCP `tools/list` schemas and a deterministic cross-version diff
 
 The machine-readable outputs are `reports/tool-schemas/{early,middle,late}.json` and `reports/tool-schemas/diff.json`. Add `--isolated` on resource-constrained machines to start one source server at a time.
 
+Generate the detailed per-server change inventory and readable summary with:
+
+```bash
+.venv/bin/python scripts/diff_tool_schemas.py
+```
+
+The outputs are `reports/tool-changes.json` and `reports/tool-changes.md`. They classify added, removed, heuristically renamed, description-changed, and parameter-changed tools for Early to Middle, Middle to Late, and Early to Late. The handoff gate validates both reports without an API key.
+
 ## Deterministic smoke test
 
 ```bash

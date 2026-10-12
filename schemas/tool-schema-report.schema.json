@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/tool-schema-report.schema.json",
+  "title": "MCP tool schema snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "benchmark_commit", "generated_at", "version", "mcp_url", "server_config_sha256", "server_count", "connected_server_count", "tool_count", "servers"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "benchmark_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "version": {"enum": ["early", "middle", "late"]},
+    "mcp_url": {"type": "string", "format": "uri"},
+    "server_config_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "server_count": {"type": "integer", "minimum": 1},
+    "connected_server_count": {"type": "integer", "minimum": 0},
+    "tool_count": {"type": "integer", "minimum": 0},
+    "servers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/server"}
+    }
+  },
+  "$defs": {
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "description", "inputSchema"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "description": {"type": "string"},
+        "inputSchema": {"type": "object"}
+      }
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "tools"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "status": {"enum": ["connected", "failed"]},
+        "tools": {"type": "array", "items": {"$ref": "#/$defs/tool"}}
+      }
+    }
+  }
+}

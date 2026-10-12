@@ -10,6 +10,7 @@
     "check:runnability": ".venv/bin/python scripts/build_runnability_matrix.py",
     "validate:environments": ".venv/bin/python scripts/validate_tool_environments.py",
     "dump:tool-schemas": ".venv/bin/python scripts/dump_tool_schemas.py",
+    "diff:tool-schemas": ".venv/bin/python scripts/diff_tool_schemas.py",
     "validate:stability": ".venv/bin/python scripts/validate_startup_stability.py",
     "smoke": ".venv/bin/python scripts/run_smoke_tests.py",
     "canary:real": ".venv/bin/python scripts/run_real_canary.py",

@@ -17,6 +17,8 @@ SCHEMA_FILES = {
     "tasks": "task-list.schema.json",
     "manifest": "subset-manifest.schema.json",
     "report": "validation-report.schema.json",
+    "tool_schema": "tool-schema-report.schema.json",
+    "tool_changes": "tool-changes.schema.json",
 }
 
 
@@ -41,6 +43,11 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
             "reports/canary-local-qwen35-4b-2/summary.json",
         ]
     )
+    targets.extend(
+        ("tool_schema", root / f"reports/tool-schemas/{version}.json")
+        for version in ("early", "middle", "late")
+    )
+    targets.append(("tool_changes", root / "reports/tool-changes.json"))
     return targets
 
 

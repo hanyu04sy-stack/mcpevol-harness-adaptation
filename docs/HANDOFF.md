@@ -71,6 +71,7 @@ The exact tool definitions and change inventory are in `reports/tool-schemas/`. 
 
 ```bash
 .venv/bin/python scripts/dump_tool_schemas.py
+.venv/bin/python scripts/diff_tool_schemas.py --check
 ```
 
 The fixed subset has 26/26 connected servers in every version. If a local result differs, rerun `python3 scripts/setup_environment.py`; do not remove tasks or replace the dataset.

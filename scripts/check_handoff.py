@@ -23,6 +23,8 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "schemas/task-list.schema.json",
         "schemas/subset-manifest.schema.json",
         "schemas/validation-report.schema.json",
+        "schemas/tool-schema-report.schema.json",
+        "schemas/tool-changes.schema.json",
     ],
     "task_sets": [
         "data/subsets/pilot-30/test_cases.json",
@@ -42,6 +44,8 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "reports/tool-schemas/middle.json",
         "reports/tool-schemas/late.json",
         "reports/tool-schemas/diff.json",
+        "reports/tool-changes.json",
+        "reports/tool-changes.md",
         *[
             f"reports/smoke/{version}/{name}"
             for version in ("early", "middle", "late")
@@ -77,6 +81,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "scripts/validate_json_schemas.py",
         "scripts/check_handoff.py",
         "scripts/dump_tool_schemas.py",
+        "scripts/diff_tool_schemas.py",
     ],
     "tests": [
         "tests/test_build_runnability_matrix.py",
@@ -95,6 +100,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_check_handoff.py",
         "tests/test_troubleshooting_doc.py",
         "tests/test_dump_tool_schemas.py",
+        "tests/test_diff_tool_schemas.py",
         "tests/test_english_only_repository.py",
     ],
     "harness": [
@@ -168,6 +174,7 @@ def run_handoff(root: Path, inventory_only: bool = False) -> dict[str, Any]:
     if inventory["passed"] and not inventory_only:
         python = sys.executable
         checks = [
+            run_check("tool_change_validation", [python, "scripts/diff_tool_schemas.py", "--check"], root),
             run_check("json_schema_validation", [python, "scripts/validate_json_schemas.py", "--root", str(root)], root),
             run_check("semantic_asset_validation", [python, "scripts/validate_ci_assets.py", "--root", str(root)], root),
             run_check("python_compilation", [python, "-m", "compileall", "-q", "scripts", "tests"], root),
