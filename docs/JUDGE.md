@@ -1,5 +1,8 @@
 # Judge Integration
 
+See [Judge Model Trade-offs](JUDGE_TRADEOFFS.md) for the cost decision,
+self-judgment limitations, and required final-report disclosure.
+
 ## Upstream findings
 
 The pinned upstream benchmark does **not** invoke its judge from

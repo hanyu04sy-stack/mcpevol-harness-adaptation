@@ -60,6 +60,10 @@ def main() -> None:
         f"MODEL_BASE_URL (press Enter for {default_base_url}): "
     ).strip() or default_base_url
     print(
+        "Tip: if you hit a 404, try appending /v1. The "
+        "check_model_connection.py script auto-detects this for you."
+    )
+    print(
         "Judge uses the same model and key by default. Press Enter to inherit, "
         "or type a separate judge key (advanced)."
     )

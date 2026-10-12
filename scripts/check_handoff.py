@@ -99,6 +99,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_build_subset.py",
         "tests/test_ci_workflow.py",
         "tests/test_check_model_connection.py",
+        "tests/test_endpoint_consistency.py",
         "tests/test_download_server_bundles.py",
         "tests/test_experiment_config.py",
         "tests/test_local_canary_report.py",
@@ -140,6 +141,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "docs/HANDOFF.md",
         "docs/TROUBLESHOOTING.md",
         "docs/JUDGE.md",
+        "docs/JUDGE_TRADEOFFS.md",
         "requirements-ci.txt",
     ],
 }
@@ -197,6 +199,11 @@ def run_handoff(
     if inventory["passed"] and not inventory_only:
         python = sys.executable
         checks = [
+            run_check(
+                "endpoint_model_consistency",
+                [python, "scripts/check_experiment_config.py", "--endpoint-only"],
+                root,
+            ),
             run_check("tool_change_validation", [python, "scripts/diff_tool_schemas.py", "--check"], root),
             run_check("json_schema_validation", [python, "scripts/validate_json_schemas.py", "--root", str(root)], root),
             run_check("semantic_asset_validation", [python, "scripts/validate_ci_assets.py", "--root", str(root)], root),

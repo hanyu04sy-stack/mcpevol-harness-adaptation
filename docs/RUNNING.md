@@ -24,7 +24,9 @@ come from `openai_client` in the experiment config.
 
 ## Model provider notes
 
-- DeepSeek endpoint: `https://api.deepseek.com`; do not append `/v1` unless the provider requires it.
+- Recommended DeepSeek endpoint: `https://api.deepseek.com`; current OpenAI SDKs handle the compatible route.
+- With an OpenAI SDK older than 1.0, use `https://api.deepseek.com/v1`.
+- If unsure, run `.venv/bin/python scripts/check_model_connection.py`; it probes both forms when needed and reports the working endpoint.
 - The configured V3 slug is `deepseek-chat`. Do not use `deepseek-reasoner` as the tool-calling agent.
 - Run `.venv/bin/python scripts/check_model_connection.py` before any paid batch.
 - Provider slugs and prices change. A model-not-found result means the config must be updated before continuing.

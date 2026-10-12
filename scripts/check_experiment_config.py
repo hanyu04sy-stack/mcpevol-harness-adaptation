@@ -5,17 +5,61 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
-from experiment_config import ConfigError, VERSIONS, load_experiment, public_summary
+from experiment_config import (
+    ConfigError,
+    VERSIONS,
+    load_env_file,
+    load_experiment,
+    public_summary,
+    resolve_runtime_credentials,
+    validate_endpoint_model_consistency,
+)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=Path, default=Path("configs/experiment.json"))
+    parser.add_argument("--env-file", type=Path)
+    parser.add_argument(
+        "--endpoint-only",
+        action="store_true",
+        help="check only endpoint/model consistency without requiring benchmark assets",
+    )
     args = parser.parse_args()
     try:
+        if args.endpoint_only:
+            config_path = args.config.resolve()
+            raw = json.loads(config_path.read_text(encoding="utf-8"))
+            model = raw["model"]
+            configured_env = raw.get("environment", {}).get("file", ".env")
+            env_file = (args.env_file or Path(configured_env)).resolve()
+            load_env_file(env_file)
+            base_url = os.environ.get(str(model["base_url_env"]), "").strip()
+            validate_endpoint_model_consistency(str(model["name"]), base_url)
+            print(
+                json.dumps(
+                    {
+                        "ok": True,
+                        "model_name": model["name"],
+                        "effective_endpoint": base_url or None,
+                    },
+                    indent=2,
+                )
+            )
+            return
         resolved = [load_experiment(args.config, version) for version in VERSIONS]
+        env_file = (args.env_file or Path(resolved[0]["env_file"])).resolve()
+        load_env_file(env_file)
+        for item in resolved:
+            resolve_runtime_credentials(item)
+            item["effective_endpoint"] = item["model_base_url_resolved"]
+        validate_endpoint_model_consistency(
+            str(resolved[0]["model_name"]),
+            str(resolved[0]["model_base_url_resolved"]),
+        )
         shared_fields = (
             "benchmark_commit",
             "task_sha256",

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import socket
 import ssl
 import time
@@ -16,6 +17,7 @@ from experiment_config import (
     load_env_file,
     load_experiment,
     resolve_runtime_credentials,
+    validate_endpoint_model_consistency,
 )
 
 
@@ -47,6 +49,84 @@ def error_advice(exc: BaseException) -> str:
     return f"Request failed: {exc}. Check the key, model name, base URL, and provider status."
 
 
+def endpoint_candidates(base_url: str) -> list[str]:
+    """Return endpoint variants to probe, preserving an explicit /v1 URL."""
+    normalized = base_url.rstrip("/")
+    parsed = urlsplit(normalized)
+    if parsed.hostname == "api.deepseek.com" and parsed.path in {"", "/"}:
+        return [normalized, normalized + "/v1"]
+    return [normalized]
+
+
+def tool_call_self_test(client: Any, model: str) -> bool:
+    """Verify the provider returns OpenAI-compatible function calls."""
+    response = client.chat.completions.create(
+        model=model,
+        messages=[
+            {
+                "role": "user",
+                "content": "What is the weather in Beijing? Use the get_weather tool.",
+            }
+        ],
+        tools=[
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_weather",
+                    "description": "Get current weather for a city",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {"city": {"type": "string"}},
+                        "required": ["city"],
+                    },
+                },
+            }
+        ],
+        max_tokens=100,
+        temperature=0.0,
+    )
+    message = response.choices[0].message
+    calls = getattr(message, "tool_calls", None)
+    if not isinstance(calls, list) or not calls:
+        print("Tool-calling self-test: FAIL")
+        print(f"  - raw content: {getattr(message, 'content', None)!r}")
+        print(
+            "  - Model ignored the tool definition. Try deepseek-chat "
+            "(not deepseek-reasoner)."
+        )
+        return False
+    function = getattr(calls[0], "function", None)
+    name = getattr(function, "name", None)
+    if name != "get_weather":
+        print("Tool-calling self-test: FAIL")
+        print(f"  - raw content: {getattr(message, 'content', None)!r}")
+        print(f"  - model called {name!r}, not 'get_weather'.")
+        print("  - Model called a different function. Check tool definitions match.")
+        return False
+    arguments = getattr(function, "arguments", "")
+    try:
+        parsed = json.loads(arguments)
+    except (TypeError, json.JSONDecodeError):
+        print("Tool-calling self-test: FAIL")
+        print(f"  - raw content: {getattr(message, 'content', None)!r}")
+        print(f"  - raw arguments: {arguments!r}")
+        print(
+            "  - Model emitted malformed tool arguments. This is a known DeepSeek "
+            "compatibility issue; do not change your harness config."
+        )
+        return False
+    if not isinstance(parsed, dict) or not parsed.get("city"):
+        print("Tool-calling self-test: FAIL")
+        print(f"  - raw content: {getattr(message, 'content', None)!r}")
+        print(f"  - parsed arguments lack city: {parsed!r}")
+        print("  - Check tool definitions match the requested arguments.")
+        return False
+    print("Tool-calling self-test: PASS")
+    print("  - model emitted a properly formatted tool_calls[]")
+    print(f"  - arguments parsed as JSON: {json.dumps(parsed, ensure_ascii=False)}")
+    return True
+
+
 def check_target(
     *,
     label: str,
@@ -56,27 +136,47 @@ def check_target(
     credential_source: str,
     client_factory: Callable[..., Any],
     connectivity_checker: Callable[[str], None] = endpoint_connectivity,
+    check_tools: bool = False,
 ) -> bool:
     print(f"[{label}] model: {model}")
     print(f"[{label}] base_url: {base_url}")
     print(f"[{label}] credential source: {credential_source}")
+    selected_client = None
+    selected_response = None
+    latency = 0.0
+    for candidate in endpoint_candidates(base_url):
+        try:
+            connectivity_checker(candidate)
+            client = client_factory(
+                api_key=api_key,
+                base_url=candidate,
+                timeout=30.0,
+                max_retries=2,
+            )
+            started = time.monotonic()
+            response = client.chat.completions.create(
+                model=model,
+                messages=[{"role": "user", "content": "Reply with the single word: ok"}],
+                max_tokens=5,
+                temperature=0.0,
+            )
+            latency = time.monotonic() - started
+            selected_client = client
+            selected_response = response
+            if len(endpoint_candidates(base_url)) > 1:
+                print(
+                    f"Detected DeepSeek endpoint: {candidate} "
+                    f"(200 OK in {latency:.3f}s)"
+                )
+            else:
+                print(f"[{label}] HTTP connectivity: ok")
+            break
+        except BaseException as exc:
+            print(f"[{label}] endpoint probe failed: {candidate}: {error_advice(exc)}")
+    if selected_client is None or selected_response is None:
+        return False
     try:
-        connectivity_checker(base_url)
-        print(f"[{label}] HTTP connectivity: ok")
-        client = client_factory(
-            api_key=api_key,
-            base_url=base_url,
-            timeout=30.0,
-            max_retries=2,
-        )
-        started = time.monotonic()
-        response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": "Reply with the single word: ok"}],
-            max_tokens=5,
-            temperature=0.0,
-        )
-        latency = time.monotonic() - started
+        response = selected_response
         content = response.choices[0].message.content or ""
         usage = getattr(response, "usage", None)
         print(f"[{label}] provider_model: {getattr(response, 'model', model)}")
@@ -84,6 +184,8 @@ def check_target(
         print(f"[{label}] prompt_tokens: {getattr(usage, 'prompt_tokens', None)}")
         print(f"[{label}] completion_tokens: {getattr(usage, 'completion_tokens', None)}")
         print(f"[{label}] latency_seconds: {latency:.3f}")
+        if check_tools and not tool_call_self_test(selected_client, model):
+            return False
         return True
     except BaseException as exc:
         print(f"[{label}] ERROR: {error_advice(exc)}")
@@ -104,6 +206,7 @@ def main() -> None:
         model_url = str(resolved["model_base_url_resolved"])
         if not model_key or not model_url:
             raise ConfigError("MODEL_API_KEY and MODEL_BASE_URL must be set in the local .env")
+        validate_endpoint_model_consistency(str(resolved["model_name"]), model_url)
         from openai import OpenAI
 
         passed = check_target(
@@ -113,6 +216,7 @@ def main() -> None:
             base_url=model_url,
             credential_source=str(resolved["model_api_key_env"]),
             client_factory=OpenAI,
+            check_tools=True,
         )
         if not args.skip_judge:
             judge_key = str(resolved["judge_api_key_resolved"])

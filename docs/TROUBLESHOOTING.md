@@ -154,7 +154,21 @@ Continue only after every required dependency is `connected`:
 .venv/bin/python scripts/check_experiment_config.py
 ```
 
-## 5. Final recovery check
+## 5. "Tool call format error" during agent run
+
+If the agent repeatedly fails with tool-call parse errors while the harness
+configuration is otherwise valid:
+
+1. Run `.venv/bin/python scripts/check_model_connection.py`.
+2. If the tool-calling self-test fails, treat this as a DeepSeek
+   function-calling compatibility issue rather than a harness bug.
+3. Confirm the model is `deepseek-chat`, not `deepseek-reasoner`.
+4. Reduce parallel tool calls; the pinned upstream agent normally emits one at
+   a time.
+5. As a last resort, configure an endpoint and matching model slug for a
+   provider known to support the required tool-calling behavior.
+
+## 6. Final recovery check
 
 ```bash
 .venv/bin/python scripts/check_handoff.py

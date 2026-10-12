@@ -25,6 +25,7 @@ from experiment_config import (
     public_summary,
     resolve_runtime_credentials,
     sha256,
+    validate_endpoint_model_consistency,
 )
 
 
@@ -328,6 +329,13 @@ def main() -> None:
         else:
             resolved["strategy"] = Path(resolved["harness_dir"]).name
             resolved["run_id"] = args.run_id
+        env_file = (args.env_file or Path(resolved["env_file"])).resolve()
+        load_env_file(env_file)
+        resolve_runtime_credentials(resolved)
+        resolved["effective_endpoint"] = resolved["model_base_url_resolved"]
+        validate_endpoint_model_consistency(
+            str(resolved["model_name"]), str(resolved["model_base_url_resolved"])
+        )
         print(json.dumps(public_summary(resolved), ensure_ascii=False, indent=2))
         print("upstream_argv=" + json.dumps(upstream_arguments(resolved)))
         if args.print_resolved_prompt:
@@ -337,9 +345,6 @@ def main() -> None:
         if args.dry_run:
             return
 
-        env_file = (args.env_file or Path(resolved["env_file"])).resolve()
-        load_env_file(env_file)
-        resolve_runtime_credentials(resolved)
         key_name = str(resolved["model_api_key_env"])
         api_key = str(resolved["model_api_key_resolved"])
         base_url = str(resolved["model_base_url_resolved"]) or None

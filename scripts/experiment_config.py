@@ -113,6 +113,30 @@ def resolve_runtime_credentials(
     return resolved
 
 
+def validate_endpoint_model_consistency(model_name: str, base_url: str) -> None:
+    """Reject provider endpoints paired with an obviously incompatible model slug."""
+    if not base_url:
+        return
+    hostname = (urlsplit(base_url).hostname or "").lower()
+    is_deepseek_model = model_name.lower().startswith("deepseek")
+    if hostname == "deepseek.com" or hostname.endswith(".deepseek.com"):
+        if not is_deepseek_model:
+            raise ConfigError(
+                f"MODEL_BASE_URL points to DeepSeek ({base_url}), but model.name is "
+                f"still {model_name!r}. Update model.name in configs/experiment.json "
+                "to 'deepseek-chat'."
+            )
+    if hostname in {"openai.com", "openrouter.ai"} or hostname.endswith(
+        (".openai.com", ".openrouter.ai")
+    ):
+        if is_deepseek_model:
+            raise ConfigError(
+                f"MODEL_BASE_URL points to {hostname} ({base_url}), but model.name is "
+                f"{model_name!r}. Use a model slug served by that endpoint, or set "
+                "MODEL_BASE_URL to https://api.deepseek.com."
+            )
+
+
 def _require(mapping: dict[str, Any], key: str, kind: type, where: str) -> Any:
     value = mapping.get(key)
     if not isinstance(value, kind):
@@ -474,8 +498,9 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "runner_step",
         "mcp_url",
         "configured_server_count",
+        "effective_endpoint",
     )
-    result = {key: resolved[key] for key in keys}
+    result = {key: resolved[key] for key in keys if key in resolved}
     for key in ("strategy", "run_id"):
         if key in resolved:
             result[key] = resolved[key]
