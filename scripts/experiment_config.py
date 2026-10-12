@@ -251,6 +251,9 @@ def load_experiment(
         ):
             raise ConfigError(f"{version} did not pass repeated startup validation")
 
+    model_provider = _require(model, "provider", str, "model")
+    if model_provider not in {"openai_compatible", "deepseek", "local_ollama"}:
+        raise ConfigError("model.provider is unsupported")
     model_name = _require(model, "name", str, "model")
     temperature = model.get("temperature")
     if not isinstance(temperature, (int, float)) or not 0 <= temperature <= 2:
@@ -366,6 +369,7 @@ def load_experiment(
         "startup_stability_report": stability_path,
         "startup_stability_report_sha256": stability_hash,
         "model_name": model_name,
+        "model_provider": model_provider,
         "temperature": float(temperature),
         "max_completion_tokens": max_tokens,
         "model_api_key_env": _require(model, "api_key_env", str, "model"),
@@ -400,6 +404,7 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "runnability_matrix_sha256",
         "startup_stability_report_sha256",
         "model_name",
+        "model_provider",
         "temperature",
         "max_completion_tokens",
         "judge_name",

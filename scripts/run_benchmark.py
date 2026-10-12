@@ -13,6 +13,7 @@ import urllib.request
 import time
 from collections.abc import Callable
 from datetime import datetime, timezone
+from functools import partial
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -183,8 +184,35 @@ def configured_initializer(
         kwargs["temperature"] = resolved["temperature"]
         kwargs["max_new_tokens"] = resolved["max_completion_tokens"]
         original_init(instance, *args, **kwargs)
+        if resolved.get("model_provider") == "deepseek":
+            # DeepSeek Chat Completions uses max_tokens, and thinking is enabled
+            # by default. Explicit non-thinking mode keeps tool-call history
+            # compatible with the pinned upstream agent and controls cost.
+            instance.chat = partial(
+                instance.client.chat.completions.create,
+                model=instance.model_name,
+                temperature=resolved["temperature"],
+                max_tokens=resolved["max_completion_tokens"],
+                extra_body={"thinking": {"type": "disabled"}},
+            )
 
     return configured_init
+
+
+def validate_model_endpoint(resolved: dict[str, object], base_url: str | None) -> None:
+    """Reject provider/model combinations that would fail after servers start."""
+    if resolved.get("model_provider") != "deepseek":
+        return
+    if not base_url:
+        raise ConfigError(
+            "MODEL_BASE_URL is required for DeepSeek; use https://api.deepseek.com"
+        )
+    parsed = urlsplit(base_url)
+    if parsed.scheme != "https" or parsed.hostname != "api.deepseek.com":
+        raise ConfigError(
+            "deepseek-flash is pinned to the official endpoint "
+            "https://api.deepseek.com; update the local .env"
+        )
 
 
 def run_upstream(
@@ -249,6 +277,7 @@ def write_metadata(
             "strategy": resolved["strategy"],
             "run_id": resolved["run_id"],
             "model": {
+                "provider": resolved["model_provider"],
                 "name": resolved["model_name"],
                 "temperature": resolved["temperature"],
                 "max_completion_tokens": resolved["max_completion_tokens"],
@@ -334,6 +363,7 @@ def main() -> None:
             raise ConfigError(
                 f"missing {key_name}; copy .env.example to .env and fill it locally"
             )
+        validate_model_endpoint(resolved, base_url)
         if formal_run:
             from verify_untouched import check_fairness
 

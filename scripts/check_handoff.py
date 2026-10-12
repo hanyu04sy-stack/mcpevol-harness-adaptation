@@ -99,6 +99,7 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "tests/test_experiment_config.py",
         "tests/test_local_canary_report.py",
         "tests/test_real_canary.py",
+        "tests/test_run_judge.py",
         "tests/test_smoke_report.py",
         "tests/test_validate_ci_assets.py",
         "tests/test_validate_json_schemas.py",

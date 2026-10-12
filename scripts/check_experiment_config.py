@@ -22,6 +22,7 @@ def main() -> None:
             "task_count",
             "runnability_matrix_sha256",
             "startup_stability_report_sha256",
+            "model_provider",
             "model_name",
             "temperature",
             "max_completion_tokens",

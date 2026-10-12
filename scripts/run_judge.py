@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from experiment_config import ConfigError, VERSIONS, load_env_file, load_experiment
-from run_benchmark import load_harness, resolve_run_output
+from run_benchmark import load_harness, resolve_run_output, validate_model_endpoint
 
 
 def extract_json(text: str) -> dict[str, Any]:
@@ -89,6 +89,7 @@ def judge_case(
     client: Any,
     prompt_builder: Any,
     model: str,
+    provider: str,
     temperature: float,
     max_tokens: int,
     num_runs: int,
@@ -108,11 +109,17 @@ def judge_case(
             str(case.get("answer", "")),
             dimension_order=tuple(order),
         )
+        request: dict[str, Any] = {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+        }
+        if provider == "deepseek":
+            request["extra_body"] = {"thinking": {"type": "disabled"}}
+            request["response_format"] = {"type": "json_object"}
         response = client.chat.completions.create(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=temperature,
-            max_tokens=max_tokens,
+            **request,
         )
         raw = response.choices[0].message.content or ""
         try:
@@ -159,6 +166,7 @@ def main() -> None:
             "run_dir": str(run_dir),
             "trajectory_files": [str(path.relative_to(run_dir)) for path in trajectories],
             "judge": {
+                "provider": resolved["model_provider"],
                 "name": resolved["judge_name"],
                 "temperature": resolved["judge_temperature"],
                 "api_key_env": resolved["judge_api_key_env"],
@@ -175,6 +183,7 @@ def main() -> None:
         base_url = os.environ.get(str(resolved["judge_base_url_env"]), "").strip() or None
         if not key:
             raise ConfigError(f"missing {resolved['judge_api_key_env']}")
+        validate_model_endpoint(resolved, base_url)
 
         from openai import OpenAI
 
@@ -191,6 +200,7 @@ def main() -> None:
                 client=client,
                 prompt_builder=prompt_builder,
                 model=str(resolved["judge_name"]),
+                provider=str(resolved["model_provider"]),
                 temperature=float(resolved["judge_temperature"]),
                 max_tokens=int(resolved["max_completion_tokens"]),
                 num_runs=max(1, args.num_runs),

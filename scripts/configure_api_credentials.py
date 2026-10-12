@@ -20,7 +20,7 @@ def main() -> None:
     parser.add_argument(
         "--set-base-url",
         metavar="URL",
-        help="update only MODEL_BASE_URL in an existing file without echoing secrets",
+        help="update model and judge base URLs without echoing secrets",
     )
     args = parser.parse_args()
     destination = args.env_file.resolve()
@@ -28,17 +28,17 @@ def main() -> None:
         if not destination.is_file():
             raise SystemExit(f"{destination} does not exist")
         lines = destination.read_text(encoding="utf-8").splitlines()
-        updated = False
-        for index, line in enumerate(lines):
-            if line.startswith("MODEL_BASE_URL="):
-                lines[index] = f"MODEL_BASE_URL={args.set_base_url}"
-                updated = True
-                break
-        if not updated:
-            lines.append(f"MODEL_BASE_URL={args.set_base_url}")
+        for name in ("MODEL_BASE_URL", "JUDGE_BASE_URL"):
+            replacement = f"{name}={args.set_base_url}"
+            for index, line in enumerate(lines):
+                if line.startswith(f"{name}="):
+                    lines[index] = replacement
+                    break
+            else:
+                lines.append(replacement)
         destination.write_text("\n".join(lines) + "\n", encoding="utf-8")
         os.chmod(destination, 0o600)
-        print(f"Updated MODEL_BASE_URL in {destination}; no secret was printed.")
+        print(f"Updated model and judge base URLs in {destination}; no secret was printed.")
         return
     if destination.exists() and not args.overwrite:
         raise SystemExit(
@@ -54,7 +54,7 @@ def main() -> None:
         "# Local secrets: never commit this file.",
         f"MODEL_API_KEY={key}",
         f"MODEL_BASE_URL={base_url}",
-        "JUDGE_API_KEY=",
+        f"JUDGE_API_KEY={key}",
         f"JUDGE_BASE_URL={DEFAULT_BASE_URL}",
         "",
     ]

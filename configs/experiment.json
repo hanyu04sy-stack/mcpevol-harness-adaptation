@@ -22,7 +22,7 @@
     "default_dir": "harness/original"
   },
   "model": {
-    "provider": "openai_compatible",
+    "provider": "deepseek",
     "name": "deepseek-flash",
     "temperature": 0.0,
     "max_completion_tokens": 4096,

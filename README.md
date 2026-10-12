@@ -111,7 +111,7 @@ All three versions passed with 2/2 connected servers, 4/4 completed tool calls, 
 
 ## External-model canary
 
-The external-model canary uses fixed upstream runnable tasks 142 and 161. Credentials are entered privately and are never written to configuration, logs, or Git.
+The external-model canary uses fixed upstream runnable tasks 144 and 161. Credentials are entered privately and are never written to configuration, logs, or Git.
 
 ```bash
 .venv/bin/python scripts/configure_api_credentials.py
@@ -130,8 +130,14 @@ endpoint when prompted:
 The resulting local `.env` uses `https://api.deepseek.com`. To update only the
 agent endpoint in an existing credential file, run
 `.venv/bin/python scripts/configure_api_credentials.py --set-base-url https://api.deepseek.com`.
-Copy the same key to `JUDGE_API_KEY` before running the separate judge phase;
-credentials remain local and are never committed.
+The credential helper reuses the same key for `JUDGE_API_KEY` because the
+agent and judge are pinned to the same provider. You may replace it locally
+with a separate DeepSeek key. Credentials are never committed.
+
+DeepSeek enables thinking by default. The adapters explicitly disable it for
+both the agent and judge: this avoids unsupported multi-turn reasoning-history
+requirements in the pinned upstream harness and prevents unnecessary reasoning
+token cost. The judge also requests native JSON output to reduce paid retries.
 
 Only redacted reports are committed. `.env`, raw `results/`, and generated 1MCP configurations are ignored. Any failed version or task produces a nonzero exit status.
 

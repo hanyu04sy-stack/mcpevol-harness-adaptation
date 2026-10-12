@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "model.provider": "deepseek",
   "model.name": "deepseek-flash",
   "model.temperature": 0.0,
   "judge.name": "deepseek-flash",

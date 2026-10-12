@@ -18,6 +18,7 @@ class ExperimentConfigTest(unittest.TestCase):
         root = SCRIPTS.parent
         for relative in ("configs/experiment.json", "configs/canary-real.json"):
             config = json.loads((root / relative).read_text(encoding="utf-8"))
+            self.assertEqual(config["model"]["provider"], "deepseek")
             self.assertEqual(config["model"]["name"], "deepseek-flash")
             self.assertEqual(config["judge"]["name"], "deepseek-flash")
         env_example = (root / ".env.example").read_text(encoding="utf-8")
@@ -71,6 +72,7 @@ class ExperimentConfigTest(unittest.TestCase):
             "dataset": {"path": "data/tasks.json", "sha256": task_hash, "size": 1},
             "harness": {"default_dir": "harness/original"},
             "model": {
+                "provider": "openai_compatible",
                 "name": "model",
                 "temperature": 0,
                 "max_completion_tokens": 100,
@@ -217,6 +219,51 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(captured["model_url"], "https://example.invalid/v1")
         self.assertEqual(captured["temperature"], 0.0)
         self.assertEqual(captured["max_new_tokens"], 4096)
+
+    def test_deepseek_initializer_uses_supported_non_thinking_request(self) -> None:
+        class Completions:
+            def create(self, **kwargs: object) -> object:
+                return kwargs
+
+        class Client:
+            class Chat:
+                completions = Completions()
+
+            chat = Chat()
+
+        class Instance:
+            pass
+
+        def upstream_init(instance: object, **kwargs: object) -> None:
+            instance.client = Client()
+            instance.model_name = "deepseek-flash"
+
+        configured = run_benchmark.configured_initializer(
+            upstream_init,
+            {
+                "model_provider": "deepseek",
+                "temperature": 0.0,
+                "max_completion_tokens": 4096,
+            },
+            "secret",
+            "https://api.deepseek.com",
+        )
+        instance = Instance()
+        configured(instance)
+        self.assertEqual(instance.chat.keywords["max_tokens"], 4096)
+        self.assertNotIn("max_completion_tokens", instance.chat.keywords)
+        self.assertEqual(
+            instance.chat.keywords["extra_body"],
+            {"thinking": {"type": "disabled"}},
+        )
+
+    def test_deepseek_endpoint_guard_rejects_openrouter(self) -> None:
+        resolved = {"model_provider": "deepseek"}
+        run_benchmark.validate_model_endpoint(resolved, "https://api.deepseek.com")
+        with self.assertRaisesRegex(experiment_config.ConfigError, "official endpoint"):
+            run_benchmark.validate_model_endpoint(
+                resolved, "https://openrouter.ai/api/v1"
+            )
 
     def test_harness_loader_audits_files_and_deduplicates_original_rule(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -100,7 +100,7 @@
       "additionalProperties": false,
       "required": ["provider", "name", "temperature", "max_completion_tokens", "api_key_env", "base_url_env"],
       "properties": {
-        "provider": {"enum": ["openai_compatible", "local_ollama"]},
+        "provider": {"enum": ["openai_compatible", "deepseek", "local_ollama"]},
         "name": {"type": "string", "minLength": 1},
         "temperature": {"type": "number", "minimum": 0},
         "max_completion_tokens": {"type": "integer", "minimum": 1},

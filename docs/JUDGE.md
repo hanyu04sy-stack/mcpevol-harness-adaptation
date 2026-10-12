@@ -61,4 +61,6 @@ A benchmark run directory contains:
 `JUDGE_API_KEY` and `JUDGE_BASE_URL` are loaded from `.env` or the process
 environment. The shared configuration pins `deepseek-flash`, and the example
 environment uses DeepSeek's official `https://api.deepseek.com` endpoint.
-Credential values are never written to metadata, results, or logs.
+The adapter explicitly disables thinking and enables DeepSeek JSON Output,
+reducing invalid-response retries. Credential values are never written to
+metadata, results, or logs.

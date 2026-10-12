@@ -18,6 +18,11 @@ sets `MODEL_BASE_URL=https://api.deepseek.com` for the pinned
 directly; it never executes the file through a shell, overwrites pre-existing
 environment variables, or writes credentials to logs or metadata.
 
+The runner rejects a missing or non-official DeepSeek endpoint before starting
+a paid run. It sends DeepSeek's supported `max_tokens` parameter and explicitly
+uses non-thinking mode, which keeps the pinned multi-turn tool loop compatible
+and limits reasoning-token cost.
+
 ## 3. Preflight checks
 
 ```bash
