@@ -273,6 +273,77 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(instance.client.timeout, 120.0)
         self.assertEqual(instance.client.max_retries, 3)
 
+    def test_initializer_accumulates_response_usage_tokens(self) -> None:
+        responses = iter(
+            [
+                SimpleNamespace(
+                    usage=SimpleNamespace(prompt_tokens=11, completion_tokens=4)
+                ),
+                SimpleNamespace(
+                    usage=SimpleNamespace(prompt_tokens=7, completion_tokens=3)
+                ),
+            ]
+        )
+
+        class Completions:
+            def create(self, **kwargs: object) -> object:
+                return next(responses)
+
+        client = SimpleNamespace(
+            timeout=None,
+            max_retries=None,
+            chat=SimpleNamespace(completions=Completions()),
+        )
+
+        def upstream_init(instance: object, **kwargs: object) -> None:
+            instance.client = client
+            instance.model_name = "deepseek-chat"
+
+        resolved = {
+            "temperature": 0.0,
+            "max_completion_tokens": 4096,
+            "openai_timeout_seconds": 120.0,
+            "openai_max_retries": 3,
+            "total_prompt_tokens": 0,
+            "total_completion_tokens": 0,
+        }
+        instance = SimpleNamespace()
+        run_benchmark.configured_initializer(
+            upstream_init,
+            resolved,
+            "secret",
+            "https://api.deepseek.com",
+        )(instance)
+        instance.chat(messages=[])
+        instance.chat(messages=[])
+        self.assertEqual(resolved["total_prompt_tokens"], 18)
+        self.assertEqual(resolved["total_completion_tokens"], 7)
+
+    def test_run_metadata_persists_accumulated_usage_tokens(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config = self.make_project(root)
+            resolved = experiment_config.load_experiment(
+                config, "early", root=root, verify_checkout=False
+            )
+            resolved.update(
+                {
+                    "strategy": "original",
+                    "run_id": 1,
+                    "total_prompt_tokens": 18,
+                    "total_completion_tokens": 7,
+                }
+            )
+            metadata = run_benchmark.write_metadata(
+                resolved,
+                {"connected_servers": 1},
+                "completed",
+                wall_clock_seconds=1.5,
+            )
+            payload = json.loads(metadata.read_text(encoding="utf-8"))
+            self.assertEqual(payload["total_prompt_tokens"], 18)
+            self.assertEqual(payload["total_completion_tokens"], 7)
+
     def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
         resolved = {
             "model_name": "deepseek-chat",

@@ -9,6 +9,7 @@ import os
 import runpy
 import string
 import sys
+import threading
 import urllib.request
 import time
 from collections.abc import Callable
@@ -180,6 +181,8 @@ def configured_initializer(
     base_url: str | None,
 ) -> Callable[..., None]:
     """Wrap the upstream agent so shared settings replace its placeholders."""
+    usage_lock = resolved.setdefault("_usage_lock", threading.Lock())
+
     def configured_init(instance: object, *args: object, **kwargs: object) -> None:
         kwargs["api_key"] = api_key
         kwargs["model_url"] = base_url
@@ -188,8 +191,29 @@ def configured_initializer(
         original_init(instance, *args, **kwargs)
         instance.client.timeout = resolved["openai_timeout_seconds"]
         instance.client.max_retries = resolved["openai_max_retries"]
+        original_create = instance.client.chat.completions.create
+
+        def tracked_create(*call_args: object, **call_kwargs: object) -> object:
+            response = original_create(*call_args, **call_kwargs)
+            usage = getattr(response, "usage", None)
+            prompt_tokens = getattr(usage, "prompt_tokens", None)
+            completion_tokens = getattr(usage, "completion_tokens", None)
+            if isinstance(prompt_tokens, int) and not isinstance(prompt_tokens, bool):
+                with usage_lock:
+                    resolved["total_prompt_tokens"] = int(
+                        resolved.get("total_prompt_tokens", 0)
+                    ) + max(0, prompt_tokens)
+            if isinstance(completion_tokens, int) and not isinstance(
+                completion_tokens, bool
+            ):
+                with usage_lock:
+                    resolved["total_completion_tokens"] = int(
+                        resolved.get("total_completion_tokens", 0)
+                    ) + max(0, completion_tokens)
+            return response
+
         instance.chat = partial(
-            instance.client.chat.completions.create,
+            tracked_create,
             model=instance.model_name,
             temperature=resolved["temperature"],
             max_tokens=resolved["max_completion_tokens"],
@@ -276,8 +300,10 @@ def write_metadata(
             "status": status,
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "mcp_status_at_start": mcp_status,
-            "total_prompt_tokens": None,
-            "total_completion_tokens": None,
+            "total_prompt_tokens": int(resolved.get("total_prompt_tokens", 0)),
+            "total_completion_tokens": int(
+                resolved.get("total_completion_tokens", 0)
+            ),
             "wall_clock_seconds": wall_clock_seconds,
             "secrets_recorded": False,
         }
@@ -364,6 +390,9 @@ def main() -> None:
             if not fairness["passed"]:
                 raise ConfigError("fairness guard failed; see reports/fairness-check.json")
         mcp_status = check_mcp(resolved)
+        resolved["total_prompt_tokens"] = 0
+        resolved["total_completion_tokens"] = 0
+        resolved["_usage_lock"] = threading.Lock()
         started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")
         if formal_run:
