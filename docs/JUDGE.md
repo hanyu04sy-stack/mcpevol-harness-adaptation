@@ -50,7 +50,12 @@ A benchmark run directory contains:
 - `<model>/ANSWER/<task_idx>.json`: upstream answer and trajectory;
 - `judge-tasks/<task_idx>.json`: complete repeated judge responses;
 - `judge-results.json`: normalized TF/PE scores consumed by result collection;
-- `judge-metadata.json`: non-secret judge configuration and input/output audit data.
+- `judge-metadata.json`: non-secret judge configuration, token usage, and cost audit data.
+
+The judge metadata separates Agent usage, valid Judge repetitions, and malformed
+Judge responses that triggered application-level retries. It records separate
+estimated USD costs plus `total_est_cost_usd`. If any response omits usage, the
+affected cost remains `null` rather than silently treating missing tokens as zero.
 
 ## Command
 

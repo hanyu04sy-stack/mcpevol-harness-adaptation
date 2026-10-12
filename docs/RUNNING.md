@@ -118,7 +118,7 @@ Collect every completed formal run with:
 ```
 
 This creates `results/summary.csv` and `results/summary.json`, including TF, PE,
-ECS, recovery, retention, token totals, and timing.
+ECS, recovery, retention, timing, and separate Agent/Judge/retry cost totals.
 
 ## 7. Export tool definitions
 

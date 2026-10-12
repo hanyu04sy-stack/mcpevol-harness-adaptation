@@ -88,6 +88,32 @@ def find_trajectories(run_dir: Path) -> list[Path]:
     )
 
 
+def response_usage(response: Any) -> tuple[int | None, int | None]:
+    usage = getattr(response, "usage", None)
+    prompt = getattr(usage, "prompt_tokens", None)
+    completion = getattr(usage, "completion_tokens", None)
+    if not isinstance(prompt, int) or isinstance(prompt, bool):
+        prompt = None
+    if not isinstance(completion, int) or isinstance(completion, bool):
+        completion = None
+    return prompt, completion
+
+
+def estimated_cost(
+    prompt_tokens: int | None,
+    completion_tokens: int | None,
+    rate: dict[str, Any],
+) -> float | None:
+    if prompt_tokens is None or completion_tokens is None:
+        return None
+    return (
+        prompt_tokens / 1_000_000 * float(rate["prompt_per_mtok_usd"])
+        + completion_tokens
+        / 1_000_000
+        * float(rate["completion_per_mtok_usd"])
+    )
+
+
 def judge_case(
     case: dict[str, Any],
     *,
@@ -102,6 +128,13 @@ def judge_case(
     rng = random.Random(seed)
     attempts: list[dict[str, Any]] = []
     scores: list[dict[str, Any]] = []
+    usage_totals = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "retry_prompt_tokens": 0,
+        "retry_completion_tokens": 0,
+        "responses_missing_usage": 0,
+    }
     max_attempts = num_runs * 3
     while len(scores) < num_runs and len(attempts) < max_attempts:
         order = [0, 1, 2]
@@ -122,17 +155,43 @@ def judge_case(
         response = client.chat.completions.create(
             **request,
         )
+        prompt_tokens, completion_tokens = response_usage(response)
+        attempt_usage = {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+        }
+        if prompt_tokens is None or completion_tokens is None:
+            usage_totals["responses_missing_usage"] += 1
         raw = response.choices[0].message.content or ""
         try:
             parsed = extract_json(raw)
             scores.append(parsed)
-            attempts.append({"dimension_order": order, "result": parsed})
+            if prompt_tokens is not None:
+                usage_totals["prompt_tokens"] += prompt_tokens
+            if completion_tokens is not None:
+                usage_totals["completion_tokens"] += completion_tokens
+            attempts.append(
+                {"dimension_order": order, "result": parsed, "usage": attempt_usage}
+            )
         except (json.JSONDecodeError, ValueError) as exc:
-            attempts.append({"dimension_order": order, "error": str(exc), "raw": raw})
+            if prompt_tokens is not None:
+                usage_totals["retry_prompt_tokens"] += prompt_tokens
+            if completion_tokens is not None:
+                usage_totals["retry_completion_tokens"] += completion_tokens
+            attempts.append(
+                {
+                    "dimension_order": order,
+                    "error": str(exc),
+                    "raw": raw,
+                    "usage": attempt_usage,
+                    "counted_as_retry": True,
+                }
+            )
     if not scores:
         raise RuntimeError(f"judge returned no valid score after {max_attempts} attempts")
     return {
         "runs": attempts,
+        "usage": usage_totals,
         "aggregate": {
             "successful_runs": len(scores),
             "total_runs": len(attempts),
@@ -151,6 +210,7 @@ def main() -> None:
     parser.add_argument("--config", type=Path, default=Path("configs/experiment.json"))
     parser.add_argument("--env-file", type=Path)
     parser.add_argument("--num-runs", type=int, default=5)
+    parser.add_argument("--pricing", type=Path, default=Path("configs/pricing.json"))
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -187,6 +247,23 @@ def main() -> None:
                 "Missing JUDGE_API_KEY (or MODEL_API_KEY as fallback). Since "
                 "model.name == judge.name, you can just fill MODEL_API_KEY."
             )
+        run_metadata_path = run_dir / "run-metadata.json"
+        if not run_metadata_path.is_file():
+            raise ConfigError(f"missing benchmark metadata: {run_metadata_path}")
+        run_metadata = json.loads(run_metadata_path.read_text(encoding="utf-8"))
+        pricing_path = args.pricing
+        if not pricing_path.is_absolute():
+            pricing_path = Path(resolved["project_root"]) / pricing_path
+        pricing = json.loads(pricing_path.read_text(encoding="utf-8"))
+        rate = pricing.get("models", {}).get(str(resolved["judge_name"]))
+        if not isinstance(rate, dict):
+            raise ConfigError(
+                f"no pricing configured for judge model {resolved['judge_name']!r}"
+            )
+        agent_prompt = run_metadata.get("total_prompt_tokens")
+        agent_completion = run_metadata.get("total_completion_tokens")
+        if not isinstance(agent_prompt, int) or not isinstance(agent_completion, int):
+            agent_prompt = agent_completion = None
 
         from openai import OpenAI
 
@@ -200,6 +277,13 @@ def main() -> None:
         task_dir = run_dir / "judge-tasks"
         task_dir.mkdir(parents=True, exist_ok=True)
         normalized: list[dict[str, Any]] = []
+        judge_usage = {
+            "prompt_tokens": 0,
+            "completion_tokens": 0,
+            "retry_prompt_tokens": 0,
+            "retry_completion_tokens": 0,
+            "responses_missing_usage": 0,
+        }
         for source in trajectories:
             case = json.loads(source.read_text(encoding="utf-8"))
             idx = int(case["idx"])
@@ -223,6 +307,8 @@ def main() -> None:
                 encoding="utf-8",
             )
             aggregate = evaluated["aggregate"]
+            for name in judge_usage:
+                judge_usage[name] += int(evaluated["usage"][name])
             tf = aggregate["task_fulfillment_mean"]
             normalized.append(
                 {
@@ -258,6 +344,22 @@ def main() -> None:
             encoding="utf-8",
         )
         metadata = run_dir / "judge-metadata.json"
+        usage_complete = judge_usage["responses_missing_usage"] == 0
+        agent_cost = estimated_cost(agent_prompt, agent_completion, rate)
+        judge_cost = estimated_cost(
+            judge_usage["prompt_tokens"] if usage_complete else None,
+            judge_usage["completion_tokens"] if usage_complete else None,
+            rate,
+        )
+        retry_cost = estimated_cost(
+            judge_usage["retry_prompt_tokens"] if usage_complete else None,
+            judge_usage["retry_completion_tokens"] if usage_complete else None,
+            rate,
+        )
+        cost_parts = (agent_cost, judge_cost, retry_cost)
+        total_cost = (
+            sum(cost_parts) if all(value is not None for value in cost_parts) else None
+        )
         metadata.write_text(
             json.dumps(
                 {
@@ -266,6 +368,27 @@ def main() -> None:
                     "judge": public["judge"],
                     "input_files": public["trajectory_files"],
                     "output_file": output.name,
+                    "usage": {
+                        "agent_prompt_tokens": agent_prompt,
+                        "agent_completion_tokens": agent_completion,
+                        "judge_prompt_tokens": judge_usage["prompt_tokens"],
+                        "judge_completion_tokens": judge_usage["completion_tokens"],
+                        "retry_prompt_tokens": judge_usage["retry_prompt_tokens"],
+                        "retry_completion_tokens": judge_usage[
+                            "retry_completion_tokens"
+                        ],
+                        "responses_missing_usage": judge_usage[
+                            "responses_missing_usage"
+                        ],
+                    },
+                    "costs": {
+                        "currency": "USD",
+                        "model": resolved["judge_name"],
+                        "agent_est_cost_usd": agent_cost,
+                        "judge_est_cost_usd": judge_cost,
+                        "retry_est_cost_usd": retry_cost,
+                        "total_est_cost_usd": total_cost,
+                    },
                     "secrets_recorded": False,
                 },
                 indent=2,

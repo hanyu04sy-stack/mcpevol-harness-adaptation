@@ -46,6 +46,25 @@ class CollectResultsTest(unittest.TestCase):
             ),
             encoding="utf-8",
         )
+        (run / "judge-metadata.json").write_text(
+            json.dumps(
+                {
+                    "usage": {
+                        "judge_prompt_tokens": 200,
+                        "judge_completion_tokens": 40,
+                        "retry_prompt_tokens": 10,
+                        "retry_completion_tokens": 5,
+                    },
+                    "costs": {
+                        "agent_est_cost_usd": 0.000049,
+                        "judge_est_cost_usd": 0.000098,
+                        "retry_est_cost_usd": 0.0000082,
+                        "total_est_cost_usd": 0.0001552,
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
 
     def test_collects_csv_rows_and_group_means(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -68,8 +87,11 @@ class CollectResultsTest(unittest.TestCase):
             self.assertEqual(tuple(rows[0]), collect_results.CSV_FIELDS)
             original = next(item for item in aggregates if item["strategy"] == "original")
             self.assertEqual(original["mean_tf"], 8.0)
-            self.assertEqual(original["total_cost_tokens"], 120)
-            self.assertAlmostEqual(original["est_cost_usd"], 0.000049)
+            self.assertEqual(original["total_cost_tokens"], 375)
+            self.assertAlmostEqual(original["agent_est_cost_usd"], 0.000049)
+            self.assertAlmostEqual(original["judge_est_cost_usd"], 0.000098)
+            self.assertAlmostEqual(original["retry_est_cost_usd"], 0.0000082)
+            self.assertAlmostEqual(original["est_cost_usd"], 0.0001552)
 
 
 if __name__ == "__main__":

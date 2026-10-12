@@ -46,7 +46,7 @@
     "aggregate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["strategy", "version", "mean_tf", "mean_pe", "mean_ecs", "recovery_rate", "retention_rate", "total_cost_tokens", "est_cost_usd", "n_runs", "n_tasks"],
+      "required": ["strategy", "version", "mean_tf", "mean_pe", "mean_ecs", "recovery_rate", "retention_rate", "total_cost_tokens", "agent_est_cost_usd", "judge_est_cost_usd", "retry_est_cost_usd", "est_cost_usd", "n_runs", "n_tasks"],
       "properties": {
         "strategy": {"type": "string", "minLength": 1},
         "version": {"enum": ["early", "middle", "late"]},
@@ -56,6 +56,9 @@
         "recovery_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
         "retention_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
         "total_cost_tokens": {"type": "integer", "minimum": 0},
+        "agent_est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
+        "judge_est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
+        "retry_est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
         "est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
         "n_runs": {"type": "integer", "minimum": 1},
         "n_tasks": {"type": "integer", "minimum": 1}

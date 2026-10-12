@@ -128,10 +128,35 @@ def collect(
                 / 1_000_000
                 * float(rate["completion_per_mtok_usd"])
             )
+        judge_prompt_tokens = judge_completion_tokens = None
+        retry_prompt_tokens = retry_completion_tokens = None
+        agent_cost = est_cost
+        judge_cost = retry_cost = None
+        total_cost = est_cost
+        judge_metadata_path = run_dir / "judge-metadata.json"
+        if judge_metadata_path.is_file():
+            judge_metadata = read_json(judge_metadata_path)
+            usage = judge_metadata.get("usage", {})
+            costs = judge_metadata.get("costs", {})
+            judge_prompt_tokens = numeric(usage.get("judge_prompt_tokens"))
+            judge_completion_tokens = numeric(usage.get("judge_completion_tokens"))
+            retry_prompt_tokens = numeric(usage.get("retry_prompt_tokens"))
+            retry_completion_tokens = numeric(usage.get("retry_completion_tokens"))
+            agent_cost = numeric(costs.get("agent_est_cost_usd"))
+            judge_cost = numeric(costs.get("judge_est_cost_usd"))
+            retry_cost = numeric(costs.get("retry_est_cost_usd"))
+            total_cost = numeric(costs.get("total_est_cost_usd"))
         run_costs[(strategy, version, run_id)] = {
             "prompt": prompt_tokens,
             "completion": completion_tokens,
-            "est_cost_usd": est_cost,
+            "judge_prompt": judge_prompt_tokens,
+            "judge_completion": judge_completion_tokens,
+            "retry_prompt": retry_prompt_tokens,
+            "retry_completion": retry_completion_tokens,
+            "agent_est_cost_usd": agent_cost,
+            "judge_est_cost_usd": judge_cost,
+            "retry_est_cost_usd": retry_cost,
+            "est_cost_usd": total_cost,
         }
         for task in rows:
             idx = int(task["task_idx"])
@@ -188,6 +213,17 @@ def collect(
         ecs_values = [row["ecs"] for row in rows if row["ecs"] is not None]
         keys = {key for key in run_costs if key[0] == strategy and key[1] == version}
         costs = [run_costs[key]["est_cost_usd"] for key in keys]
+        agent_costs = [run_costs[key]["agent_est_cost_usd"] for key in keys]
+        judge_costs = [run_costs[key]["judge_est_cost_usd"] for key in keys]
+        retry_costs = [run_costs[key]["retry_est_cost_usd"] for key in keys]
+
+        def complete_sum(values: list[Any]) -> float | None:
+            return (
+                sum(values)
+                if values and all(value is not None for value in values)
+                else None
+            )
+
         aggregates.append(
             {
                 "strategy": strategy,
@@ -205,10 +241,17 @@ def collect(
                     sum(
                         (run_costs[key]["prompt"] or 0)
                         + (run_costs[key]["completion"] or 0)
+                        + (run_costs[key]["judge_prompt"] or 0)
+                        + (run_costs[key]["judge_completion"] or 0)
+                        + (run_costs[key]["retry_prompt"] or 0)
+                        + (run_costs[key]["retry_completion"] or 0)
                         for key in keys
                     )
                 ),
-                "est_cost_usd": sum(costs) if costs and all(cost is not None for cost in costs) else None,
+                "agent_est_cost_usd": complete_sum(agent_costs),
+                "judge_est_cost_usd": complete_sum(judge_costs),
+                "retry_est_cost_usd": complete_sum(retry_costs),
+                "est_cost_usd": complete_sum(costs),
                 "n_runs": len({row["run_id"] for row in rows}),
                 "n_tasks": len(rows),
             }
