@@ -10,6 +10,9 @@ import tempfile
 from pathlib import Path
 
 
+DEFAULT_BASE_URL = "https://api.deepseek.com"
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
@@ -45,14 +48,14 @@ def main() -> None:
     if not key:
         raise SystemExit("No API key entered; nothing was written")
     base_url = input(
-        "MODEL_BASE_URL (press Enter for the official OpenAI endpoint): "
-    ).strip()
+        f"MODEL_BASE_URL (press Enter for {DEFAULT_BASE_URL}): "
+    ).strip() or DEFAULT_BASE_URL
     lines = [
         "# Local secrets: never commit this file.",
         f"MODEL_API_KEY={key}",
         f"MODEL_BASE_URL={base_url}",
         "JUDGE_API_KEY=",
-        "JUDGE_BASE_URL=",
+        f"JUDGE_BASE_URL={DEFAULT_BASE_URL}",
         "",
     ]
     destination.parent.mkdir(parents=True, exist_ok=True)

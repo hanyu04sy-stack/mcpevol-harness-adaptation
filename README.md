@@ -119,12 +119,19 @@ The external-model canary uses fixed upstream runnable tasks 142 and 161. Creden
 .venv/bin/python scripts/run_real_canary.py --overwrite
 ```
 
-For OpenRouter, use `https://openrouter.ai/api/v1` with model slug `openai/gpt-4o`. To update only the endpoint:
+The shared external model is `deepseek-flash`, using DeepSeek's official
+OpenAI-compatible endpoint. Enter a DeepSeek API key and accept the default
+endpoint when prompted:
 
 ```bash
-.venv/bin/python scripts/configure_api_credentials.py \
-  --set-base-url https://openrouter.ai/api/v1
+.venv/bin/python scripts/configure_api_credentials.py
 ```
+
+The resulting local `.env` uses `https://api.deepseek.com`. To update only the
+agent endpoint in an existing credential file, run
+`.venv/bin/python scripts/configure_api_credentials.py --set-base-url https://api.deepseek.com`.
+Copy the same key to `JUDGE_API_KEY` before running the separate judge phase;
+credentials remain local and are never committed.
 
 Only redacted reports are committed. `.env`, raw `results/`, and generated 1MCP configurations are ignored. Any failed version or task produces a nonzero exit status.
 
@@ -146,7 +153,7 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Early/Middle/Late generation and environment validation
 - [x] Cross-platform installer and verified bundle downloader
 - [x] Pinned 1MCP 0.38.2 and benchmark dependencies
-- [x] Unified `gpt-4o` agent configuration plus a separate configured judge phase
+- [x] Unified `deepseek-flash` agent and judge configuration
 - [x] Repaired Late dataless files, increasing usable servers from 23 to 54
 - [x] Fixed 30-task set with 26/26 dependencies available in all versions
 - [x] Three independent cold starts per version

@@ -14,6 +14,16 @@ import run_benchmark  # noqa: E402
 
 
 class ExperimentConfigTest(unittest.TestCase):
+    def test_repository_external_configs_pin_deepseek_flash(self) -> None:
+        root = SCRIPTS.parent
+        for relative in ("configs/experiment.json", "configs/canary-real.json"):
+            config = json.loads((root / relative).read_text(encoding="utf-8"))
+            self.assertEqual(config["model"]["name"], "deepseek-flash")
+            self.assertEqual(config["judge"]["name"], "deepseek-flash")
+        env_example = (root / ".env.example").read_text(encoding="utf-8")
+        self.assertIn("MODEL_BASE_URL=https://api.deepseek.com", env_example)
+        self.assertIn("JUDGE_BASE_URL=https://api.deepseek.com", env_example)
+
     def make_project(self, root: Path) -> Path:
         (root / "benchmark/src").mkdir(parents=True)
         (root / "benchmark/src/runner.py").write_text("# test\n", encoding="utf-8")

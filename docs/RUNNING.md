@@ -12,7 +12,11 @@ The three versions do not accept independent model or task arguments, preventing
 cp .env.example .env
 ```
 
-Set `MODEL_API_KEY` and the optional `MODEL_BASE_URL` only in the local `.env`. Git ignores this file. The runner parses `NAME=value` directly; it never executes the file through a shell, overwrites pre-existing environment variables, or writes credentials to logs or metadata.
+Set `MODEL_API_KEY` only in the local `.env`; the checked-in example already
+sets `MODEL_BASE_URL=https://api.deepseek.com` for the pinned
+`deepseek-flash` model. Git ignores `.env`. The runner parses `NAME=value`
+directly; it never executes the file through a shell, overwrites pre-existing
+environment variables, or writes credentials to logs or metadata.
 
 ## 3. Preflight checks
 
@@ -82,7 +86,8 @@ The check must pass before B or C compares strategies.
 ## 6. Judge
 
 The pinned upstream runner creates trajectories but does not automatically
-score them. Configure `JUDGE_API_KEY` and optional `JUDGE_BASE_URL` in `.env`,
+score them. Configure `JUDGE_API_KEY` in `.env`; keep the example's
+`JUDGE_BASE_URL=https://api.deepseek.com`,
 then run the separate judge phase with the same version, strategy, and run ID:
 
 ```bash

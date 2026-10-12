@@ -58,6 +58,7 @@ A benchmark run directory contains:
   --run-id 1
 ```
 
-`JUDGE_API_KEY` and optional `JUDGE_BASE_URL` are loaded from `.env` or the
-process environment. Their values are never written to metadata, results, or
-logs.
+`JUDGE_API_KEY` and `JUDGE_BASE_URL` are loaded from `.env` or the process
+environment. The shared configuration pins `deepseek-flash`, and the example
+environment uses DeepSeek's official `https://api.deepseek.com` endpoint.
+Credential values are never written to metadata, results, or logs.
