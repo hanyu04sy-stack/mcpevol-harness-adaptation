@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/run-metadata.schema.json",
+  "title": "Benchmark run metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "experiment_name", "version", "benchmark_commit", "task_sha256",
+    "task_count", "strategy", "run_id", "model", "judge",
+    "rate_limit_retry", "rate_limit_retry_file", "status", "recorded_at",
+    "mcp_status_at_start", "total_prompt_tokens", "total_completion_tokens",
+    "wall_clock_seconds", "secrets_recorded"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "experiment_name": {"type": "string", "minLength": 1},
+    "version": {"enum": ["early", "middle", "late"]},
+    "config_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "benchmark_commit": {"type": "string", "minLength": 1},
+    "task_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "task_count": {"type": "integer", "minimum": 1},
+    "harness_dir": {"type": "string"},
+    "runnability_matrix_sha256": {"type": ["string", "null"]},
+    "startup_stability_report_sha256": {"type": ["string", "null"]},
+    "model_name": {"type": "string"},
+    "model_provider": {"type": "string"},
+    "temperature": {"type": "number"},
+    "max_completion_tokens": {"type": "integer", "minimum": 1},
+    "judge_name": {"type": "string"},
+    "judge_temperature": {"type": "number"},
+    "judge_api_key_env": {"type": "string"},
+    "judge_base_url_env": {"type": "string"},
+    "openai_timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+    "openai_max_retries": {"type": "integer", "minimum": 0},
+    "runner_step": {"type": "integer"},
+    "mcp_url": {"type": "string"},
+    "configured_server_count": {"type": "integer", "minimum": 0},
+    "effective_endpoint": {"type": "string"},
+    "strategy": {"type": "string", "minLength": 1},
+    "run_id": {"type": "integer", "minimum": 1},
+    "harness_manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "harness_files": {"type": "array", "items": {"type": "object"}},
+    "config_path": {"type": ["string", "null"]},
+    "task_file": {"type": ["string", "null"]},
+    "runnability_matrix": {"type": ["string", "null"]},
+    "startup_stability_report": {"type": ["string", "null"]},
+    "server_config": {"type": ["string", "null"]},
+    "output_dir": {"type": ["string", "null"]},
+    "output_root": {"type": ["string", "null"]},
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["provider", "name", "temperature", "max_completion_tokens", "api_key_env", "timeout_seconds", "max_retries", "provider_reported_model", "provider_reported_models"],
+      "properties": {
+        "provider": {"type": "string"},
+        "name": {"type": "string"},
+        "temperature": {"type": "number"},
+        "max_completion_tokens": {"type": "integer", "minimum": 1},
+        "api_key_env": {"type": "string"},
+        "timeout_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "max_retries": {"type": "integer", "minimum": 0},
+        "provider_reported_model": {"type": ["string", "null"]},
+        "provider_reported_models": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "judge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "temperature", "api_key_env"],
+      "properties": {
+        "name": {"type": "string"},
+        "temperature": {"type": "number"},
+        "api_key_env": {"type": "string"}
+      }
+    },
+    "rate_limit_retry": {
+      "type": "object",
+      "required": ["policy", "sdk_max_retries", "max_retries_per_request", "rate_limit_responses", "actual_retries", "exhausted_requests", "total_backoff_seconds", "events"],
+      "properties": {
+        "policy": {"type": "string"},
+        "sdk_max_retries": {"const": 0},
+        "max_retries_per_request": {"type": "integer", "minimum": 0},
+        "rate_limit_responses": {"type": "integer", "minimum": 0},
+        "actual_retries": {"type": "integer", "minimum": 0},
+        "exhausted_requests": {"type": "integer", "minimum": 0},
+        "total_backoff_seconds": {"type": "number", "minimum": 0},
+        "events": {"type": "array"}
+      }
+    },
+    "rate_limit_retry_file": {"type": "string", "minLength": 1},
+    "status": {"enum": ["running", "completed", "failed"]},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "mcp_status_at_start": {"type": "object"},
+    "total_prompt_tokens": {"type": "integer", "minimum": 0},
+    "total_completion_tokens": {"type": "integer", "minimum": 0},
+    "wall_clock_seconds": {"type": ["number", "null"], "minimum": 0},
+    "secrets_recorded": {"const": false}
+  }
+}

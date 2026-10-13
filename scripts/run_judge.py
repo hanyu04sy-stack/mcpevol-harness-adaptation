@@ -19,6 +19,7 @@ from experiment_config import (
     VERSIONS,
     load_env_file,
     load_experiment,
+    pricing_warning,
     resolve_runtime_credentials,
 )
 from run_benchmark import load_harness, resolve_run_output
@@ -299,6 +300,9 @@ def main() -> None:
             raise ConfigError(
                 f"no pricing configured for judge model {resolved['judge_name']!r}"
             )
+        price_warning = pricing_warning(pricing_path, str(resolved["judge_name"]))
+        if price_warning:
+            print(f"PRICING WARNING: {price_warning}")
         agent_prompt = run_metadata.get("total_prompt_tokens")
         agent_completion = run_metadata.get("total_completion_tokens")
         if not isinstance(agent_prompt, int) or not isinstance(agent_completion, int):

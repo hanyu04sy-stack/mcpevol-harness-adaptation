@@ -3,9 +3,12 @@ import json
 import sys
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+
+from jsonschema import Draft202012Validator, FormatChecker
 
 
 SCRIPTS = Path(__file__).parents[1] / "scripts"
@@ -343,6 +346,7 @@ class ExperimentConfigTest(unittest.TestCase):
                     "provider_reported_model": "deepseek-chat-v3-20250324",
                     "provider_reported_models": ["deepseek-chat-v3-20250324"],
                     "rate_limit_retry": run_benchmark.new_retry_audit(3),
+                    "rate_limit_retry_file": "agent-rate-limit-retry.json",
                 }
             )
             metadata = run_benchmark.write_metadata(
@@ -360,6 +364,36 @@ class ExperimentConfigTest(unittest.TestCase):
             )
             self.assertEqual(payload["rate_limit_retry"]["actual_retries"], 0)
             self.assertEqual(payload["rate_limit_retry"]["sdk_max_retries"], 0)
+            schema = json.loads(
+                (SCRIPTS.parent / "schemas/run-metadata.schema.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            errors = list(
+                Draft202012Validator(
+                    schema, format_checker=FormatChecker()
+                ).iter_errors(payload)
+            )
+            self.assertEqual(errors, [])
+
+    def test_retry_checkpoint_is_atomic_and_records_status(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "agent-rate-limit-retry.json"
+            audit = run_benchmark.new_retry_audit(3)
+            run_benchmark.write_retry_checkpoint(path, audit, "running")
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual(payload["status"], "running")
+            self.assertEqual(payload["actual_retries"], 0)
+            self.assertFalse(path.with_suffix(".json.tmp").exists())
+
+    def test_historical_pricing_emits_pre_run_warning(self) -> None:
+        warning = experiment_config.pricing_warning(
+            SCRIPTS.parent / "configs/pricing.json",
+            "deepseek-chat",
+            today=date(2026, 10, 13),
+        )
+        self.assertIn("historical reference", warning)
+        self.assertIn("api-docs.deepseek.com", warning)
 
     def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
         resolved = {

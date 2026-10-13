@@ -29,6 +29,12 @@ CSV_FIELDS = (
     "prompt_tokens",
     "completion_tokens",
     "wall_clock_s",
+    "configured_model",
+    "provider_reported_model",
+    "model_identifier_mismatch",
+    "configured_judge_model",
+    "judge_provider_reported_model",
+    "judge_model_identifier_mismatch",
 )
 
 
@@ -94,6 +100,7 @@ def collect(
     details: list[dict[str, Any]] = []
     run_costs: dict[tuple[str, str, int], dict[str, Any]] = {}
     warned_models: set[str] = set()
+    warned_identifier_pairs: set[tuple[str, str, str]] = set()
 
     for run_dir in sorted(path for path in results_root.rglob("run-[0-9][0-9]") if path.is_dir()):
         metadata_path = run_dir / "run-metadata.json"
@@ -112,6 +119,13 @@ def collect(
         completion_tokens = numeric(metadata.get("total_completion_tokens"))
         wall_clock = numeric(metadata.get("wall_clock_seconds"))
         model_name = metadata_name(metadata.get("model") or metadata.get("model_name"))
+        model_block = metadata.get("model", {})
+        provider_model = (
+            str(model_block.get("provider_reported_model") or "")
+            if isinstance(model_block, dict)
+            else ""
+        )
+        model_mismatch = bool(provider_model and provider_model != model_name)
         rate = pricing.get(model_name)
         est_cost: float | None = None
         if rate is None:
@@ -134,8 +148,22 @@ def collect(
         judge_cost = retry_cost = None
         total_cost = est_cost
         judge_metadata_path = run_dir / "judge-metadata.json"
+        configured_judge = metadata_name(
+            metadata.get("judge") or metadata.get("judge_name")
+        )
+        judge_provider_model = ""
+        judge_model_mismatch = False
         if judge_metadata_path.is_file():
             judge_metadata = read_json(judge_metadata_path)
+            configured_judge = str(
+                judge_metadata.get("configured_model") or configured_judge
+            )
+            judge_provider_model = str(
+                judge_metadata.get("provider_reported_model") or ""
+            )
+            judge_model_mismatch = bool(
+                judge_provider_model and judge_provider_model != configured_judge
+            )
             usage = judge_metadata.get("usage", {})
             costs = judge_metadata.get("costs", {})
             judge_prompt_tokens = numeric(usage.get("judge_prompt_tokens"))
@@ -146,6 +174,18 @@ def collect(
             judge_cost = numeric(costs.get("judge_est_cost_usd"))
             retry_cost = numeric(costs.get("retry_est_cost_usd"))
             total_cost = numeric(costs.get("total_est_cost_usd"))
+        for phase, configured_name, reported_name, mismatch in (
+            ("Agent", model_name, provider_model, model_mismatch),
+            ("Judge", configured_judge, judge_provider_model, judge_model_mismatch),
+        ):
+            pair = (phase, configured_name, reported_name)
+            if mismatch and pair not in warned_identifier_pairs:
+                warnings.warn(
+                    f"{phase} configured model {configured_name!r} differs from "
+                    f"provider-reported model {reported_name!r}",
+                    stacklevel=2,
+                )
+                warned_identifier_pairs.add(pair)
         run_costs[(strategy, version, run_id)] = {
             "prompt": prompt_tokens,
             "completion": completion_tokens,
@@ -186,7 +226,13 @@ def collect(
                     "wall_clock_s": wall_clock,
                     "task_status": statuses.get(idx, "unknown"),
                     "model": model_name,
-                    "judge": metadata_name(metadata.get("judge") or metadata.get("judge_name")),
+                    "judge": configured_judge,
+                    "configured_model": model_name,
+                    "provider_reported_model": provider_model,
+                    "model_identifier_mismatch": model_mismatch,
+                    "configured_judge_model": configured_judge,
+                    "judge_provider_reported_model": judge_provider_model,
+                    "judge_model_identifier_mismatch": judge_model_mismatch,
                     "mcp_status_at_start": metadata.get("mcp_status_at_start"),
                 }
             )
@@ -254,6 +300,12 @@ def collect(
                 "est_cost_usd": complete_sum(costs),
                 "n_runs": len({row["run_id"] for row in rows}),
                 "n_tasks": len(rows),
+                "model_identifier_mismatches": sum(
+                    bool(row["model_identifier_mismatch"]) for row in rows
+                ),
+                "judge_model_identifier_mismatches": sum(
+                    bool(row["judge_model_identifier_mismatch"]) for row in rows
+                ),
             }
         )
     return details, aggregates

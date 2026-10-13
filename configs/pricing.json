@@ -1,14 +1,20 @@
 {
   "schema_version": 1,
+  "last_reviewed_at": "2026-10-13",
+  "stale_after_days": 30,
   "models": {
     "deepseek-chat": {
       "prompt_per_mtok_usd": 0.27,
       "completion_per_mtok_usd": 1.10,
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "pricing_status": "historical_reference",
       "note": "Historical DeepSeek V3 cache-miss price from the official V3 release. Prices and model availability can change; verify the official pricing page before every paid run."
     },
     "gpt-4o": {
       "prompt_per_mtok_usd": 2.50,
       "completion_per_mtok_usd": 10.00,
+      "source_url": "https://platform.openai.com/docs/pricing",
+      "pricing_status": "historical_reference",
       "note": "Reference price only; verify the provider price before use."
     }
   }

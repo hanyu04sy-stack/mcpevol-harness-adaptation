@@ -21,6 +21,8 @@ SCHEMA_FILES = {
     "tool_changes": "tool-changes.schema.json",
     "summary": "summary.schema.json",
     "pricing": "pricing.schema.json",
+    "run_metadata": "run-metadata.schema.json",
+    "judge_metadata": "judge-metadata.schema.json",
 }
 
 
@@ -58,6 +60,16 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
     result_summary = root / "results/summary.json"
     if result_summary.is_file():
         targets.append(("summary", result_summary))
+    targets.extend(
+        ("run_metadata", path)
+        for path in sorted((root / "results").rglob("run-metadata.json"))
+        if read_json(path).get("schema_version") == 1
+    )
+    targets.extend(
+        ("judge_metadata", path)
+        for path in sorted((root / "results").rglob("judge-metadata.json"))
+        if read_json(path).get("schema_version") == 1
+    )
     return targets
 
 

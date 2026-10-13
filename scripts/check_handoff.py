@@ -24,6 +24,8 @@ REQUIRED_FILES: dict[str, list[str]] = {
         "configs/pricing.json",
         "schemas/experiment-config.schema.json",
         "schemas/pricing.schema.json",
+        "schemas/run-metadata.schema.json",
+        "schemas/judge-metadata.schema.json",
         "schemas/task-list.schema.json",
         "schemas/subset-manifest.schema.json",
         "schemas/validation-report.schema.json",

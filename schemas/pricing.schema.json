@@ -4,19 +4,23 @@
   "title": "Model pricing configuration",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "models"],
+  "required": ["schema_version", "last_reviewed_at", "stale_after_days", "models"],
   "properties": {
     "schema_version": {"const": 1},
+    "last_reviewed_at": {"type": "string", "format": "date"},
+    "stale_after_days": {"type": "integer", "minimum": 1},
     "models": {
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["prompt_per_mtok_usd", "completion_per_mtok_usd"],
+        "required": ["prompt_per_mtok_usd", "completion_per_mtok_usd", "source_url", "pricing_status"],
         "properties": {
           "prompt_per_mtok_usd": {"type": "number", "minimum": 0},
           "completion_per_mtok_usd": {"type": "number", "minimum": 0},
+          "source_url": {"type": "string", "format": "uri"},
+          "pricing_status": {"enum": ["current", "historical_reference"]},
           "note": {"type": "string"}
         }
       }

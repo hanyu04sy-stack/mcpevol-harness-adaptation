@@ -24,6 +24,7 @@ from experiment_config import (
     load_env_file,
     load_experiment,
     public_summary,
+    pricing_warning,
     resolve_runtime_credentials,
     sha256,
     validate_endpoint_model_consistency,
@@ -205,6 +206,7 @@ def configured_initializer(
                 max_retries=int(resolved["openai_max_retries"]),
                 audit=retry_audit,
                 lock=usage_lock,
+                on_record=resolved.get("_retry_checkpoint"),
             )
             usage = getattr(response, "usage", None)
             reported_model = getattr(response, "model", None)
@@ -300,6 +302,7 @@ def write_metadata(
     payload = public_summary(resolved)
     payload.update(
         {
+            "schema_version": 1,
             "strategy": resolved["strategy"],
             "run_id": resolved["run_id"],
             "model": {
@@ -318,6 +321,7 @@ def write_metadata(
                 ),
             },
             "rate_limit_retry": dict(resolved.get("rate_limit_retry", {})),
+            "rate_limit_retry_file": resolved.get("rate_limit_retry_file"),
             "judge": {
                 "name": resolved["judge_name"],
                 "temperature": resolved["judge_temperature"],
@@ -339,6 +343,19 @@ def write_metadata(
         encoding="utf-8",
     )
     return path
+
+
+def write_retry_checkpoint(
+    path: Path, audit: dict[str, object], status: str
+) -> None:
+    """Atomically preserve Agent retry state, including during long runs."""
+    payload = {"schema_version": 1, "status": status, **audit}
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    temporary.replace(path)
 
 
 def main() -> None:
@@ -389,6 +406,12 @@ def main() -> None:
             str(resolved["model_name"]), str(resolved["model_base_url_resolved"])
         )
         print(json.dumps(public_summary(resolved), ensure_ascii=False, indent=2))
+        price_warning = pricing_warning(
+            Path(resolved["project_root"]) / "configs/pricing.json",
+            str(resolved["model_name"]),
+        )
+        if price_warning:
+            print(f"PRICING WARNING: {price_warning}")
         print("upstream_argv=" + json.dumps(upstream_arguments(resolved)))
         if args.print_resolved_prompt:
             print("--- resolved harness prompt ---")
@@ -424,6 +447,20 @@ def main() -> None:
             int(resolved["openai_max_retries"])
         )
         resolved["_usage_lock"] = threading.Lock()
+        retry_checkpoint = Path(resolved["output_dir"]) / "agent-rate-limit-retry.json"
+        resolved["rate_limit_retry_file"] = retry_checkpoint.name
+
+        def checkpoint_retry(audit: dict[str, object]) -> None:
+            with resolved["_usage_lock"]:
+                write_retry_checkpoint(
+                    retry_checkpoint,
+                    audit,
+                    "failed" if audit["exhausted_requests"] else "running",
+                )
+
+        resolved["_retry_checkpoint"] = checkpoint_retry
+        retry_checkpoint.parent.mkdir(parents=True, exist_ok=True)
+        write_retry_checkpoint(retry_checkpoint, resolved["rate_limit_retry"], "running")
         started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")
         if formal_run:
@@ -434,6 +471,9 @@ def main() -> None:
         try:
             run_upstream(resolved, api_key, base_url)
         except BaseException:
+            write_retry_checkpoint(
+                retry_checkpoint, resolved["rate_limit_retry"], "failed"
+            )
             write_metadata(
                 resolved,
                 mcp_status,
@@ -446,6 +486,9 @@ def main() -> None:
             mcp_status,
             "completed",
             wall_clock_seconds=round(time.monotonic() - started, 3),
+        )
+        write_retry_checkpoint(
+            retry_checkpoint, resolved["rate_limit_retry"], "completed"
         )
         print(f"Run completed; metadata: {metadata}")
         print(

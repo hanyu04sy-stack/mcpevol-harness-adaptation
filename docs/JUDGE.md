@@ -67,6 +67,8 @@ exponential delay, actual retry, exhausted request, and total wait. SDK retries
 are disabled so this transport behavior is not hidden from the experiment log.
 The same state is checkpointed to `judge-rate-limit-retry.json` after every 429,
 so exhausted retries remain available even when judging stops before completion.
+`schemas/judge-metadata.schema.json` validates these fields; Agent metadata has a
+parallel schema so incompatible reporting changes fail validation immediately.
 
 ## Command
 

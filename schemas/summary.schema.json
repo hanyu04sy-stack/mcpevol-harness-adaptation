@@ -23,7 +23,7 @@
     "detail": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["strategy", "version", "run_id", "task_idx", "tf", "pe", "ecs", "success", "failure_category", "prompt_tokens", "completion_tokens", "wall_clock_s", "task_status", "model", "judge", "mcp_status_at_start"],
+      "required": ["strategy", "version", "run_id", "task_idx", "tf", "pe", "ecs", "success", "failure_category", "prompt_tokens", "completion_tokens", "wall_clock_s", "task_status", "model", "judge", "configured_model", "provider_reported_model", "model_identifier_mismatch", "configured_judge_model", "judge_provider_reported_model", "judge_model_identifier_mismatch", "mcp_status_at_start"],
       "properties": {
         "strategy": {"type": "string", "minLength": 1},
         "version": {"enum": ["early", "middle", "late"]},
@@ -40,13 +40,19 @@
         "task_status": {"enum": ["affected", "retention", "unknown"]},
         "model": {"type": "string"},
         "judge": {"type": "string"},
+        "configured_model": {"type": "string"},
+        "provider_reported_model": {"type": "string"},
+        "model_identifier_mismatch": {"type": "boolean"},
+        "configured_judge_model": {"type": "string"},
+        "judge_provider_reported_model": {"type": "string"},
+        "judge_model_identifier_mismatch": {"type": "boolean"},
         "mcp_status_at_start": {"type": ["object", "null"]}
       }
     },
     "aggregate": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["strategy", "version", "mean_tf", "mean_pe", "mean_ecs", "recovery_rate", "retention_rate", "total_cost_tokens", "agent_est_cost_usd", "judge_est_cost_usd", "retry_est_cost_usd", "est_cost_usd", "n_runs", "n_tasks"],
+      "required": ["strategy", "version", "mean_tf", "mean_pe", "mean_ecs", "recovery_rate", "retention_rate", "total_cost_tokens", "agent_est_cost_usd", "judge_est_cost_usd", "retry_est_cost_usd", "est_cost_usd", "n_runs", "n_tasks", "model_identifier_mismatches", "judge_model_identifier_mismatches"],
       "properties": {
         "strategy": {"type": "string", "minLength": 1},
         "version": {"enum": ["early", "middle", "late"]},
@@ -61,7 +67,9 @@
         "retry_est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
         "est_cost_usd": {"$ref": "#/$defs/nullableNumber"},
         "n_runs": {"type": "integer", "minimum": 1},
-        "n_tasks": {"type": "integer", "minimum": 1}
+        "n_tasks": {"type": "integer", "minimum": 1},
+        "model_identifier_mismatches": {"type": "integer", "minimum": 0},
+        "judge_model_identifier_mismatches": {"type": "integer", "minimum": 0}
       }
     }
   }

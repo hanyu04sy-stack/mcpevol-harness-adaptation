@@ -8,6 +8,7 @@ import json
 import os
 import re
 import subprocess
+from datetime import date
 from pathlib import Path
 from typing import Any, MutableMapping
 from urllib.parse import urlsplit
@@ -519,3 +520,28 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
     ):
         result[key] = str(resolved[key]) if resolved[key] is not None else None
     return result
+
+
+def pricing_warning(
+    pricing_path: Path, model_name: str, *, today: date | None = None
+) -> str | None:
+    """Return a pre-run warning when configured prices are stale or historical."""
+    try:
+        payload = json.loads(pricing_path.read_text(encoding="utf-8"))
+        reviewed = date.fromisoformat(str(payload["last_reviewed_at"]))
+        stale_after = int(payload["stale_after_days"])
+        model = payload["models"][model_name]
+        age = ((today or date.today()) - reviewed).days
+        status = str(model["pricing_status"])
+        if status != "current" or age > stale_after:
+            return (
+                f"Pricing for {model_name} is {status.replace('_', ' ')} and was "
+                f"reviewed {reviewed.isoformat()} ({age} days ago). Confirm current "
+                f"rates at {model['source_url']} before paid runs."
+            )
+        return None
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return (
+            f"Pricing metadata for {model_name} is incomplete; verify it before "
+            "paid runs."
+        )

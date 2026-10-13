@@ -21,7 +21,10 @@ class CollectResultsTest(unittest.TestCase):
                     "strategy": strategy,
                     "version": "late",
                     "run_id": 1,
-                    "model": {"name": "deepseek-chat"},
+                    "model": {
+                        "name": "deepseek-chat",
+                        "provider_reported_model": "deepseek-v3-20250324",
+                    },
                     "judge": {"name": "deepseek-chat"},
                     "mcp_status_at_start": {"connected_servers": 26},
                     "total_prompt_tokens": 100,
@@ -49,6 +52,8 @@ class CollectResultsTest(unittest.TestCase):
         (run / "judge-metadata.json").write_text(
             json.dumps(
                 {
+                    "configured_model": "deepseek-chat",
+                    "provider_reported_model": "deepseek-v3-20250324",
                     "usage": {
                         "judge_prompt_tokens": 200,
                         "judge_completion_tokens": 40,
@@ -92,6 +97,12 @@ class CollectResultsTest(unittest.TestCase):
             self.assertAlmostEqual(original["judge_est_cost_usd"], 0.000098)
             self.assertAlmostEqual(original["retry_est_cost_usd"], 0.0000082)
             self.assertAlmostEqual(original["est_cost_usd"], 0.0001552)
+            self.assertEqual(original["model_identifier_mismatches"], 1)
+            self.assertEqual(original["judge_model_identifier_mismatches"], 1)
+            self.assertTrue(details[0]["model_identifier_mismatch"])
+            self.assertEqual(
+                details[0]["provider_reported_model"], "deepseek-v3-20250324"
+            )
 
 
 if __name__ == "__main__":

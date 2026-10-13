@@ -12,7 +12,13 @@ from pathlib import Path
 from typing import Any, Callable, Mapping, TextIO
 from urllib.parse import urlsplit
 
-from experiment_config import ConfigError, parse_env_file, validate_endpoint_model_consistency
+from experiment_config import (
+    ConfigError,
+    parse_env_file,
+    pricing_warning,
+    validate_endpoint_model_consistency,
+)
+from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
 
 
 @dataclass
@@ -91,17 +97,20 @@ def skipped(number: int, title: str, reason: str) -> Result:
     return Result(number, title, False, f"Not run: {reason}", "Fix: resolve the earlier FAIL, then re-run this script.")
 
 
-def check_config(model: str, judge: str, endpoint: str) -> Result:
+def check_config(
+    model: str, judge: str, model_endpoint: str, judge_endpoint: str
+) -> Result:
     try:
         if model != judge:
             raise ConfigError(f"model.name={model!r} does not match judge.name={judge!r}")
-        validate_endpoint_model_consistency(model, endpoint)
-        return Result(2, "Config / env consistency", True, f"model={model}, judge={judge} (match), endpoint={endpoint}", "Next: configuration and endpoint agree.")
+        validate_endpoint_model_consistency(model, model_endpoint)
+        validate_endpoint_model_consistency(judge, judge_endpoint)
+        return Result(2, "Config / env consistency", True, f"model={model}, judge={judge} (match), model_endpoint={model_endpoint}, judge_endpoint={judge_endpoint}", "Next: both Agent and Judge configurations agree with their endpoints.")
     except ConfigError as exc:
         if "DeepSeek" in str(exc) and not model.lower().startswith("deepseek"):
             fix = "Fix: change model.name and judge.name in configs/experiment.json to deepseek-chat."
         elif model.lower().startswith("deepseek"):
-            fix = "Fix: set MODEL_BASE_URL=https://api.deepseek.com in .env, or use a model slug served by that endpoint."
+            fix = "Fix: set MODEL_BASE_URL and JUDGE_BASE_URL (if non-empty) to https://api.deepseek.com, or use model slugs served by those endpoints."
         else:
             fix = "Fix: make model.name and judge.name identical in configs/experiment.json."
         return Result(2, "Config / env consistency", False, str(exc), fix)
@@ -118,12 +127,25 @@ def request_chat(client: Any, model: str) -> tuple[Any, float]:
     return response, time.monotonic() - started
 
 
-def probe(model: str, key: str, endpoint: str, factory: Callable[..., Any]):
+def probe(
+    model: str,
+    key: str,
+    endpoint: str,
+    factory: Callable[..., Any],
+    retry_audit: dict[str, Any] | None = None,
+):
+    retry_audit = retry_audit or new_retry_audit(2)
     successes, failures = [], []
     for candidate in endpoint_candidates(endpoint):
         try:
-            client = factory(api_key=key, base_url=candidate, timeout=30.0, max_retries=2)
-            response, latency = request_chat(client, model)
+            client = factory(api_key=key, base_url=candidate, timeout=30.0, max_retries=0)
+            started = time.monotonic()
+            response = call_with_rate_limit_retry(
+                lambda: request_chat(client, model)[0],
+                max_retries=2,
+                audit=retry_audit,
+            )
+            latency = time.monotonic() - started
             successes.append((candidate, response, latency))
         except Exception as exc:
             failures.append((candidate, exc))
@@ -156,7 +178,10 @@ def _tool_call_payload(call: Any) -> dict[str, Any]:
     }
 
 
-def check_tools(client: Any, model: str) -> Result:
+def check_tools(
+    client: Any, model: str, retry_audit: dict[str, Any] | None = None
+) -> Result:
+    retry_audit = retry_audit or new_retry_audit(2)
     try:
         tools = [
             {
@@ -215,12 +240,16 @@ def check_tools(client: Any, model: str) -> Result:
                 ),
             }
         ]
-        response = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=tools,
-            max_tokens=100,
-            temperature=0.0,
+        response = call_with_rate_limit_retry(
+            lambda: client.chat.completions.create(
+                model=model,
+                messages=messages,
+                tools=tools,
+                max_tokens=100,
+                temperature=0.0,
+            ),
+            max_retries=2,
+            audit=retry_audit,
         )
         message = response.choices[0].message
         calls = getattr(message, "tool_calls", None)
@@ -260,12 +289,16 @@ def check_tools(client: Any, model: str) -> Result:
                 },
             ]
         )
-        chained = client.chat.completions.create(
-            model=model,
-            messages=messages,
-            tools=tools,
-            max_tokens=100,
-            temperature=0.0,
+        chained = call_with_rate_limit_retry(
+            lambda: client.chat.completions.create(
+                model=model,
+                messages=messages,
+                tools=tools,
+                max_tokens=100,
+                temperature=0.0,
+            ),
+            max_retries=2,
+            audit=retry_audit,
         )
         chained_calls = getattr(chained.choices[0].message, "tool_calls", None)
         if not isinstance(chained_calls, list) or not chained_calls:
@@ -297,6 +330,73 @@ def _cost(prompt_tokens: int, completion_tokens: int, rate: dict[str, Any]) -> f
         / 1_000_000
         * float(rate["completion_per_mtok_usd"])
     )
+
+
+def _usage_calibration(
+    root: Path, model: str, target_tasks: int
+) -> dict[str, Any] | None:
+    """Use the newest completed real run to calibrate per-task token estimates."""
+    candidates = sorted(
+        (root / "results").rglob("run-metadata.json"),
+        key=lambda path: path.stat().st_mtime,
+        reverse=True,
+    ) if (root / "results").is_dir() else []
+    for metadata_path in candidates:
+        try:
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            configured = metadata.get("model", {})
+            configured_name = (
+                configured.get("name") if isinstance(configured, dict) else configured
+            )
+            if configured_name != model or metadata.get("status") != "completed":
+                continue
+            run_dir = metadata_path.parent
+            judge_results_path = run_dir / "judge-results.json"
+            if not judge_results_path.is_file():
+                continue
+            tasks = json.loads(judge_results_path.read_text(encoding="utf-8")).get(
+                "tasks", []
+            )
+            observed_tasks = len(tasks) if isinstance(tasks, list) else 0
+            agent_prompt = metadata.get("total_prompt_tokens")
+            agent_completion = metadata.get("total_completion_tokens")
+            if (
+                observed_tasks < 1
+                or not isinstance(agent_prompt, int)
+                or not isinstance(agent_completion, int)
+            ):
+                continue
+            scale = target_tasks / observed_tasks
+            calibrated: dict[str, Any] = {
+                "source": str(metadata_path.relative_to(root)),
+                "observed_tasks": observed_tasks,
+                "agent_prompt_tokens": round(agent_prompt * scale),
+                "agent_completion_tokens": round(agent_completion * scale),
+            }
+            judge_path = run_dir / "judge-metadata.json"
+            if judge_path.is_file():
+                judge = json.loads(judge_path.read_text(encoding="utf-8"))
+                usage = judge.get("usage", {})
+                valid_scores = judge.get("valid_score_count")
+                for source_key, output_key in (
+                    ("judge_prompt_tokens", "judge_prompt_tokens"),
+                    ("judge_completion_tokens", "judge_completion_tokens"),
+                ):
+                    value = usage.get(source_key)
+                    if isinstance(value, int):
+                        calibrated[output_key] = round(value * scale)
+                if isinstance(valid_scores, int) and valid_scores > 0:
+                    calibrated["valid_score_count"] = valid_scores
+                    calibrated["judge_prompt_per_score"] = (
+                        usage.get("judge_prompt_tokens", 0) / valid_scores
+                    )
+                    calibrated["judge_completion_per_score"] = (
+                        usage.get("judge_completion_tokens", 0) / valid_scores
+                    )
+            return calibrated
+        except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+            continue
+    return None
 
 
 def estimate_cost(config: dict[str, Any], root: Path) -> dict[str, Any] | None:
@@ -363,6 +463,27 @@ def estimate_cost(config: dict[str, Any], root: Path) -> dict[str, Any] | None:
             * (JUDGE_MAX_ATTEMPTS_PER_VALID_SCORE - 1)
         )
         retry_completion = retry_attempts * JUDGE_COMPLETION_TOKENS_PER_ATTEMPT
+        calibration = _usage_calibration(root, model, len(cases))
+        estimation_method = "actual_trajectory_chars_divided_by_4"
+        calibration_source = None
+        if calibration is not None:
+            agent_prompt = int(calibration["agent_prompt_tokens"])
+            agent_completion = int(calibration["agent_completion_tokens"])
+            if "judge_prompt_tokens" in calibration:
+                judge_prompt = int(calibration["judge_prompt_tokens"])
+            if "judge_completion_tokens" in calibration:
+                judge_completion = int(calibration["judge_completion_tokens"])
+            if "judge_prompt_per_score" in calibration:
+                retry_prompt = round(
+                    float(calibration["judge_prompt_per_score"]) * retry_attempts
+                )
+            if "judge_completion_per_score" in calibration:
+                retry_completion = round(
+                    float(calibration["judge_completion_per_score"])
+                    * retry_attempts
+                )
+            estimation_method = "calibrated_from_real_usage"
+            calibration_source = calibration["source"]
         agent_cost = _cost(agent_prompt, agent_completion, rate)
         judge_cost = _cost(judge_prompt, judge_completion, rate)
         retry_reserve = _cost(retry_prompt, retry_completion, rate)
@@ -376,6 +497,8 @@ def estimate_cost(config: dict[str, Any], root: Path) -> dict[str, Any] | None:
             "retry_attempt_reserve": retry_attempts,
             "retry_prompt_tokens": retry_prompt,
             "retry_completion_tokens": retry_completion,
+            "estimation_method": estimation_method,
+            "calibration_source": calibration_source,
             "agent_cost": agent_cost,
             "judge_cost": judge_cost,
             "retry_reserve": retry_reserve,
@@ -385,7 +508,13 @@ def estimate_cost(config: dict[str, Any], root: Path) -> dict[str, Any] | None:
         return None
 
 
-def summary(results: list[Result], config: dict[str, Any], root: Path, out: TextIO) -> None:
+def summary(
+    results: list[Result],
+    config: dict[str, Any],
+    root: Path,
+    out: TextIO,
+    retry_audit: dict[str, Any] | None = None,
+) -> None:
     print("== Summary ==", file=out)
     for item in results:
         suffix = f" {item.suffix}" if item.suffix else ""
@@ -409,13 +538,26 @@ def summary(results: list[Result], config: dict[str, Any], root: Path, out: Text
                 file=out,
             )
             print(
-                "Estimate uses the actual stored trajectory text "
-                f"(~{estimate['agent_prompt_tokens'] + estimate['judge_prompt_tokens']:,} "
-                "prompt tokens at 4 chars/token), includes up to "
+                (
+                    f"Estimate calibrated from real usage in {estimate['calibration_source']} "
+                    if estimate["calibration_source"]
+                    else "Estimate uses actual stored trajectory text at 4 chars/token "
+                )
+                + f"(~{estimate['agent_prompt_tokens'] + estimate['judge_prompt_tokens']:,} prompt tokens), includes up to "
                 f"{estimate['retry_attempt_reserve']} Judge retries, and excludes "
                 "normally-unbilled HTTP 429 retries. See configs/pricing.json.",
                 file=out,
             )
+    if retry_audit is not None:
+        print(
+            "429 retry audit: "
+            f"responses={retry_audit['rate_limit_responses']}, "
+            f"actual_retries={retry_audit['actual_retries']}, "
+            f"total_backoff_seconds={retry_audit['total_backoff_seconds']}, "
+            f"exhausted_requests={retry_audit['exhausted_requests']}, "
+            f"events={json.dumps(retry_audit['events'], ensure_ascii=False)}",
+            file=out,
+        )
 
 
 def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callable[..., Any], environ: Mapping[str, str] | None, stream: TextIO) -> int:
@@ -431,17 +573,34 @@ def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callabl
         return 1
     source = os.environ if environ is None else environ
     model_cfg, judge_cfg = config["model"], config["judge"]
+    price_warning = pricing_warning(
+        config_path.resolve().parents[1] / "configs/pricing.json",
+        str(model_cfg["name"]),
+    )
+    if price_warning:
+        print(f"[WARN] {price_warning}\n", file=stream)
     key_name, url_name = str(model_cfg["api_key_env"]), str(model_cfg["base_url_env"])
     key = str(source.get(key_name, dotenv.get(key_name, ""))).strip()
     endpoint = str(source.get(url_name, dotenv.get(url_name, ""))).strip()
+    judge_key_name = str(judge_cfg.get("api_key_env", "JUDGE_API_KEY"))
+    judge_url_name = str(judge_cfg.get("base_url_env", "JUDGE_BASE_URL"))
+    judge_key = str(
+        source.get(judge_key_name, dotenv.get(judge_key_name, ""))
+    ).strip() or key
+    judge_endpoint = str(
+        source.get(judge_url_name, dotenv.get(judge_url_name, ""))
+    ).strip() or endpoint
     model, judge = str(model_cfg["name"]), str(judge_cfg["name"])
-    consistency = check_config(model, judge, endpoint)
+    retry_audit = new_retry_audit(2)
+    consistency = check_config(model, judge, endpoint, judge_endpoint)
     if not consistency.passed:
         results = [skipped(1, "Chat completion", "config / env consistency failed"), consistency, skipped(3, "Endpoint detection", "config / env consistency failed"), skipped(4, "Tool calling", "config / env consistency failed")]
     elif not key:
         results = [Result(1, "Chat completion", False, "MODEL_API_KEY is empty.", "Fix: open .env and set MODEL_API_KEY to a valid key from https://platform.deepseek.com/.\nRe-run this script after editing."), consistency, skipped(3, "Endpoint detection", "MODEL_API_KEY is empty"), skipped(4, "Tool calling", "MODEL_API_KEY is empty")]
     else:
-        (selected, response, latency), failures = probe(model, key, endpoint, client_factory)
+        (selected, response, latency), failures = probe(
+            model, key, endpoint, client_factory, retry_audit
+        )
         if selected is None:
             detail, fix = friendly_error(failures[0][1] if failures else RuntimeError("no endpoint candidate"))
             chat = Result(1, "Chat completion", False, detail, fix)
@@ -451,13 +610,50 @@ def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callabl
         else:
             chat = chat_result(selected, response, latency)
             is_deepseek = urlsplit(endpoint).hostname == "api.deepseek.com"
-            endpoint_result = Result(3, "Endpoint detection", True, f"Selected {selected}. You may set MODEL_BASE_URL={selected} in .env for stability." if is_deepseek else f"DeepSeek probing is not required; using {selected}.", "Next: keep this URL; the script never rewrites .env.", f"(using {selected})")
-            client = client_factory(api_key=key, base_url=selected, timeout=30.0, max_retries=2)
-            tool = check_tools(client, model)
+            judge_selected = selected
+            judge_failures: list[tuple[str, Exception]] = []
+            if judge_endpoint != endpoint or judge_key != key:
+                (judge_selected, _, _), judge_failures = probe(
+                    judge, judge_key, judge_endpoint, client_factory, retry_audit
+                )
+            if judge_selected is None:
+                failed = "; ".join(
+                    f"{url}: {friendly_error(exc)[0]}"
+                    for url, exc in judge_failures
+                )
+                endpoint_result = Result(
+                    3,
+                    "Endpoint detection",
+                    False,
+                    f"Agent selected {selected}; Judge failed: {failed}",
+                    "Fix: correct JUDGE_BASE_URL/JUDGE_API_KEY or leave them blank to inherit MODEL_*.",
+                )
+            else:
+                endpoint_result = Result(
+                    3,
+                    "Endpoint detection",
+                    True,
+                    f"Agent selected {selected}; Judge selected {judge_selected}. "
+                    + (
+                        f"You may set MODEL_BASE_URL={selected} in .env for stability."
+                        if is_deepseek
+                        else "DeepSeek probing is not required."
+                    ),
+                    "Next: keep these URLs; the script never rewrites .env.",
+                    f"(agent={selected}, judge={judge_selected})",
+                )
+            client = client_factory(api_key=key, base_url=selected, timeout=30.0, max_retries=0)
+            tool = check_tools(client, model, retry_audit)
         results = [chat, consistency, endpoint_result, tool]
     for result in results:
         render(result, stream)
-    summary(results, config, config_path.resolve().parents[1], stream)
+    summary(
+        results,
+        config,
+        config_path.resolve().parents[1],
+        stream,
+        retry_audit,
+    )
     return 0 if all(item.passed for item in results) else 1
 
 

@@ -21,6 +21,8 @@ environment variables, or writes credentials to logs or metadata.
 Leave `JUDGE_API_KEY` and `JUDGE_BASE_URL` blank when judge and agent use the
 same model; the judge safely inherits `MODEL_*`. Client timeout and retry values
 come from `openai_client` in the experiment config.
+When Judge overrides are present, the connection self-check validates and probes
+Agent and Judge credentials and endpoints independently.
 
 HTTP 429 retries are handled by the harness instead of the OpenAI SDK's hidden
 retry loop. Each request uses exponential backoff (1, 2, 4, ... seconds, capped
@@ -28,6 +30,8 @@ at 60 seconds) and honors a longer provider `Retry-After` value within that cap.
 `run-metadata.json` records every 429, advertised delay, applied delay, actual
 retry count, exhausted requests, and total backoff time under
 `rate_limit_retry`.
+The same state is atomically checkpointed after every 429 to
+`agent-rate-limit-retry.json`, so a killed process retains its latest audit.
 
 ## Model provider notes
 
@@ -39,6 +43,9 @@ retry count, exhausted requests, and total backoff time under
 - On failure, its cost estimate reads the actual stored trajectories, includes
   five Judge scores per task and a conservative malformed-response retry reserve,
   and prints the token approximation and pricing assumptions.
+- After a completed real canary exists under `results/`, the estimate uses its
+  per-task Agent/Judge usage and reports the calibration source instead of using
+  the 4-character fallback.
 - Its tool preflight verifies nested objects, arrays, two consecutive tool calls,
   and the `tool_call_id` used to attach a tool result to the first call.
 - Provider slugs and prices change. A model-not-found result means the config must be updated before continuing.
@@ -97,6 +104,13 @@ Metadata never contains credentials. It does contain `harness_dir`, `harness_man
 The nested `model.provider_reported_model` field records the first model
 identifier returned by the provider, while `provider_reported_models` preserves
 every distinct identifier observed during the run.
+`collect_results.py` warns when configured and provider-reported identifiers
+differ and records mismatch counts in the summary.
+
+`configs/pricing.json` records a review date, source URL, and current/historical
+status. The self-check, runner, and Judge warn before paid calls when a rate needs
+confirmation. Formal Agent and Judge metadata are validated by
+`schemas/run-metadata.schema.json` and `schemas/judge-metadata.schema.json`.
 
 ## 5. Run IDs and fairness check
 

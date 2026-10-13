@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/raw/main/schemas/judge-metadata.schema.json",
+  "title": "Judge run metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "recorded_at", "judge", "configured_model", "provider_reported_model", "provider_reported_models", "prompt_tokens", "completion_tokens", "attempt_count", "valid_score_count", "model_usage_audit", "rate_limit_retry", "rate_limit_retry_file", "input_files", "output_file", "usage", "costs", "secrets_recorded"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "judge": {"type": "object", "required": ["name", "temperature", "api_key_env", "base_url_env"], "additionalProperties": false, "properties": {"name": {"type": "string"}, "temperature": {"type": "number"}, "api_key_env": {"type": "string"}, "base_url_env": {"type": "string"}}},
+    "configured_model": {"type": "string"},
+    "provider_reported_model": {"type": ["string", "null"]},
+    "provider_reported_models": {"type": "array", "items": {"type": "string"}},
+    "prompt_tokens": {"type": "integer", "minimum": 0},
+    "completion_tokens": {"type": "integer", "minimum": 0},
+    "attempt_count": {"type": "integer", "minimum": 0},
+    "valid_score_count": {"type": "integer", "minimum": 0},
+    "model_usage_audit": {"type": "object"},
+    "rate_limit_retry": {"type": "object"},
+    "rate_limit_retry_file": {"type": "string"},
+    "input_files": {"type": "array", "items": {"type": "string"}},
+    "output_file": {"type": "string"},
+    "usage": {"type": "object", "additionalProperties": false, "required": ["agent_prompt_tokens", "agent_completion_tokens", "judge_prompt_tokens", "judge_completion_tokens", "retry_prompt_tokens", "retry_completion_tokens", "responses_missing_usage"], "properties": {"agent_prompt_tokens": {"type": ["integer", "null"], "minimum": 0}, "agent_completion_tokens": {"type": ["integer", "null"], "minimum": 0}, "judge_prompt_tokens": {"type": "integer", "minimum": 0}, "judge_completion_tokens": {"type": "integer", "minimum": 0}, "retry_prompt_tokens": {"type": "integer", "minimum": 0}, "retry_completion_tokens": {"type": "integer", "minimum": 0}, "responses_missing_usage": {"type": "integer", "minimum": 0}}},
+    "costs": {"type": "object", "additionalProperties": false, "required": ["currency", "model", "agent_est_cost_usd", "judge_est_cost_usd", "retry_est_cost_usd", "total_est_cost_usd"], "properties": {"currency": {"const": "USD"}, "model": {"type": "string"}, "agent_est_cost_usd": {"type": ["number", "null"]}, "judge_est_cost_usd": {"type": ["number", "null"]}, "retry_est_cost_usd": {"type": ["number", "null"]}, "total_est_cost_usd": {"type": ["number", "null"]}}},
+    "secrets_recorded": {"const": false}
+  }
+}
