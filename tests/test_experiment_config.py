@@ -277,10 +277,12 @@ class ExperimentConfigTest(unittest.TestCase):
         responses = iter(
             [
                 SimpleNamespace(
-                    usage=SimpleNamespace(prompt_tokens=11, completion_tokens=4)
+                    model="deepseek-chat-v3-20250324",
+                    usage=SimpleNamespace(prompt_tokens=11, completion_tokens=4),
                 ),
                 SimpleNamespace(
-                    usage=SimpleNamespace(prompt_tokens=7, completion_tokens=3)
+                    model="deepseek-chat-v3-20250324",
+                    usage=SimpleNamespace(prompt_tokens=7, completion_tokens=3),
                 ),
             ]
         )
@@ -318,6 +320,12 @@ class ExperimentConfigTest(unittest.TestCase):
         instance.chat(messages=[])
         self.assertEqual(resolved["total_prompt_tokens"], 18)
         self.assertEqual(resolved["total_completion_tokens"], 7)
+        self.assertEqual(
+            resolved["provider_reported_model"], "deepseek-chat-v3-20250324"
+        )
+        self.assertEqual(
+            resolved["provider_reported_models"], ["deepseek-chat-v3-20250324"]
+        )
 
     def test_run_metadata_persists_accumulated_usage_tokens(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -332,6 +340,8 @@ class ExperimentConfigTest(unittest.TestCase):
                     "run_id": 1,
                     "total_prompt_tokens": 18,
                     "total_completion_tokens": 7,
+                    "provider_reported_model": "deepseek-chat-v3-20250324",
+                    "provider_reported_models": ["deepseek-chat-v3-20250324"],
                 }
             )
             metadata = run_benchmark.write_metadata(
@@ -343,6 +353,10 @@ class ExperimentConfigTest(unittest.TestCase):
             payload = json.loads(metadata.read_text(encoding="utf-8"))
             self.assertEqual(payload["total_prompt_tokens"], 18)
             self.assertEqual(payload["total_completion_tokens"], 7)
+            self.assertEqual(
+                payload["model"]["provider_reported_model"],
+                "deepseek-chat-v3-20250324",
+            )
 
     def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
         resolved = {

@@ -128,6 +128,7 @@ def judge_case(
     rng = random.Random(seed)
     attempts: list[dict[str, Any]] = []
     scores: list[dict[str, Any]] = []
+    provider_reported_models: list[str] = []
     usage_totals = {
         "prompt_tokens": 0,
         "completion_tokens": 0,
@@ -155,6 +156,13 @@ def judge_case(
         response = client.chat.completions.create(
             **request,
         )
+        reported_model = getattr(response, "model", None)
+        if (
+            isinstance(reported_model, str)
+            and reported_model.strip()
+            and reported_model not in provider_reported_models
+        ):
+            provider_reported_models.append(reported_model)
         prompt_tokens, completion_tokens = response_usage(response)
         attempt_usage = {
             "prompt_tokens": prompt_tokens,
@@ -192,6 +200,7 @@ def judge_case(
     return {
         "runs": attempts,
         "usage": usage_totals,
+        "provider_reported_models": provider_reported_models,
         "aggregate": {
             "successful_runs": len(scores),
             "total_runs": len(attempts),
@@ -284,6 +293,7 @@ def main() -> None:
             "retry_completion_tokens": 0,
             "responses_missing_usage": 0,
         }
+        judge_provider_models: list[str] = []
         for source in trajectories:
             case = json.loads(source.read_text(encoding="utf-8"))
             idx = int(case["idx"])
@@ -309,6 +319,9 @@ def main() -> None:
             aggregate = evaluated["aggregate"]
             for name in judge_usage:
                 judge_usage[name] += int(evaluated["usage"][name])
+            for reported_model in evaluated["provider_reported_models"]:
+                if reported_model not in judge_provider_models:
+                    judge_provider_models.append(reported_model)
             tf = aggregate["task_fulfillment_mean"]
             normalized.append(
                 {
@@ -366,6 +379,10 @@ def main() -> None:
                     "schema_version": 1,
                     "recorded_at": generated_at,
                     "judge": public["judge"],
+                    "provider_reported_model": (
+                        judge_provider_models[0] if judge_provider_models else None
+                    ),
+                    "provider_reported_models": judge_provider_models,
                     "input_files": public["trajectory_files"],
                     "output_file": output.name,
                     "usage": {

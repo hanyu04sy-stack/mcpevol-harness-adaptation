@@ -196,6 +196,7 @@ def configured_initializer(
         def tracked_create(*call_args: object, **call_kwargs: object) -> object:
             response = original_create(*call_args, **call_kwargs)
             usage = getattr(response, "usage", None)
+            reported_model = getattr(response, "model", None)
             prompt_tokens = getattr(usage, "prompt_tokens", None)
             completion_tokens = getattr(usage, "completion_tokens", None)
             if isinstance(prompt_tokens, int) and not isinstance(prompt_tokens, bool):
@@ -210,6 +211,13 @@ def configured_initializer(
                     resolved["total_completion_tokens"] = int(
                         resolved.get("total_completion_tokens", 0)
                     ) + max(0, completion_tokens)
+            if isinstance(reported_model, str) and reported_model.strip():
+                with usage_lock:
+                    observed = resolved.setdefault("provider_reported_models", [])
+                    if reported_model not in observed:
+                        observed.append(reported_model)
+                    if not resolved.get("provider_reported_model"):
+                        resolved["provider_reported_model"] = reported_model
             return response
 
         instance.chat = partial(
@@ -291,6 +299,12 @@ def write_metadata(
                 "api_key_env": resolved["model_api_key_env"],
                 "timeout_seconds": resolved["openai_timeout_seconds"],
                 "max_retries": resolved["openai_max_retries"],
+                "provider_reported_model": resolved.get(
+                    "provider_reported_model"
+                ),
+                "provider_reported_models": list(
+                    resolved.get("provider_reported_models", [])
+                ),
             },
             "judge": {
                 "name": resolved["judge_name"],
@@ -392,6 +406,8 @@ def main() -> None:
         mcp_status = check_mcp(resolved)
         resolved["total_prompt_tokens"] = 0
         resolved["total_completion_tokens"] = 0
+        resolved["provider_reported_model"] = None
+        resolved["provider_reported_models"] = []
         resolved["_usage_lock"] = threading.Lock()
         started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")

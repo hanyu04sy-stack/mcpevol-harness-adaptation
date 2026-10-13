@@ -82,6 +82,9 @@ results/<strategy>/<early|middle|late>/run-XX/run-metadata.json
 ```
 
 Metadata never contains credentials. It does contain `harness_dir`, `harness_manifest_sha256`, and the SHA-256 of each injected harness file for auditability.
+The nested `model.provider_reported_model` field records the first model
+identifier returned by the provider, while `provider_reported_models` preserves
+every distinct identifier observed during the run.
 
 ## 5. Run IDs and fairness check
 

@@ -22,6 +22,7 @@ class RunJudgeTest(unittest.TestCase):
                     )
                 )
                 return SimpleNamespace(
+                    model="deepseek-chat-v3-20250324",
                     choices=[SimpleNamespace(message=message)],
                     usage=SimpleNamespace(prompt_tokens=20, completion_tokens=8),
                 )
@@ -45,6 +46,9 @@ class RunJudgeTest(unittest.TestCase):
         self.assertEqual(result["usage"]["prompt_tokens"], 20)
         self.assertEqual(result["usage"]["completion_tokens"], 8)
         self.assertEqual(result["usage"]["retry_prompt_tokens"], 0)
+        self.assertEqual(
+            result["provider_reported_models"], ["deepseek-chat-v3-20250324"]
+        )
 
     def test_invalid_judge_response_usage_is_counted_as_retry(self) -> None:
         contents = iter(
@@ -58,6 +62,7 @@ class RunJudgeTest(unittest.TestCase):
         class Completions:
             def create(self, **kwargs):
                 return SimpleNamespace(
+                    model="deepseek-chat-v3-20250324",
                     choices=[
                         SimpleNamespace(
                             message=SimpleNamespace(content=next(contents))

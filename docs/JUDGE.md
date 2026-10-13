@@ -56,6 +56,8 @@ The judge metadata separates Agent usage, valid Judge repetitions, and malformed
 Judge responses that triggered application-level retries. It records separate
 estimated USD costs plus `total_est_cost_usd`. If any response omits usage, the
 affected cost remains `null` rather than silently treating missing tokens as zero.
+It also records `provider_reported_model` and every distinct model identifier
+returned during judging so aliases can be audited after a provider-side change.
 
 ## Command
 
