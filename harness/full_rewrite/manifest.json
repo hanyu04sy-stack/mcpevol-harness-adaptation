@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "strategy": "full_rewrite",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "generated_at": "2026-10-12T00:00:00+08:00",
+  "adaptation_method": {
+    "name": "full_rewrite",
+    "description": "Regenerate the complete tool-related harness knowledge for the current MCP environment rather than patching only affected tools.",
+    "scope": "all tool-related harness knowledge",
+    "changes_allowed": [
+      "system prompt wording",
+      "tool usage rules"
+    ],
+    "changes_disallowed": [
+      "benchmark commit",
+      "task set",
+      "task labels",
+      "model settings",
+      "judge settings",
+      "MCP endpoint mapping",
+      "upstream benchmark source"
+    ]
+  },
+  "source_files": [
+    {"path": "harness/original/system_prompt.md"},
+    {"path": "harness/original/tool_usage_rules.md"},
+    {"path": "reports/tool-schemas/early.json"},
+    {"path": "reports/tool-schemas/middle.json"},
+    {"path": "reports/tool-schemas/late.json"},
+    {"path": "reports/tool-schemas/diff.json"},
+    {"path": "reports/tool-changes.json"},
+    {"path": "reports/tool-changes.md"},
+    {"path": "configs/experiment.json"},
+    {"path": "configs/fairness-pins.json"}
+  ],
+  "adaptation_cost": {
+    "generation_mode": "manual",
+    "api_prompt_tokens": 0,
+    "api_completion_tokens": 0,
+    "api_cost_usd": 0,
+    "notes": "The Full Rewrite baseline harness files were written manually from the fixed original harness snapshot and exported tool-schema/change reports. Runtime model and judge costs are recorded separately in run metadata and collected summaries."
+  }
+}
