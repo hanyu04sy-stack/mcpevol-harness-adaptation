@@ -271,7 +271,7 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(instance.chat.keywords["max_tokens"], 4096)
         self.assertNotIn("max_completion_tokens", instance.chat.keywords)
         self.assertEqual(instance.client.timeout, 120.0)
-        self.assertEqual(instance.client.max_retries, 3)
+        self.assertEqual(instance.client.max_retries, 0)
 
     def test_initializer_accumulates_response_usage_tokens(self) -> None:
         responses = iter(
@@ -342,6 +342,7 @@ class ExperimentConfigTest(unittest.TestCase):
                     "total_completion_tokens": 7,
                     "provider_reported_model": "deepseek-chat-v3-20250324",
                     "provider_reported_models": ["deepseek-chat-v3-20250324"],
+                    "rate_limit_retry": run_benchmark.new_retry_audit(3),
                 }
             )
             metadata = run_benchmark.write_metadata(
@@ -357,6 +358,8 @@ class ExperimentConfigTest(unittest.TestCase):
                 payload["model"]["provider_reported_model"],
                 "deepseek-chat-v3-20250324",
             )
+            self.assertEqual(payload["rate_limit_retry"]["actual_retries"], 0)
+            self.assertEqual(payload["rate_limit_retry"]["sdk_max_retries"], 0)
 
     def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
         resolved = {

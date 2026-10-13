@@ -22,6 +22,13 @@ Leave `JUDGE_API_KEY` and `JUDGE_BASE_URL` blank when judge and agent use the
 same model; the judge safely inherits `MODEL_*`. Client timeout and retry values
 come from `openai_client` in the experiment config.
 
+HTTP 429 retries are handled by the harness instead of the OpenAI SDK's hidden
+retry loop. Each request uses exponential backoff (1, 2, 4, ... seconds, capped
+at 60 seconds) and honors a longer provider `Retry-After` value within that cap.
+`run-metadata.json` records every 429, advertised delay, applied delay, actual
+retry count, exhausted requests, and total backoff time under
+`rate_limit_retry`.
+
 ## Model provider notes
 
 - Recommended DeepSeek endpoint: `https://api.deepseek.com`; current OpenAI SDKs handle the compatible route.

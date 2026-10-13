@@ -9,6 +9,7 @@ import random
 import re
 import statistics
 import sys
+from collections.abc import Callable
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -21,6 +22,7 @@ from experiment_config import (
     resolve_runtime_credentials,
 )
 from run_benchmark import load_harness, resolve_run_output
+from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
 
 
 def extract_json(text: str) -> dict[str, Any]:
@@ -124,6 +126,9 @@ def judge_case(
     max_tokens: int,
     num_runs: int,
     seed: int,
+    max_retries: int = 0,
+    retry_audit: dict[str, Any] | None = None,
+    on_retry_record: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     rng = random.Random(seed)
     attempts: list[dict[str, Any]] = []
@@ -137,6 +142,8 @@ def judge_case(
         "responses_missing_usage": 0,
     }
     max_attempts = num_runs * 3
+    if retry_audit is None:
+        retry_audit = new_retry_audit(max_retries)
     while len(scores) < num_runs and len(attempts) < max_attempts:
         order = [0, 1, 2]
         rng.shuffle(order)
@@ -153,8 +160,11 @@ def judge_case(
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        response = client.chat.completions.create(
-            **request,
+        response = call_with_rate_limit_retry(
+            lambda: client.chat.completions.create(**request),
+            max_retries=max_retries,
+            audit=retry_audit,
+            on_record=on_retry_record,
         )
         reported_model = getattr(response, "model", None)
         if (
@@ -280,7 +290,8 @@ def main() -> None:
             api_key=key,
             base_url=base_url,
             timeout=float(resolved["openai_timeout_seconds"]),
-            max_retries=int(resolved["openai_max_retries"]),
+            # Keep retries visible and auditable instead of delegating to the SDK.
+            max_retries=0,
         )
         prompt_builder = load_prompt_builder(Path(resolved["benchmark_root"]))
         task_dir = run_dir / "judge-tasks"
@@ -294,6 +305,19 @@ def main() -> None:
             "responses_missing_usage": 0,
         }
         judge_provider_models: list[str] = []
+        rate_limit_retry = new_retry_audit(int(resolved["openai_max_retries"]))
+        retry_audit_path = run_dir / "judge-rate-limit-retry.json"
+
+        def persist_retry_audit(audit: dict[str, Any], status: str) -> None:
+            retry_audit_path.write_text(
+                json.dumps(
+                    {"schema_version": 1, "status": status, **audit}, indent=2
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+        persist_retry_audit(rate_limit_retry, "running")
         for source in trajectories:
             case = json.loads(source.read_text(encoding="utf-8"))
             idx = int(case["idx"])
@@ -306,6 +330,12 @@ def main() -> None:
                 max_tokens=int(resolved["max_completion_tokens"]),
                 num_runs=max(1, args.num_runs),
                 seed=6203 ^ idx,
+                max_retries=int(resolved["openai_max_retries"]),
+                retry_audit=rate_limit_retry,
+                on_retry_record=lambda audit: persist_retry_audit(
+                    audit,
+                    "failed" if audit["exhausted_requests"] else "running",
+                ),
             )
             task_payload = {
                 "task_idx": idx,
@@ -383,6 +413,8 @@ def main() -> None:
                         judge_provider_models[0] if judge_provider_models else None
                     ),
                     "provider_reported_models": judge_provider_models,
+                    "rate_limit_retry": rate_limit_retry,
+                    "rate_limit_retry_file": retry_audit_path.name,
                     "input_files": public["trajectory_files"],
                     "output_file": output.name,
                     "usage": {
@@ -413,6 +445,7 @@ def main() -> None:
             + "\n",
             encoding="utf-8",
         )
+        persist_retry_audit(rate_limit_retry, "completed")
         print(f"Judge completed: {output}")
     except (ConfigError, OSError, KeyError, ValueError, RuntimeError) as exc:
         raise SystemExit(f"JUDGE ERROR: {exc}") from exc

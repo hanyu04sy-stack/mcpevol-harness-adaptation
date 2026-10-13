@@ -28,6 +28,7 @@ from experiment_config import (
     sha256,
     validate_endpoint_model_consistency,
 )
+from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
 
 
 HARNESS_FILENAMES = ("system_prompt.md", "tool_usage_rules.md", "manifest.json")
@@ -182,6 +183,10 @@ def configured_initializer(
 ) -> Callable[..., None]:
     """Wrap the upstream agent so shared settings replace its placeholders."""
     usage_lock = resolved.setdefault("_usage_lock", threading.Lock())
+    retry_audit = resolved.setdefault(
+        "rate_limit_retry",
+        new_retry_audit(int(resolved["openai_max_retries"])),
+    )
 
     def configured_init(instance: object, *args: object, **kwargs: object) -> None:
         kwargs["api_key"] = api_key
@@ -190,11 +195,17 @@ def configured_initializer(
         kwargs["max_new_tokens"] = resolved["max_completion_tokens"]
         original_init(instance, *args, **kwargs)
         instance.client.timeout = resolved["openai_timeout_seconds"]
-        instance.client.max_retries = resolved["openai_max_retries"]
+        # Disable the SDK's opaque retry loop; the wrapper below records every 429.
+        instance.client.max_retries = 0
         original_create = instance.client.chat.completions.create
 
         def tracked_create(*call_args: object, **call_kwargs: object) -> object:
-            response = original_create(*call_args, **call_kwargs)
+            response = call_with_rate_limit_retry(
+                lambda: original_create(*call_args, **call_kwargs),
+                max_retries=int(resolved["openai_max_retries"]),
+                audit=retry_audit,
+                lock=usage_lock,
+            )
             usage = getattr(response, "usage", None)
             reported_model = getattr(response, "model", None)
             prompt_tokens = getattr(usage, "prompt_tokens", None)
@@ -306,6 +317,7 @@ def write_metadata(
                     resolved.get("provider_reported_models", [])
                 ),
             },
+            "rate_limit_retry": dict(resolved.get("rate_limit_retry", {})),
             "judge": {
                 "name": resolved["judge_name"],
                 "temperature": resolved["judge_temperature"],
@@ -408,6 +420,9 @@ def main() -> None:
         resolved["total_completion_tokens"] = 0
         resolved["provider_reported_model"] = None
         resolved["provider_reported_models"] = []
+        resolved["rate_limit_retry"] = new_retry_audit(
+            int(resolved["openai_max_retries"])
+        )
         resolved["_usage_lock"] = threading.Lock()
         started = time.monotonic()
         metadata = write_metadata(resolved, mcp_status, "running")
