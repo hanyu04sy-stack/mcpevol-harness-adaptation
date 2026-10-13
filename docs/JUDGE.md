@@ -83,6 +83,8 @@ parallel schema so incompatible reporting changes fail validation immediately.
 environment. When blank and `judge.name == model.name`, they inherit `MODEL_*`.
 The shared configuration pins `deepseek-flash` and uses DeepSeek's official
 endpoint. Credential values are never written to metadata, results, or logs.
+Judge requests explicitly disable thinking mode, matching the Agent and the
+fairness pins.
 
 JSON mode is intentionally not forced because provider behavior can vary. If
 JSON parsing repeatedly fails, retry with `--num-runs 3`; the existing parser

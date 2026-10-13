@@ -15,6 +15,7 @@ from urllib.parse import urlsplit
 
 
 VERSIONS = ("early", "middle", "late")
+THINKING_MODES = {"enabled", "disabled", "provider_default"}
 ENV_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
@@ -136,6 +137,15 @@ def validate_endpoint_model_consistency(model_name: str, base_url: str) -> None:
                 f"{model_name!r}. Use a model slug served by that endpoint, or set "
                 "MODEL_BASE_URL to https://api.deepseek.com."
             )
+
+
+def thinking_request_kwargs(thinking_mode: str) -> dict[str, object]:
+    """Build the OpenAI-compatible request extension for an explicit mode."""
+    if thinking_mode == "provider_default":
+        return {}
+    if thinking_mode not in THINKING_MODES:
+        raise ConfigError(f"unsupported thinking_mode: {thinking_mode!r}")
+    return {"extra_body": {"thinking": {"type": thinking_mode}}}
 
 
 def _require(mapping: dict[str, Any], key: str, kind: type, where: str) -> Any:
@@ -325,6 +335,9 @@ def load_experiment(
     if model_provider not in {"openai_compatible", "local_ollama"}:
         raise ConfigError("model.provider is unsupported")
     model_name = _require(model, "name", str, "model")
+    thinking_mode = _require(model, "thinking_mode", str, "model")
+    if thinking_mode not in THINKING_MODES:
+        raise ConfigError("model.thinking_mode is unsupported")
     temperature = model.get("temperature")
     if not isinstance(temperature, (int, float)) or not 0 <= temperature <= 2:
         raise ConfigError("model.temperature must be between 0 and 2")
@@ -333,6 +346,9 @@ def load_experiment(
         raise ConfigError("model.max_completion_tokens must be positive")
     if _require(judge, "name", str, "judge") != model_name:
         raise ConfigError("model.name and judge.name must match for this experiment")
+    judge_thinking_mode = _require(judge, "thinking_mode", str, "judge")
+    if judge_thinking_mode != thinking_mode:
+        raise ConfigError("model.thinking_mode and judge.thinking_mode must match")
     judge_temperature = judge.get("temperature")
     if judge_temperature != temperature:
         raise ConfigError("model.temperature and judge.temperature must match")
@@ -450,11 +466,13 @@ def load_experiment(
         "startup_stability_report_sha256": stability_hash,
         "model_name": model_name,
         "model_provider": model_provider,
+        "thinking_mode": thinking_mode,
         "temperature": float(temperature),
         "max_completion_tokens": max_tokens,
         "model_api_key_env": _require(model, "api_key_env", str, "model"),
         "model_base_url_env": _require(model, "base_url_env", str, "model"),
         "judge_name": judge["name"],
+        "judge_thinking_mode": judge_thinking_mode,
         "judge_temperature": float(judge_temperature),
         "judge_api_key_env": _require(judge, "api_key_env", str, "judge"),
         "judge_base_url_env": _require(judge, "base_url_env", str, "judge"),
@@ -488,9 +506,11 @@ def public_summary(resolved: dict[str, Any]) -> dict[str, Any]:
         "startup_stability_report_sha256",
         "model_name",
         "model_provider",
+        "thinking_mode",
         "temperature",
         "max_completion_tokens",
         "judge_name",
+        "judge_thinking_mode",
         "judge_temperature",
         "judge_api_key_env",
         "judge_base_url_env",

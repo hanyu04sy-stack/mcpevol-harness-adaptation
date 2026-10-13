@@ -82,11 +82,12 @@ class CheckModelConnectionTest(unittest.TestCase):
         config = {
             "model": {
                 "name": "deepseek-flash",
+                "thinking_mode": "disabled",
                 "api_key_env": "MODEL_API_KEY",
                 "base_url_env": "MODEL_BASE_URL",
                 "max_completion_tokens": 100,
             },
-            "judge": {"name": "deepseek-flash"},
+            "judge": {"name": "deepseek-flash", "thinking_mode": "disabled"},
             "dataset": {"size": 30, "path": "data/tasks.json"},
         }
         config_path = root / "configs/experiment.json"

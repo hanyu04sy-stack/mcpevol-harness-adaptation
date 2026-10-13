@@ -25,6 +25,8 @@ class ExperimentConfigTest(unittest.TestCase):
             self.assertEqual(config["model"]["provider"], "openai_compatible")
             self.assertEqual(config["model"]["name"], "deepseek-flash")
             self.assertEqual(config["judge"]["name"], "deepseek-flash")
+            self.assertEqual(config["model"]["thinking_mode"], "disabled")
+            self.assertEqual(config["judge"]["thinking_mode"], "disabled")
         env_example = (root / ".env.example").read_text(encoding="utf-8")
         self.assertIn("MODEL_BASE_URL=https://api.deepseek.com", env_example)
         self.assertIn("JUDGE_BASE_URL=", env_example)
@@ -78,6 +80,7 @@ class ExperimentConfigTest(unittest.TestCase):
             "model": {
                 "provider": "openai_compatible",
                 "name": "model",
+                "thinking_mode": "provider_default",
                 "temperature": 0,
                 "max_completion_tokens": 100,
                 "api_key_env": "MODEL_API_KEY",
@@ -85,6 +88,7 @@ class ExperimentConfigTest(unittest.TestCase):
             },
             "judge": {
                 "name": "model",
+                "thinking_mode": "provider_default",
                 "temperature": 0,
                 "api_key_env": "JUDGE_API_KEY",
                 "base_url_env": "JUDGE_BASE_URL",
@@ -107,6 +111,7 @@ class ExperimentConfigTest(unittest.TestCase):
                 config, "middle", root=root, verify_checkout=False
             )
             self.assertEqual(resolved["temperature"], 0.0)
+            self.assertEqual(resolved["thinking_mode"], "provider_default")
             self.assertEqual(resolved["task_count"], 1)
             self.assertEqual(
                 resolved["harness_dir"], (root / "harness/original").resolve()
@@ -219,6 +224,7 @@ class ExperimentConfigTest(unittest.TestCase):
             upstream_init,
             {
                 "temperature": 0.0,
+                "thinking_mode": "disabled",
                 "max_completion_tokens": 4096,
                 "openai_timeout_seconds": 120.0,
                 "openai_max_retries": 3,
@@ -257,11 +263,18 @@ class ExperimentConfigTest(unittest.TestCase):
         def upstream_init(instance: object, **kwargs: object) -> None:
             instance.client = Client()
             instance.model_name = "deepseek-flash"
+            instance.complete_with_retry = lambda **request: (_ for _ in ()).throw(
+                AssertionError("upstream retry wrapper must be replaced")
+            )
+            instance.chat_with_retry = lambda messages, retry=4: (
+                _ for _ in ()
+            ).throw(AssertionError("upstream retry wrapper must be replaced"))
 
         configured = run_benchmark.configured_initializer(
             upstream_init,
             {
                 "temperature": 0.0,
+                "thinking_mode": "disabled",
                 "max_completion_tokens": 4096,
                 "openai_timeout_seconds": 120.0,
                 "openai_max_retries": 3,
@@ -272,9 +285,16 @@ class ExperimentConfigTest(unittest.TestCase):
         instance = Instance()
         configured(instance)
         self.assertEqual(instance.chat.keywords["max_tokens"], 4096)
+        self.assertEqual(
+            instance.chat.keywords["extra_body"],
+            {"thinking": {"type": "disabled"}},
+        )
         self.assertNotIn("max_completion_tokens", instance.chat.keywords)
         self.assertEqual(instance.client.timeout, 120.0)
         self.assertEqual(instance.client.max_retries, 0)
+        request = instance.complete_with_retry(messages=[])
+        self.assertEqual(request["extra_body"], {"thinking": {"type": "disabled"}})
+        self.assertEqual(instance.chat_with_retry([], retry=99)["messages"], [])
 
     def test_initializer_accumulates_response_usage_tokens(self) -> None:
         responses = iter(
@@ -306,6 +326,7 @@ class ExperimentConfigTest(unittest.TestCase):
 
         resolved = {
             "temperature": 0.0,
+            "thinking_mode": "disabled",
             "max_completion_tokens": 4096,
             "openai_timeout_seconds": 120.0,
             "openai_max_retries": 3,

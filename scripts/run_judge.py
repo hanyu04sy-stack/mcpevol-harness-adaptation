@@ -21,6 +21,7 @@ from experiment_config import (
     load_experiment,
     pricing_warning,
     resolve_runtime_credentials,
+    thinking_request_kwargs,
 )
 from run_benchmark import load_harness, resolve_run_output
 from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
@@ -147,6 +148,7 @@ def judge_case(
     max_tokens: int,
     num_runs: int,
     seed: int,
+    thinking_mode: str = "provider_default",
     max_retries: int = 0,
     retry_audit: dict[str, Any] | None = None,
     on_retry_record: Callable[[dict[str, Any]], None] | None = None,
@@ -180,6 +182,7 @@ def judge_case(
             "messages": [{"role": "user", "content": prompt}],
             "temperature": temperature,
             "max_tokens": max_tokens,
+            **thinking_request_kwargs(thinking_mode),
         }
         response = call_with_rate_limit_retry(
             lambda: client.chat.completions.create(**request),
@@ -268,6 +271,7 @@ def main() -> None:
             "trajectory_files": [str(path.relative_to(run_dir)) for path in trajectories],
             "judge": {
                 "name": resolved["judge_name"],
+                "thinking_mode": resolved["judge_thinking_mode"],
                 "temperature": resolved["judge_temperature"],
                 "api_key_env": resolved["judge_api_key_env"],
                 "base_url_env": resolved["judge_base_url_env"],
@@ -356,6 +360,7 @@ def main() -> None:
                 max_tokens=int(resolved["max_completion_tokens"]),
                 num_runs=max(1, args.num_runs),
                 seed=6203 ^ idx,
+                thinking_mode=str(resolved["judge_thinking_mode"]),
                 max_retries=int(resolved["openai_max_retries"]),
                 retry_audit=rate_limit_retry,
                 on_retry_record=lambda audit: persist_retry_audit(

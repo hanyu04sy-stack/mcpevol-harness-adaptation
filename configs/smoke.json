@@ -20,6 +20,7 @@
   "model": {
     "provider": "openai_compatible",
     "name": "smoke-local",
+    "thinking_mode": "provider_default",
     "temperature": 0.0,
     "max_completion_tokens": 1024,
     "api_key_env": "MODEL_API_KEY",
@@ -27,6 +28,7 @@
   },
   "judge": {
     "name": "smoke-local",
+    "thinking_mode": "provider_default",
     "temperature": 0.0,
     "api_key_env": "JUDGE_API_KEY",
     "base_url_env": "JUDGE_BASE_URL"

@@ -147,6 +147,10 @@ OpenAI-compatible endpoint. Agent and judge must remain identical across all
 three harness strategies. Run `scripts/check_model_connection.py` and
 `scripts/check_handoff.py` after every switch.
 
+DeepSeek thinking mode is explicitly disabled for both Agent and Judge. This
+keeps `temperature=0.0` effective and avoids requiring `reasoning_content` in
+the pinned upstream multi-turn tool-call history.
+
 ### Free local-model canary
 
 Install Ollama and run one command. The script downloads the tool-capable `qwen3.5:4b` model, starts the local service, and tests all three versions.

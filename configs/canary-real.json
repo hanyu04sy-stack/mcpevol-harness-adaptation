@@ -20,6 +20,7 @@
   "model": {
     "provider": "openai_compatible",
     "name": "deepseek-flash",
+    "thinking_mode": "disabled",
     "temperature": 0.0,
     "max_completion_tokens": 4096,
     "api_key_env": "MODEL_API_KEY",
@@ -27,6 +28,7 @@
   },
   "judge": {
     "name": "deepseek-flash",
+    "thinking_mode": "disabled",
     "temperature": 0.0,
     "api_key_env": "JUDGE_API_KEY",
     "base_url_env": "JUDGE_BASE_URL"

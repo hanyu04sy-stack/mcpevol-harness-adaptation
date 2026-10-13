@@ -27,6 +27,7 @@ from experiment_config import (
     pricing_warning,
     resolve_runtime_credentials,
     sha256,
+    thinking_request_kwargs,
     validate_endpoint_model_consistency,
 )
 from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
@@ -238,7 +239,23 @@ def configured_initializer(
             model=instance.model_name,
             temperature=resolved["temperature"],
             max_tokens=resolved["max_completion_tokens"],
+            **thinking_request_kwargs(str(resolved["thinking_mode"])),
         )
+
+        # The pinned upstream methods use backoff(max_tries=4/5), which would
+        # multiply requests after our auditable retry policy is exhausted.
+        # Route both entry points directly through the single tracked wrapper.
+        def complete_without_upstream_retry(**request: object) -> object:
+            return instance.chat(**request)
+
+        def chat_without_upstream_retry(
+            messages: object, retry: int = 0
+        ) -> object:
+            del retry
+            return instance.chat(messages=messages)
+
+        instance.complete_with_retry = complete_without_upstream_retry
+        instance.chat_with_retry = chat_without_upstream_retry
 
     return configured_init
 
@@ -308,6 +325,7 @@ def write_metadata(
             "model": {
                 "provider": resolved["model_provider"],
                 "name": resolved["model_name"],
+                "thinking_mode": resolved["thinking_mode"],
                 "temperature": resolved["temperature"],
                 "max_completion_tokens": resolved["max_completion_tokens"],
                 "api_key_env": resolved["model_api_key_env"],
@@ -324,6 +342,7 @@ def write_metadata(
             "rate_limit_retry_file": resolved.get("rate_limit_retry_file"),
             "judge": {
                 "name": resolved["judge_name"],
+                "thinking_mode": resolved["judge_thinking_mode"],
                 "temperature": resolved["judge_temperature"],
                 "api_key_env": resolved["judge_api_key_env"],
             },

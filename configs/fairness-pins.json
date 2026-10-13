@@ -1,8 +1,10 @@
 {
   "schema_version": 1,
   "model.name": "deepseek-flash",
+  "model.thinking_mode": "disabled",
   "model.temperature": 0.0,
   "judge.name": "deepseek-flash",
+  "judge.thinking_mode": "disabled",
   "judge.temperature": 0.0,
   "benchmark.commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701"
 }

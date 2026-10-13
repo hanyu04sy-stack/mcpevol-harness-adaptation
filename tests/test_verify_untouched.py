@@ -29,8 +29,8 @@ class VerifyUntouchedTest(unittest.TestCase):
         config = {
             "benchmark": {"root": "external/MCPEvol-Bench", "commit": "abc"},
             "dataset": {"path": "data/tasks.json", "sha256": task_hash},
-            "model": {"name": "deepseek-flash", "temperature": 0.0},
-            "judge": {"name": "deepseek-flash", "temperature": 0.0},
+            "model": {"name": "deepseek-flash", "thinking_mode": "disabled", "temperature": 0.0},
+            "judge": {"name": "deepseek-flash", "thinking_mode": "disabled", "temperature": 0.0},
         }
         config_path = root / "config.json"
         config_path.write_text(json.dumps(config), encoding="utf-8")
@@ -40,8 +40,10 @@ class VerifyUntouchedTest(unittest.TestCase):
                 {
                     "schema_version": 1,
                     "model.name": "deepseek-flash",
+                    "model.thinking_mode": "disabled",
                     "model.temperature": 0.0,
                     "judge.name": "deepseek-flash",
+                    "judge.thinking_mode": "disabled",
                     "judge.temperature": 0.0,
                     "benchmark.commit": "abc",
                 }

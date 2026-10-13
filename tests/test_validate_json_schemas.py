@@ -51,6 +51,7 @@ class ValidateJSONSchemasTest(unittest.TestCase):
             "recorded_at": "2026-10-13T00:00:00+00:00",
             "judge": {
                 "name": "deepseek-flash",
+                "thinking_mode": "disabled",
                 "temperature": 0,
                 "api_key_env": "JUDGE_API_KEY",
                 "base_url_env": "JUDGE_BASE_URL",

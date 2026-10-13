@@ -16,6 +16,7 @@ from experiment_config import (
     ConfigError,
     parse_env_file,
     pricing_warning,
+    thinking_request_kwargs,
     validate_endpoint_model_consistency,
 )
 from rate_limit_retry import call_with_rate_limit_retry, new_retry_audit
@@ -98,16 +99,33 @@ def skipped(number: int, title: str, reason: str) -> Result:
 
 
 def check_config(
-    model: str, judge: str, model_endpoint: str, judge_endpoint: str
+    model: str,
+    judge: str,
+    model_endpoint: str,
+    judge_endpoint: str,
+    model_thinking_mode: str,
+    judge_thinking_mode: str,
 ) -> Result:
     try:
         if model != judge:
             raise ConfigError(f"model.name={model!r} does not match judge.name={judge!r}")
+        if model_thinking_mode != judge_thinking_mode:
+            raise ConfigError("model.thinking_mode and judge.thinking_mode do not match")
+        if model.lower().startswith("deepseek") and model_thinking_mode != "disabled":
+            raise ConfigError(
+                "deepseek-flash requires thinking_mode=disabled for reproducible "
+                "temperature and tool calls"
+            )
         validate_endpoint_model_consistency(model, model_endpoint)
         validate_endpoint_model_consistency(judge, judge_endpoint)
-        return Result(2, "Config / env consistency", True, f"model={model}, judge={judge} (match), model_endpoint={model_endpoint}, judge_endpoint={judge_endpoint}", "Next: both Agent and Judge configurations agree with their endpoints.")
+        return Result(2, "Config / env consistency", True, f"model={model}, judge={judge} (match), thinking_mode={model_thinking_mode}, model_endpoint={model_endpoint}, judge_endpoint={judge_endpoint}", "Next: both Agent and Judge configurations agree with their endpoints.")
     except ConfigError as exc:
-        if "DeepSeek" in str(exc) and not model.lower().startswith("deepseek"):
+        if "thinking_mode" in str(exc):
+            fix = (
+                "Fix: set model.thinking_mode and judge.thinking_mode to "
+                "disabled in configs/experiment.json."
+            )
+        elif "DeepSeek" in str(exc) and not model.lower().startswith("deepseek"):
             fix = "Fix: change model.name and judge.name in configs/experiment.json to deepseek-flash."
         elif model.lower().startswith("deepseek"):
             fix = "Fix: set MODEL_BASE_URL and JUDGE_BASE_URL (if non-empty) to https://api.deepseek.com, or use model slugs served by those endpoints."
@@ -116,13 +134,16 @@ def check_config(
         return Result(2, "Config / env consistency", False, str(exc), fix)
 
 
-def request_chat(client: Any, model: str) -> tuple[Any, float]:
+def request_chat(
+    client: Any, model: str, thinking_mode: str = "disabled"
+) -> tuple[Any, float]:
     started = time.monotonic()
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": "Reply with the single word: ok"}],
         max_tokens=5,
         temperature=0.0,
+        **thinking_request_kwargs(thinking_mode),
     )
     return response, time.monotonic() - started
 
@@ -133,6 +154,7 @@ def probe(
     endpoint: str,
     factory: Callable[..., Any],
     retry_audit: dict[str, Any] | None = None,
+    thinking_mode: str = "disabled",
 ):
     retry_audit = retry_audit or new_retry_audit(2)
     successes, failures = [], []
@@ -141,7 +163,7 @@ def probe(
             client = factory(api_key=key, base_url=candidate, timeout=30.0, max_retries=0)
             started = time.monotonic()
             response = call_with_rate_limit_retry(
-                lambda: request_chat(client, model)[0],
+                lambda: request_chat(client, model, thinking_mode)[0],
                 max_retries=2,
                 audit=retry_audit,
             )
@@ -179,7 +201,10 @@ def _tool_call_payload(call: Any) -> dict[str, Any]:
 
 
 def check_tools(
-    client: Any, model: str, retry_audit: dict[str, Any] | None = None
+    client: Any,
+    model: str,
+    retry_audit: dict[str, Any] | None = None,
+    thinking_mode: str = "disabled",
 ) -> Result:
     retry_audit = retry_audit or new_retry_audit(2)
     try:
@@ -247,6 +272,7 @@ def check_tools(
                 tools=tools,
                 max_tokens=100,
                 temperature=0.0,
+                **thinking_request_kwargs(thinking_mode),
             ),
             max_retries=2,
             audit=retry_audit,
@@ -296,6 +322,7 @@ def check_tools(
                 tools=tools,
                 max_tokens=100,
                 temperature=0.0,
+                **thinking_request_kwargs(thinking_mode),
             ),
             max_retries=2,
             audit=retry_audit,
@@ -591,15 +618,29 @@ def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callabl
         source.get(judge_url_name, dotenv.get(judge_url_name, ""))
     ).strip() or endpoint
     model, judge = str(model_cfg["name"]), str(judge_cfg["name"])
+    model_thinking_mode = str(model_cfg.get("thinking_mode", "provider_default"))
+    judge_thinking_mode = str(judge_cfg.get("thinking_mode", "provider_default"))
     retry_audit = new_retry_audit(2)
-    consistency = check_config(model, judge, endpoint, judge_endpoint)
+    consistency = check_config(
+        model,
+        judge,
+        endpoint,
+        judge_endpoint,
+        model_thinking_mode,
+        judge_thinking_mode,
+    )
     if not consistency.passed:
         results = [skipped(1, "Chat completion", "config / env consistency failed"), consistency, skipped(3, "Endpoint detection", "config / env consistency failed"), skipped(4, "Tool calling", "config / env consistency failed")]
     elif not key:
         results = [Result(1, "Chat completion", False, "MODEL_API_KEY is empty.", "Fix: open .env and set MODEL_API_KEY to a valid key from https://platform.deepseek.com/.\nRe-run this script after editing."), consistency, skipped(3, "Endpoint detection", "MODEL_API_KEY is empty"), skipped(4, "Tool calling", "MODEL_API_KEY is empty")]
     else:
         (selected, response, latency), failures = probe(
-            model, key, endpoint, client_factory, retry_audit
+            model,
+            key,
+            endpoint,
+            client_factory,
+            retry_audit,
+            model_thinking_mode,
         )
         if selected is None:
             detail, fix = friendly_error(failures[0][1] if failures else RuntimeError("no endpoint candidate"))
@@ -614,7 +655,12 @@ def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callabl
             judge_failures: list[tuple[str, Exception]] = []
             if judge_endpoint != endpoint or judge_key != key:
                 (judge_selected, _, _), judge_failures = probe(
-                    judge, judge_key, judge_endpoint, client_factory, retry_audit
+                    judge,
+                    judge_key,
+                    judge_endpoint,
+                    client_factory,
+                    retry_audit,
+                    judge_thinking_mode,
                 )
             if judge_selected is None:
                 failed = "; ".join(
@@ -643,7 +689,9 @@ def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callabl
                     f"(agent={selected}, judge={judge_selected})",
                 )
             client = client_factory(api_key=key, base_url=selected, timeout=30.0, max_retries=0)
-            tool = check_tools(client, model, retry_audit)
+            tool = check_tools(
+                client, model, retry_audit, model_thinking_mode
+            )
         results = [chat, consistency, endpoint_result, tool]
     for result in results:
         render(result, stream)

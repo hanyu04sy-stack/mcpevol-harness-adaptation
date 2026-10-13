@@ -27,6 +27,8 @@ Agent and Judge credentials and endpoints independently.
 HTTP 429 retries are handled by the harness instead of the OpenAI SDK's hidden
 retry loop. Each request uses exponential backoff (1, 2, 4, ... seconds, capped
 at 60 seconds) and honors a longer provider `Retry-After` value within that cap.
+The pinned upstream Agent's generic `backoff` wrappers are bypassed at runtime,
+so they cannot multiply attempts after this policy is exhausted.
 `run-metadata.json` records every 429, advertised delay, applied delay, actual
 retry count, exhausted requests, and total backoff time under
 `rate_limit_retry`.
@@ -39,6 +41,10 @@ The same state is atomically checkpointed after every 429 to
 - With an OpenAI SDK older than 1.0, use `https://api.deepseek.com/v1`.
 - If unsure, run `.venv/bin/python scripts/check_model_connection.py`; it probes both forms when needed and reports the working endpoint.
 - The configured slug is `deepseek-flash`, currently served as DeepSeek-V4.1-Flash. Do not use `deepseek-reasoner` as the tool-calling agent.
+- `thinking_mode` is pinned to `disabled` for Agent and Judge. Every DeepSeek
+  request sends `extra_body={"thinking":{"type":"disabled"}}`, making the
+  configured temperature effective and keeping multi-turn tool history compatible
+  with the pinned upstream runner.
 - Run `.venv/bin/python scripts/check_model_connection.py` before any paid batch.
 - On failure, its cost estimate reads the actual stored trajectories, includes
   five Judge scores per task and a conservative malformed-response retry reserve,
@@ -104,6 +110,7 @@ Metadata never contains credentials. It does contain `harness_dir`, `harness_man
 The nested `model.provider_reported_model` field records the first model
 identifier returned by the provider, while `provider_reported_models` preserves
 every distinct identifier observed during the run.
+Metadata also records the resolved Agent and Judge thinking modes.
 `collect_results.py` warns when configured and provider-reported identifiers
 differ and records mismatch counts in the summary.
 

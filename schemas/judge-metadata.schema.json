@@ -8,7 +8,7 @@
   "properties": {
     "schema_version": {"const": 1},
     "recorded_at": {"type": "string", "format": "date-time"},
-    "judge": {"type": "object", "required": ["name", "temperature", "api_key_env", "base_url_env"], "additionalProperties": false, "properties": {"name": {"type": "string"}, "temperature": {"type": "number"}, "api_key_env": {"type": "string"}, "base_url_env": {"type": "string"}}},
+    "judge": {"type": "object", "required": ["name", "thinking_mode", "temperature", "api_key_env", "base_url_env"], "additionalProperties": false, "properties": {"name": {"type": "string"}, "thinking_mode": {"enum": ["enabled", "disabled", "provider_default"]}, "temperature": {"type": "number"}, "api_key_env": {"type": "string"}, "base_url_env": {"type": "string"}}},
     "configured_model": {"type": "string"},
     "provider_reported_model": {"type": ["string", "null"]},
     "provider_reported_models": {"type": "array", "items": {"type": "string"}},

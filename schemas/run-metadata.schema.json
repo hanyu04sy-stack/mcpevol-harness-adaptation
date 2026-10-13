@@ -24,9 +24,11 @@
     "startup_stability_report_sha256": {"type": ["string", "null"]},
     "model_name": {"type": "string"},
     "model_provider": {"type": "string"},
+    "thinking_mode": {"enum": ["enabled", "disabled", "provider_default"]},
     "temperature": {"type": "number"},
     "max_completion_tokens": {"type": "integer", "minimum": 1},
     "judge_name": {"type": "string"},
+    "judge_thinking_mode": {"enum": ["enabled", "disabled", "provider_default"]},
     "judge_temperature": {"type": "number"},
     "judge_api_key_env": {"type": "string"},
     "judge_base_url_env": {"type": "string"},
@@ -50,10 +52,11 @@
     "model": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["provider", "name", "temperature", "max_completion_tokens", "api_key_env", "timeout_seconds", "max_retries", "provider_reported_model", "provider_reported_models"],
+      "required": ["provider", "name", "thinking_mode", "temperature", "max_completion_tokens", "api_key_env", "timeout_seconds", "max_retries", "provider_reported_model", "provider_reported_models"],
       "properties": {
         "provider": {"type": "string"},
         "name": {"type": "string"},
+        "thinking_mode": {"enum": ["enabled", "disabled", "provider_default"]},
         "temperature": {"type": "number"},
         "max_completion_tokens": {"type": "integer", "minimum": 1},
         "api_key_env": {"type": "string"},
@@ -66,9 +69,10 @@
     "judge": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name", "temperature", "api_key_env"],
+      "required": ["name", "thinking_mode", "temperature", "api_key_env"],
       "properties": {
         "name": {"type": "string"},
+        "thinking_mode": {"enum": ["enabled", "disabled", "provider_default"]},
         "temperature": {"type": "number"},
         "api_key_env": {"type": "string"}
       }

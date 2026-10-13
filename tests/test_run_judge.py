@@ -64,10 +64,14 @@ class RunJudgeTest(unittest.TestCase):
             max_tokens=4096,
             num_runs=1,
             seed=6203,
+            thinking_mode="disabled",
         )
         self.assertEqual(result["aggregate"]["successful_runs"], 1)
         self.assertEqual(calls[0]["max_tokens"], 4096)
         self.assertNotIn("response_format", calls[0])
+        self.assertEqual(
+            calls[0]["extra_body"], {"thinking": {"type": "disabled"}}
+        )
         self.assertEqual(result["usage"]["prompt_tokens"], 20)
         self.assertEqual(result["usage"]["completion_tokens"], 8)
         self.assertEqual(result["usage"]["retry_prompt_tokens"], 0)

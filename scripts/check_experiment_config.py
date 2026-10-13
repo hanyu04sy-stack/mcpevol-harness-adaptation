@@ -68,11 +68,13 @@ def main() -> None:
             "startup_stability_report_sha256",
             "model_provider",
             "model_name",
+            "thinking_mode",
             "temperature",
             "max_completion_tokens",
             "openai_timeout_seconds",
             "openai_max_retries",
             "judge_name",
+            "judge_thinking_mode",
             "judge_temperature",
         )
         for field in shared_fields:
