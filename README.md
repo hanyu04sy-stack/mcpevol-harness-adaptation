@@ -120,7 +120,7 @@ The external-model canary uses fixed upstream runnable tasks 144 and 161. Creden
 .venv/bin/python scripts/run_real_canary.py --overwrite
 ```
 
-The shared external model is `deepseek-chat`, using DeepSeek's official
+The shared external model is `deepseek-flash`, using DeepSeek's official
 OpenAI-compatible endpoint. Enter a DeepSeek API key and accept the default
 endpoint when prompted:
 
@@ -132,14 +132,14 @@ The resulting local `.env` uses `https://api.deepseek.com`. To update only the
 agent endpoint in an existing credential file, run
 `.venv/bin/python scripts/configure_api_credentials.py --set-base-url https://api.deepseek.com`.
 Leave `JUDGE_API_KEY` and `JUDGE_BASE_URL` blank to inherit `MODEL_*`.
-Credentials are never committed. The V3 slug and prices can change; always run
+Credentials are never committed. The model slug and prices can change; always run
 the connection check and verify `configs/pricing.json` before a paid run.
 
 Only redacted reports are committed. `.env`, raw `results/`, and generated 1MCP configurations are ignored. Any failed version or task produces a nonzero exit status.
 
 ## Switching models
 
-The default is `deepseek-chat` for lower experimental cost. To switch models,
+The default is `deepseek-flash` for lower experimental cost. To switch models,
 update both model names in `configs/experiment.json` and
 `configs/canary-real.json`, update `configs/fairness-pins.json`, add current
 rates to `configs/pricing.json`, and point the local `.env` at the matching
@@ -165,7 +165,7 @@ Verified results are under `reports/canary-local-qwen35-4b-2/`. Each version pas
 - [x] Early/Middle/Late generation and environment validation
 - [x] Cross-platform installer and verified bundle downloader
 - [x] Pinned 1MCP 0.38.2 and benchmark dependencies
-- [x] Unified `deepseek-chat` agent and judge configuration (OpenAI-compatible and config-driven)
+- [x] Unified `deepseek-flash` agent and judge configuration (OpenAI-compatible and config-driven)
 - [x] Repaired Late dataless files, increasing usable servers from 23 to 54
 - [x] Fixed 30-task set with 26/26 dependencies available in all versions
 - [x] Three independent cold starts per version

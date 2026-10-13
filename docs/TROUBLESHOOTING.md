@@ -162,7 +162,7 @@ configuration is otherwise valid:
 1. Run `.venv/bin/python scripts/check_model_connection.py`.
 2. If the tool-calling self-test fails, treat this as a DeepSeek
    function-calling compatibility issue rather than a harness bug.
-3. Confirm the model is `deepseek-chat`, not `deepseek-reasoner`.
+3. Confirm the model is `deepseek-flash`, not `deepseek-reasoner`.
 4. Reduce parallel tool calls; the pinned upstream agent normally emits one at
    a time.
 5. As a last resort, configure an endpoint and matching model slug for a

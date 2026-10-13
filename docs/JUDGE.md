@@ -81,7 +81,7 @@ parallel schema so incompatible reporting changes fail validation immediately.
 
 `JUDGE_API_KEY` and `JUDGE_BASE_URL` are loaded from `.env` or the process
 environment. When blank and `judge.name == model.name`, they inherit `MODEL_*`.
-The shared configuration pins `deepseek-chat` and uses DeepSeek's official
+The shared configuration pins `deepseek-flash` and uses DeepSeek's official
 endpoint. Credential values are never written to metadata, results, or logs.
 
 JSON mode is intentionally not forced because provider behavior can vary. If

@@ -3,12 +3,12 @@
   "last_reviewed_at": "2026-10-13",
   "stale_after_days": 30,
   "models": {
-    "deepseek-chat": {
-      "prompt_per_mtok_usd": 0.27,
-      "completion_per_mtok_usd": 1.10,
+    "deepseek-flash": {
+      "prompt_per_mtok_usd": 0.30,
+      "completion_per_mtok_usd": 1.20,
       "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
-      "pricing_status": "historical_reference",
-      "note": "Historical DeepSeek V3 cache-miss price from the official V3 release. Prices and model availability can change; verify the official pricing page before every paid run."
+      "pricing_status": "current",
+      "note": "Conservative peak-hour DeepSeek-V4.1-Flash rates using cache-miss input. Off-peak and cache-hit rates are lower; verify the official pricing page before every paid run."
     },
     "gpt-4o": {
       "prompt_per_mtok_usd": 2.50,

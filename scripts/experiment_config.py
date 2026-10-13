@@ -125,7 +125,7 @@ def validate_endpoint_model_consistency(model_name: str, base_url: str) -> None:
             raise ConfigError(
                 f"MODEL_BASE_URL points to DeepSeek ({base_url}), but model.name is "
                 f"still {model_name!r}. Update model.name in configs/experiment.json "
-                "to 'deepseek-chat'."
+                "to 'deepseek-flash'."
             )
     if hostname in {"openai.com", "openrouter.ai"} or hostname.endswith(
         (".openai.com", ".openrouter.ai")

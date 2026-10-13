@@ -22,10 +22,10 @@ class CollectResultsTest(unittest.TestCase):
                     "version": "late",
                     "run_id": 1,
                     "model": {
-                        "name": "deepseek-chat",
-                        "provider_reported_model": "deepseek-v3-20250324",
+                        "name": "deepseek-flash",
+                        "provider_reported_model": "DeepSeek-V4.1-Flash",
                     },
-                    "judge": {"name": "deepseek-chat"},
+                    "judge": {"name": "deepseek-flash"},
                     "mcp_status_at_start": {"connected_servers": 26},
                     "total_prompt_tokens": 100,
                     "total_completion_tokens": 20,
@@ -52,8 +52,8 @@ class CollectResultsTest(unittest.TestCase):
         (run / "judge-metadata.json").write_text(
             json.dumps(
                 {
-                    "configured_model": "deepseek-chat",
-                    "provider_reported_model": "deepseek-v3-20250324",
+                    "configured_model": "deepseek-flash",
+                    "provider_reported_model": "DeepSeek-V4.1-Flash",
                     "usage": {
                         "judge_prompt_tokens": 200,
                         "judge_completion_tokens": 40,
@@ -101,7 +101,7 @@ class CollectResultsTest(unittest.TestCase):
             self.assertEqual(original["judge_model_identifier_mismatches"], 1)
             self.assertTrue(details[0]["model_identifier_mismatch"])
             self.assertEqual(
-                details[0]["provider_reported_model"], "deepseek-v3-20250324"
+                details[0]["provider_reported_model"], "DeepSeek-V4.1-Flash"
             )
 
 

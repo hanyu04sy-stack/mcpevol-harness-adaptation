@@ -33,13 +33,13 @@ class EndpointConsistencyTest(unittest.TestCase):
             "https://openrouter.ai/api/v1",
         ):
             with self.subTest(endpoint=endpoint), self.assertRaisesRegex(
-                ConfigError, "but model.name is 'deepseek-chat'"
+                ConfigError, "but model.name is 'deepseek-flash'"
             ):
-                validate_endpoint_model_consistency("deepseek-chat", endpoint)
+                validate_endpoint_model_consistency("deepseek-flash", endpoint)
 
     def test_matching_deepseek_endpoint_and_model_pass(self) -> None:
         validate_endpoint_model_consistency(
-            "deepseek-chat", "https://api.deepseek.com/v1"
+            "deepseek-flash", "https://api.deepseek.com/v1"
         )
 
 

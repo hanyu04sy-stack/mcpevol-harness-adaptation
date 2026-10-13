@@ -19,7 +19,7 @@ class StatusError(Exception):
 
 def chat_response():
     return SimpleNamespace(
-        model="deepseek-chat",
+        model="deepseek-flash",
         choices=[SimpleNamespace(message=SimpleNamespace(content="ok"))],
         usage=SimpleNamespace(prompt_tokens=5, completion_tokens=1),
     )
@@ -81,12 +81,12 @@ class CheckModelConnectionTest(unittest.TestCase):
         (root / "configs").mkdir()
         config = {
             "model": {
-                "name": "deepseek-chat",
+                "name": "deepseek-flash",
                 "api_key_env": "MODEL_API_KEY",
                 "base_url_env": "MODEL_BASE_URL",
                 "max_completion_tokens": 100,
             },
-            "judge": {"name": "deepseek-chat"},
+            "judge": {"name": "deepseek-flash"},
             "dataset": {"size": 30, "path": "data/tasks.json"},
         }
         config_path = root / "configs/experiment.json"
@@ -95,7 +95,7 @@ class CheckModelConnectionTest(unittest.TestCase):
             json.dumps(
                 {
                     "models": {
-                        "deepseek-chat": {
+                        "deepseek-flash": {
                             "prompt_per_mtok_usd": 0.27,
                             "completion_per_mtok_usd": 1.10,
                         }
@@ -273,7 +273,7 @@ class CheckModelConnectionTest(unittest.TestCase):
                 json.dumps(
                     {
                         "status": "completed",
-                        "model": {"name": "deepseek-chat"},
+                        "model": {"name": "deepseek-flash"},
                         "total_prompt_tokens": 100,
                         "total_completion_tokens": 20,
                     }
@@ -309,7 +309,7 @@ class CheckModelConnectionTest(unittest.TestCase):
 
         with self.assertRaises(KeyboardInterrupt):
             check_model_connection.probe(
-                "deepseek-chat",
+                "deepseek-flash",
                 "secret",
                 "https://api.deepseek.com",
                 interrupted_factory,

@@ -18,13 +18,13 @@ import run_benchmark  # noqa: E402
 
 
 class ExperimentConfigTest(unittest.TestCase):
-    def test_repository_external_configs_pin_deepseek_chat(self) -> None:
+    def test_repository_external_configs_pin_deepseek_flash(self) -> None:
         root = SCRIPTS.parent
         for relative in ("configs/experiment.json", "configs/canary-real.json"):
             config = json.loads((root / relative).read_text(encoding="utf-8"))
             self.assertEqual(config["model"]["provider"], "openai_compatible")
-            self.assertEqual(config["model"]["name"], "deepseek-chat")
-            self.assertEqual(config["judge"]["name"], "deepseek-chat")
+            self.assertEqual(config["model"]["name"], "deepseek-flash")
+            self.assertEqual(config["judge"]["name"], "deepseek-flash")
         env_example = (root / ".env.example").read_text(encoding="utf-8")
         self.assertIn("MODEL_BASE_URL=https://api.deepseek.com", env_example)
         self.assertIn("JUDGE_BASE_URL=", env_example)
@@ -256,7 +256,7 @@ class ExperimentConfigTest(unittest.TestCase):
 
         def upstream_init(instance: object, **kwargs: object) -> None:
             instance.client = Client()
-            instance.model_name = "deepseek-chat"
+            instance.model_name = "deepseek-flash"
 
         configured = run_benchmark.configured_initializer(
             upstream_init,
@@ -280,11 +280,11 @@ class ExperimentConfigTest(unittest.TestCase):
         responses = iter(
             [
                 SimpleNamespace(
-                    model="deepseek-chat-v3-20250324",
+                    model="DeepSeek-V4.1-Flash",
                     usage=SimpleNamespace(prompt_tokens=11, completion_tokens=4),
                 ),
                 SimpleNamespace(
-                    model="deepseek-chat-v3-20250324",
+                    model="DeepSeek-V4.1-Flash",
                     usage=SimpleNamespace(prompt_tokens=7, completion_tokens=3),
                 ),
             ]
@@ -302,7 +302,7 @@ class ExperimentConfigTest(unittest.TestCase):
 
         def upstream_init(instance: object, **kwargs: object) -> None:
             instance.client = client
-            instance.model_name = "deepseek-chat"
+            instance.model_name = "deepseek-flash"
 
         resolved = {
             "temperature": 0.0,
@@ -324,10 +324,10 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(resolved["total_prompt_tokens"], 18)
         self.assertEqual(resolved["total_completion_tokens"], 7)
         self.assertEqual(
-            resolved["provider_reported_model"], "deepseek-chat-v3-20250324"
+            resolved["provider_reported_model"], "DeepSeek-V4.1-Flash"
         )
         self.assertEqual(
-            resolved["provider_reported_models"], ["deepseek-chat-v3-20250324"]
+            resolved["provider_reported_models"], ["DeepSeek-V4.1-Flash"]
         )
 
     def test_run_metadata_persists_accumulated_usage_tokens(self) -> None:
@@ -343,8 +343,8 @@ class ExperimentConfigTest(unittest.TestCase):
                     "run_id": 1,
                     "total_prompt_tokens": 18,
                     "total_completion_tokens": 7,
-                    "provider_reported_model": "deepseek-chat-v3-20250324",
-                    "provider_reported_models": ["deepseek-chat-v3-20250324"],
+                    "provider_reported_model": "DeepSeek-V4.1-Flash",
+                    "provider_reported_models": ["DeepSeek-V4.1-Flash"],
                     "rate_limit_retry": run_benchmark.new_retry_audit(3),
                     "rate_limit_retry_file": "agent-rate-limit-retry.json",
                 }
@@ -360,7 +360,7 @@ class ExperimentConfigTest(unittest.TestCase):
             self.assertEqual(payload["total_completion_tokens"], 7)
             self.assertEqual(
                 payload["model"]["provider_reported_model"],
-                "deepseek-chat-v3-20250324",
+                "DeepSeek-V4.1-Flash",
             )
             self.assertEqual(payload["rate_limit_retry"]["actual_retries"], 0)
             self.assertEqual(payload["rate_limit_retry"]["sdk_max_retries"], 0)
@@ -386,19 +386,18 @@ class ExperimentConfigTest(unittest.TestCase):
             self.assertEqual(payload["actual_retries"], 0)
             self.assertFalse(path.with_suffix(".json.tmp").exists())
 
-    def test_historical_pricing_emits_pre_run_warning(self) -> None:
+    def test_current_pricing_does_not_emit_pre_run_warning(self) -> None:
         warning = experiment_config.pricing_warning(
             SCRIPTS.parent / "configs/pricing.json",
-            "deepseek-chat",
+            "deepseek-flash",
             today=date(2026, 10, 13),
         )
-        self.assertIn("historical reference", warning)
-        self.assertIn("api-docs.deepseek.com", warning)
+        self.assertIsNone(warning)
 
     def test_judge_credentials_fall_back_to_same_model_credentials(self) -> None:
         resolved = {
-            "model_name": "deepseek-chat",
-            "judge_name": "deepseek-chat",
+            "model_name": "deepseek-flash",
+            "judge_name": "deepseek-flash",
             "model_api_key_env": "MODEL_API_KEY",
             "model_base_url_env": "MODEL_BASE_URL",
             "judge_api_key_env": "JUDGE_API_KEY",

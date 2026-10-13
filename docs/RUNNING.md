@@ -14,7 +14,7 @@ cp .env.example .env
 
 Set `MODEL_API_KEY` only in the local `.env`; the checked-in example already
 sets `MODEL_BASE_URL=https://api.deepseek.com` for the pinned
-`deepseek-chat` model. Git ignores `.env`. The runner parses `NAME=value`
+`deepseek-flash` model. Git ignores `.env`. The runner parses `NAME=value`
 directly; it never executes the file through a shell, overwrites pre-existing
 environment variables, or writes credentials to logs or metadata.
 
@@ -38,7 +38,7 @@ The same state is atomically checkpointed after every 429 to
 - Recommended DeepSeek endpoint: `https://api.deepseek.com`; current OpenAI SDKs handle the compatible route.
 - With an OpenAI SDK older than 1.0, use `https://api.deepseek.com/v1`.
 - If unsure, run `.venv/bin/python scripts/check_model_connection.py`; it probes both forms when needed and reports the working endpoint.
-- The configured V3 slug is `deepseek-chat`. Do not use `deepseek-reasoner` as the tool-calling agent.
+- The configured slug is `deepseek-flash`, currently served as DeepSeek-V4.1-Flash. Do not use `deepseek-reasoner` as the tool-calling agent.
 - Run `.venv/bin/python scripts/check_model_connection.py` before any paid batch.
 - On failure, its cost estimate reads the actual stored trajectories, includes
   five Judge scores per task and a conservative malformed-response retry reserve,

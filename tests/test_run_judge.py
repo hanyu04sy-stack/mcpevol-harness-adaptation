@@ -11,8 +11,8 @@ import run_judge  # noqa: E402
 class RunJudgeTest(unittest.TestCase):
     def test_model_usage_audit_includes_attempts_and_all_tokens(self) -> None:
         audit = run_judge.judge_audit_summary(
-            "deepseek-chat",
-            ["deepseek-chat-v3-20250324"],
+            "deepseek-flash",
+            ["DeepSeek-V4.1-Flash"],
             {
                 "prompt_tokens": 100,
                 "completion_tokens": 20,
@@ -25,8 +25,8 @@ class RunJudgeTest(unittest.TestCase):
         self.assertEqual(
             audit,
             {
-                "configured_model": "deepseek-chat",
-                "provider_reported_model": "deepseek-chat-v3-20250324",
+                "configured_model": "deepseek-flash",
+                "provider_reported_model": "DeepSeek-V4.1-Flash",
                 "prompt_tokens": 130,
                 "completion_tokens": 25,
                 "attempt_count": 6,
@@ -47,7 +47,7 @@ class RunJudgeTest(unittest.TestCase):
                     )
                 )
                 return SimpleNamespace(
-                    model="deepseek-chat-v3-20250324",
+                    model="DeepSeek-V4.1-Flash",
                     choices=[SimpleNamespace(message=message)],
                     usage=SimpleNamespace(prompt_tokens=20, completion_tokens=8),
                 )
@@ -59,7 +59,7 @@ class RunJudgeTest(unittest.TestCase):
             {"question": "q", "answer": "a", "trajectory_messages": []},
             client=client,
             prompt_builder=lambda *args, **kwargs: "Return JSON.",
-            model="deepseek-chat",
+            model="deepseek-flash",
             temperature=0.0,
             max_tokens=4096,
             num_runs=1,
@@ -72,7 +72,7 @@ class RunJudgeTest(unittest.TestCase):
         self.assertEqual(result["usage"]["completion_tokens"], 8)
         self.assertEqual(result["usage"]["retry_prompt_tokens"], 0)
         self.assertEqual(
-            result["provider_reported_models"], ["deepseek-chat-v3-20250324"]
+            result["provider_reported_models"], ["DeepSeek-V4.1-Flash"]
         )
 
     def test_invalid_judge_response_usage_is_counted_as_retry(self) -> None:
@@ -87,7 +87,7 @@ class RunJudgeTest(unittest.TestCase):
         class Completions:
             def create(self, **kwargs):
                 return SimpleNamespace(
-                    model="deepseek-chat-v3-20250324",
+                    model="DeepSeek-V4.1-Flash",
                     choices=[
                         SimpleNamespace(
                             message=SimpleNamespace(content=next(contents))
@@ -102,7 +102,7 @@ class RunJudgeTest(unittest.TestCase):
                 chat=SimpleNamespace(completions=Completions())
             ),
             prompt_builder=lambda *args, **kwargs: "Return JSON.",
-            model="deepseek-chat",
+            model="deepseek-flash",
             temperature=0.0,
             max_tokens=4096,
             num_runs=1,

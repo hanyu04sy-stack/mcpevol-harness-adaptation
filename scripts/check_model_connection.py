@@ -59,7 +59,7 @@ def friendly_error(exc: Exception) -> tuple[str, str]:
     if status == 404 or ("model" in lower and ("not found" in lower or "does not exist" in lower)):
         return (
             f"HTTP 404: model not found ({message})",
-            "Fix: model.name and the endpoint do not match. Check whether configs/experiment.json still says gpt-4o instead of deepseek-chat.",
+            "Fix: model.name and the endpoint do not match. Check whether configs/experiment.json still says gpt-4o instead of deepseek-flash.",
         )
     if isinstance(exc, (TimeoutError, ConnectionError, OSError)) or any(x in lower for x in ("timeout", "timed out", "connection error")):
         return (
@@ -108,7 +108,7 @@ def check_config(
         return Result(2, "Config / env consistency", True, f"model={model}, judge={judge} (match), model_endpoint={model_endpoint}, judge_endpoint={judge_endpoint}", "Next: both Agent and Judge configurations agree with their endpoints.")
     except ConfigError as exc:
         if "DeepSeek" in str(exc) and not model.lower().startswith("deepseek"):
-            fix = "Fix: change model.name and judge.name in configs/experiment.json to deepseek-chat."
+            fix = "Fix: change model.name and judge.name in configs/experiment.json to deepseek-flash."
         elif model.lower().startswith("deepseek"):
             fix = "Fix: set MODEL_BASE_URL and JUDGE_BASE_URL (if non-empty) to https://api.deepseek.com, or use model slugs served by those endpoints."
         else:
@@ -254,7 +254,7 @@ def check_tools(
         message = response.choices[0].message
         calls = getattr(message, "tool_calls", None)
         if not isinstance(calls, list) or not calls:
-            return Result(4, "Tool calling", False, f"No tool_calls[] returned; raw content={getattr(message, 'content', None)!r}", "Fix: the model ignored the tool definition. Use deepseek-chat, not deepseek-reasoner.")
+            return Result(4, "Tool calling", False, f"No tool_calls[] returned; raw content={getattr(message, 'content', None)!r}", "Fix: the model ignored the tool definition. Use deepseek-flash, not deepseek-reasoner.")
         function = getattr(calls[0], "function", None)
         if getattr(function, "name", None) != "plan_trip":
             return Result(4, "Tool calling", False, f"Model called {getattr(function, 'name', None)!r}, not plan_trip.", "Fix: check the tool definition format.")

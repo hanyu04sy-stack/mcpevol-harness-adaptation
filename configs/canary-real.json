@@ -19,14 +19,14 @@
   },
   "model": {
     "provider": "openai_compatible",
-    "name": "deepseek-chat",
+    "name": "deepseek-flash",
     "temperature": 0.0,
     "max_completion_tokens": 4096,
     "api_key_env": "MODEL_API_KEY",
     "base_url_env": "MODEL_BASE_URL"
   },
   "judge": {
-    "name": "deepseek-chat",
+    "name": "deepseek-flash",
     "temperature": 0.0,
     "api_key_env": "JUDGE_API_KEY",
     "base_url_env": "JUDGE_BASE_URL"

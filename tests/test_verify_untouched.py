@@ -29,8 +29,8 @@ class VerifyUntouchedTest(unittest.TestCase):
         config = {
             "benchmark": {"root": "external/MCPEvol-Bench", "commit": "abc"},
             "dataset": {"path": "data/tasks.json", "sha256": task_hash},
-            "model": {"name": "deepseek-chat", "temperature": 0.0},
-            "judge": {"name": "deepseek-chat", "temperature": 0.0},
+            "model": {"name": "deepseek-flash", "temperature": 0.0},
+            "judge": {"name": "deepseek-flash", "temperature": 0.0},
         }
         config_path = root / "config.json"
         config_path.write_text(json.dumps(config), encoding="utf-8")
@@ -39,9 +39,9 @@ class VerifyUntouchedTest(unittest.TestCase):
             json.dumps(
                 {
                     "schema_version": 1,
-                    "model.name": "deepseek-chat",
+                    "model.name": "deepseek-flash",
                     "model.temperature": 0.0,
-                    "judge.name": "deepseek-chat",
+                    "judge.name": "deepseek-flash",
                     "judge.temperature": 0.0,
                     "benchmark.commit": "abc",
                 }
@@ -88,7 +88,7 @@ class VerifyUntouchedTest(unittest.TestCase):
                 encoding="utf-8",
             )
             pins.write_text(
-                json.dumps({"model.name": "deepseek-chat"}), encoding="utf-8"
+                json.dumps({"model.name": "deepseek-flash"}), encoding="utf-8"
             )
             with self.assertRaisesRegex(ValueError, "metadata model mismatch"):
                 verify_untouched.verify_run_metadata_model(metadata, pins)
