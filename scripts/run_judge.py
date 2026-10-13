@@ -116,6 +116,26 @@ def estimated_cost(
     )
 
 
+def judge_audit_summary(
+    configured_model: str,
+    provider_models: list[str],
+    usage: dict[str, int],
+    attempt_count: int,
+    valid_score_count: int,
+) -> dict[str, Any]:
+    """Return the compact model/usage audit requested for every judge run."""
+    return {
+        "configured_model": configured_model,
+        "provider_reported_model": provider_models[0] if provider_models else None,
+        "prompt_tokens": usage["prompt_tokens"] + usage["retry_prompt_tokens"],
+        "completion_tokens": (
+            usage["completion_tokens"] + usage["retry_completion_tokens"]
+        ),
+        "attempt_count": attempt_count,
+        "valid_score_count": valid_score_count,
+    }
+
+
 def judge_case(
     case: dict[str, Any],
     *,
@@ -305,6 +325,8 @@ def main() -> None:
             "responses_missing_usage": 0,
         }
         judge_provider_models: list[str] = []
+        judge_attempt_count = 0
+        valid_score_count = 0
         rate_limit_retry = new_retry_audit(int(resolved["openai_max_retries"]))
         retry_audit_path = run_dir / "judge-rate-limit-retry.json"
 
@@ -347,6 +369,8 @@ def main() -> None:
                 encoding="utf-8",
             )
             aggregate = evaluated["aggregate"]
+            judge_attempt_count += int(aggregate["total_runs"])
+            valid_score_count += int(aggregate["successful_runs"])
             for name in judge_usage:
                 judge_usage[name] += int(evaluated["usage"][name])
             for reported_model in evaluated["provider_reported_models"]:
@@ -403,16 +427,22 @@ def main() -> None:
         total_cost = (
             sum(cost_parts) if all(value is not None for value in cost_parts) else None
         )
+        model_usage_audit = judge_audit_summary(
+            str(resolved["judge_name"]),
+            judge_provider_models,
+            judge_usage,
+            judge_attempt_count,
+            valid_score_count,
+        )
         metadata.write_text(
             json.dumps(
                 {
                     "schema_version": 1,
                     "recorded_at": generated_at,
                     "judge": public["judge"],
-                    "provider_reported_model": (
-                        judge_provider_models[0] if judge_provider_models else None
-                    ),
+                    **model_usage_audit,
                     "provider_reported_models": judge_provider_models,
+                    "model_usage_audit": model_usage_audit,
                     "rate_limit_retry": rate_limit_retry,
                     "rate_limit_retry_file": retry_audit_path.name,
                     "input_files": public["trajectory_files"],

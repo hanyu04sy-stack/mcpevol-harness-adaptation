@@ -25,9 +25,18 @@ def chat_response():
     )
 
 
-def tool_response(arguments='{"city": "Beijing"}'):
+def tool_response(
+    name="plan_trip",
+    arguments=(
+        '{"destinations":[{"city":"Beijing","days":2},'
+        '{"city":"Shanghai","days":3}],'
+        '"preferences":{"activities":["food","museums"]}}'
+    ),
+    call_id="call_plan_1",
+):
     call = SimpleNamespace(
-        function=SimpleNamespace(name="get_weather", arguments=arguments)
+        id=call_id,
+        function=SimpleNamespace(name=name, arguments=arguments),
     )
     return SimpleNamespace(
         choices=[
@@ -38,11 +47,26 @@ def tool_response(arguments='{"city": "Beijing"}'):
     )
 
 
+def valid_tool_responses():
+    return [
+        tool_response(),
+        tool_response(
+            name="get_weather",
+            arguments='{"city":"Beijing"}',
+            call_id="call_weather_2",
+        ),
+    ]
+
+
 def client_factory(chat_outcome=None, tool_outcome=None):
+    tool_outcomes = iter(
+        tool_outcome if isinstance(tool_outcome, list) else [tool_outcome]
+    )
+
     def factory(**kwargs):
         class Completions:
             def create(self, **request):
-                outcome = tool_outcome if "tools" in request else chat_outcome
+                outcome = next(tool_outcomes) if "tools" in request else chat_outcome
                 if isinstance(outcome, BaseException):
                     raise outcome
                 return outcome
@@ -63,7 +87,7 @@ class CheckModelConnectionTest(unittest.TestCase):
                 "max_completion_tokens": 100,
             },
             "judge": {"name": "deepseek-chat"},
-            "dataset": {"size": 30},
+            "dataset": {"size": 30, "path": "data/tasks.json"},
         }
         config_path = root / "configs/experiment.json"
         config_path.write_text(json.dumps(config), encoding="utf-8")
@@ -79,6 +103,26 @@ class CheckModelConnectionTest(unittest.TestCase):
                 }
             ),
             encoding="utf-8",
+        )
+        (root / "data").mkdir()
+        task = {
+            "question": "Use a tool to answer the question.",
+            "answer": "Done.",
+            "servers": {"example": ["lookup"]},
+            "trajectory_messages": [
+                {"role": "system", "content": "Use tools."},
+                {"role": "user", "content": "Look this up."},
+                {
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": [{"function": {"name": "lookup"}}],
+                },
+                {"role": "tool", "content": "result"},
+                {"role": "assistant", "content": "Done."},
+            ],
+        }
+        (root / "data/tasks.json").write_text(
+            json.dumps([task] * 30), encoding="utf-8"
         )
         env_path = root / ".env"
         env_path.write_text(
@@ -103,11 +147,12 @@ class CheckModelConnectionTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             code, output = self.run_case(
                 Path(directory),
-                client_factory(chat_response(), tool_response()),
+                client_factory(chat_response(), valid_tool_responses()),
             )
         self.assertEqual(code, 0)
         self.assertIn("[PASS] 1. Chat completion", output)
         self.assertIn("[PASS] 4. Tool calling", output)
+        self.assertIn("linked_tool_call_id=call_plan_1", output)
         self.assertIn("All checks passed", output)
         self.assertNotIn("secret", output)
 
@@ -115,7 +160,7 @@ class CheckModelConnectionTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             code, output = self.run_case(
                 Path(directory),
-                client_factory(StatusError("Invalid API key", 401), tool_response()),
+                client_factory(StatusError("Invalid API key", 401), valid_tool_responses()),
             )
         self.assertEqual(code, 1)
         self.assertIn("[FAIL] 1. Chat completion", output)
@@ -125,7 +170,10 @@ class CheckModelConnectionTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             code, output = self.run_case(
                 Path(directory),
-                client_factory(chat_response(), tool_response("{city: Beijing}")),
+                client_factory(
+                    chat_response(),
+                    tool_response(arguments="{city: Beijing}"),
+                ),
             )
         self.assertEqual(code, 1)
         self.assertIn("[FAIL] 4. Tool calling", output)
@@ -144,6 +192,33 @@ class CheckModelConnectionTest(unittest.TestCase):
             )
         self.assertEqual(code, 2)
         self.assertIn("cp .env.example .env first", output.getvalue())
+
+    def test_cost_estimate_includes_five_judges_and_retry_reserve(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            config_path, _ = self.make_files(root)
+            config = json.loads(config_path.read_text(encoding="utf-8"))
+            estimate = check_model_connection.estimate_cost(config, root)
+        self.assertIsNotNone(estimate)
+        self.assertEqual(estimate["judge_runs_per_task"], 5)
+        self.assertEqual(estimate["retry_attempt_reserve"], 300)
+        self.assertGreater(estimate["agent_prompt_tokens"], 0)
+        self.assertGreater(estimate["judge_prompt_tokens"], 0)
+        self.assertGreater(
+            estimate["total"], estimate["agent_cost"] + estimate["judge_cost"]
+        )
+
+    def test_keyboard_interrupt_is_not_swallowed(self):
+        def interrupted_factory(**kwargs):
+            raise KeyboardInterrupt()
+
+        with self.assertRaises(KeyboardInterrupt):
+            check_model_connection.probe(
+                "deepseek-chat",
+                "secret",
+                "https://api.deepseek.com",
+                interrupted_factory,
+            )
 
 
 if __name__ == "__main__":

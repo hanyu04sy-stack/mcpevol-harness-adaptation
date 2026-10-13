@@ -31,7 +31,13 @@ def endpoint_candidates(url: str) -> list[str]:
     return [url, url + "/v1"] if parsed.hostname == "api.deepseek.com" and parsed.path in {"", "/"} else [url]
 
 
-def friendly_error(exc: BaseException) -> tuple[str, str]:
+JUDGE_RUNS_PER_TASK = 5
+JUDGE_MAX_ATTEMPTS_PER_VALID_SCORE = 3
+CHARS_PER_TOKEN_ESTIMATE = 4
+JUDGE_COMPLETION_TOKENS_PER_ATTEMPT = 128
+
+
+def friendly_error(exc: Exception) -> tuple[str, str]:
     status, message = getattr(exc, "status_code", None), str(exc).strip() or type(exc).__name__
     lower = message.lower()
     if status in {401, 403} or "authentication" in lower or "invalid api key" in lower:
@@ -119,7 +125,7 @@ def probe(model: str, key: str, endpoint: str, factory: Callable[..., Any]):
             client = factory(api_key=key, base_url=candidate, timeout=30.0, max_retries=2)
             response, latency = request_chat(client, model)
             successes.append((candidate, response, latency))
-        except BaseException as exc:
+        except Exception as exc:
             failures.append((candidate, exc))
     return (successes[0] if successes else (None, None, None)), failures
 
@@ -138,12 +144,81 @@ def chat_result(endpoint: str, response: Any, latency: float) -> Result:
         return Result(1, "Chat completion", False, detail, fix)
 
 
+def _tool_call_payload(call: Any) -> dict[str, Any]:
+    function = getattr(call, "function", None)
+    return {
+        "id": getattr(call, "id", ""),
+        "type": "function",
+        "function": {
+            "name": getattr(function, "name", ""),
+            "arguments": getattr(function, "arguments", ""),
+        },
+    }
+
+
 def check_tools(client: Any, model: str) -> Result:
     try:
+        tools = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "plan_trip",
+                    "description": "Create a trip plan from structured preferences",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "destinations": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "city": {"type": "string"},
+                                        "days": {"type": "integer"},
+                                    },
+                                    "required": ["city", "days"],
+                                },
+                            },
+                            "preferences": {
+                                "type": "object",
+                                "properties": {
+                                    "activities": {
+                                        "type": "array",
+                                        "items": {"type": "string"},
+                                    }
+                                },
+                                "required": ["activities"],
+                            },
+                        },
+                        "required": ["destinations", "preferences"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_weather",
+                    "description": "Get current weather for a city",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {"city": {"type": "string"}},
+                        "required": ["city"],
+                    },
+                },
+            },
+        ]
+        messages = [
+            {
+                "role": "user",
+                "content": (
+                    "First call plan_trip for Beijing (2 days) and Shanghai "
+                    "(3 days), with food and museums as activities."
+                ),
+            }
+        ]
         response = client.chat.completions.create(
             model=model,
-            messages=[{"role": "user", "content": "What is the weather in Beijing? Use the get_weather tool."}],
-            tools=[{"type": "function", "function": {"name": "get_weather", "description": "Get current weather for a city", "parameters": {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]}}}],
+            messages=messages,
+            tools=tools,
             max_tokens=100,
             temperature=0.0,
         )
@@ -152,26 +227,160 @@ def check_tools(client: Any, model: str) -> Result:
         if not isinstance(calls, list) or not calls:
             return Result(4, "Tool calling", False, f"No tool_calls[] returned; raw content={getattr(message, 'content', None)!r}", "Fix: the model ignored the tool definition. Use deepseek-chat, not deepseek-reasoner.")
         function = getattr(calls[0], "function", None)
-        if getattr(function, "name", None) != "get_weather":
-            return Result(4, "Tool calling", False, f"Model called {getattr(function, 'name', None)!r}, not get_weather.", "Fix: check the tool definition format.")
+        if getattr(function, "name", None) != "plan_trip":
+            return Result(4, "Tool calling", False, f"Model called {getattr(function, 'name', None)!r}, not plan_trip.", "Fix: check the tool definition format.")
+        first_id = getattr(calls[0], "id", None)
+        if not isinstance(first_id, str) or not first_id:
+            return Result(4, "Tool calling", False, "First tool call has no tool_call_id.", "Fix: the endpoint must return OpenAI-compatible tool call IDs.")
         raw = getattr(function, "arguments", "")
         try:
             arguments = json.loads(raw)
         except (TypeError, json.JSONDecodeError):
             return Result(4, "Tool calling", False, f"Tool arguments are malformed JSON: {raw!r}", "Fix: DeepSeek tool calling compatibility failed; this is not a harness configuration error. If frequent, consider a matching OpenRouter gpt-4o configuration.")
-        if not isinstance(arguments, dict) or not arguments.get("city"):
-            return Result(4, "Tool calling", False, f"Parsed arguments lack city: {arguments!r}", "Fix: check the tool definition format.")
-        return Result(4, "Tool calling", True, f"arguments={json.dumps(arguments, ensure_ascii=False)}", "Next: tool_calls[] matches the upstream agent format.")
-    except BaseException as exc:
+        destinations = arguments.get("destinations") if isinstance(arguments, dict) else None
+        preferences = arguments.get("preferences") if isinstance(arguments, dict) else None
+        activities = preferences.get("activities") if isinstance(preferences, dict) else None
+        if not isinstance(destinations, list) or len(destinations) < 2 or not all(isinstance(item, dict) and item.get("city") and isinstance(item.get("days"), int) for item in destinations) or not isinstance(activities, list) or not activities:
+            return Result(4, "Tool calling", False, f"Nested/array arguments are invalid: {arguments!r}", "Fix: check nested object and array support in the tool definition format.")
+        messages.extend(
+            [
+                {
+                    "role": "assistant",
+                    "content": getattr(message, "content", None),
+                    "tool_calls": [_tool_call_payload(calls[0])],
+                },
+                {
+                    "role": "tool",
+                    "tool_call_id": first_id,
+                    "content": json.dumps({"status": "planned"}),
+                },
+                {
+                    "role": "user",
+                    "content": "Now call get_weather for Beijing.",
+                },
+            ]
+        )
+        chained = client.chat.completions.create(
+            model=model,
+            messages=messages,
+            tools=tools,
+            max_tokens=100,
+            temperature=0.0,
+        )
+        chained_calls = getattr(chained.choices[0].message, "tool_calls", None)
+        if not isinstance(chained_calls, list) or not chained_calls:
+            return Result(4, "Tool calling", False, "No second tool call returned after a tool result.", "Fix: the model must support consecutive tool calls.")
+        chained_function = getattr(chained_calls[0], "function", None)
+        second_id = getattr(chained_calls[0], "id", None)
+        if getattr(chained_function, "name", None) != "get_weather" or not isinstance(second_id, str) or not second_id:
+            return Result(4, "Tool calling", False, "Second call lacks get_weather or a tool_call_id.", "Fix: check consecutive OpenAI-compatible tool calling.")
+        weather_arguments = json.loads(getattr(chained_function, "arguments", ""))
+        if not isinstance(weather_arguments, dict) or not weather_arguments.get("city"):
+            return Result(4, "Tool calling", False, f"Second-call arguments lack city: {weather_arguments!r}", "Fix: check the tool definition format.")
+        return Result(4, "Tool calling", True, f"nested_arguments={json.dumps(arguments, ensure_ascii=False)}, chained_arguments={json.dumps(weather_arguments, ensure_ascii=False)}, linked_tool_call_id={first_id}", "Next: nested arrays, consecutive calls, and tool_call_id linkage match the upstream format.")
+    except (AttributeError, IndexError, TypeError, ValueError, json.JSONDecodeError) as exc:
+        detail, fix = friendly_error(exc)
+        return Result(4, "Tool calling", False, detail, fix)
+    except Exception as exc:
         detail, fix = friendly_error(exc)
         return Result(4, "Tool calling", False, detail, fix)
 
 
-def estimate_cost(config: dict[str, Any], root: Path) -> float | None:
+def _tokens_from_chars(characters: int) -> int:
+    return max(1, (characters + CHARS_PER_TOKEN_ESTIMATE - 1) // CHARS_PER_TOKEN_ESTIMATE)
+
+
+def _cost(prompt_tokens: int, completion_tokens: int, rate: dict[str, Any]) -> float:
+    return (
+        prompt_tokens / 1_000_000 * float(rate["prompt_per_mtok_usd"])
+        + completion_tokens
+        / 1_000_000
+        * float(rate["completion_per_mtok_usd"])
+    )
+
+
+def estimate_cost(config: dict[str, Any], root: Path) -> dict[str, Any] | None:
+    """Estimate one version using actual stored trajectory text plus Judge reserves."""
     try:
-        model, maximum, count = str(config["model"]["name"]), int(config["model"]["max_completion_tokens"]), int(config["dataset"]["size"])
+        model = str(config["model"]["name"])
+        maximum = int(config["model"]["max_completion_tokens"])
+        count = int(config["dataset"]["size"])
         rate = json.loads((root / "configs/pricing.json").read_text(encoding="utf-8"))["models"][model]
-        return count * maximum / 1_000_000 * (float(rate["prompt_per_mtok_usd"]) + float(rate["completion_per_mtok_usd"]))
+        dataset_path = root / str(config["dataset"]["path"])
+        cases = json.loads(dataset_path.read_text(encoding="utf-8"))
+        if not isinstance(cases, list) or not cases:
+            raise ValueError("dataset is empty")
+        cases = cases[:count]
+
+        agent_prompt_chars = 0
+        agent_completion_chars = 0
+        judge_prompt_chars = 0
+        for case in cases:
+            if not isinstance(case, dict):
+                continue
+            messages = case.get("trajectory_messages", [])
+            assistant_calls = 0
+            if isinstance(messages, list):
+                for index, message in enumerate(messages):
+                    if isinstance(message, dict) and message.get("role") == "assistant":
+                        agent_prompt_chars += len(
+                            json.dumps(messages[:index], ensure_ascii=False)
+                        )
+                        agent_completion_chars += len(
+                            json.dumps(message, ensure_ascii=False)
+                        )
+                        assistant_calls += 1
+            if assistant_calls == 0:
+                agent_prompt_chars += len(str(case.get("question", "")))
+                agent_completion_chars += maximum * CHARS_PER_TOKEN_ESTIMATE
+            judge_prompt_chars += len(
+                json.dumps(
+                    {
+                        "question": case.get("question", ""),
+                        "tools": case.get("involved_tools", case.get("servers", {})),
+                        "trajectory": messages,
+                        "answer": case.get("answer", ""),
+                    },
+                    ensure_ascii=False,
+                )
+            )
+
+        agent_prompt = _tokens_from_chars(agent_prompt_chars)
+        agent_completion = _tokens_from_chars(agent_completion_chars)
+        judge_prompt_once = _tokens_from_chars(judge_prompt_chars)
+        judge_prompt = judge_prompt_once * JUDGE_RUNS_PER_TASK
+        judge_completion = (
+            len(cases)
+            * JUDGE_RUNS_PER_TASK
+            * JUDGE_COMPLETION_TOKENS_PER_ATTEMPT
+        )
+        retry_attempts = len(cases) * JUDGE_RUNS_PER_TASK * (
+            JUDGE_MAX_ATTEMPTS_PER_VALID_SCORE - 1
+        )
+        retry_prompt = (
+            judge_prompt_once
+            * JUDGE_RUNS_PER_TASK
+            * (JUDGE_MAX_ATTEMPTS_PER_VALID_SCORE - 1)
+        )
+        retry_completion = retry_attempts * JUDGE_COMPLETION_TOKENS_PER_ATTEMPT
+        agent_cost = _cost(agent_prompt, agent_completion, rate)
+        judge_cost = _cost(judge_prompt, judge_completion, rate)
+        retry_reserve = _cost(retry_prompt, retry_completion, rate)
+        return {
+            "task_count": len(cases),
+            "agent_prompt_tokens": agent_prompt,
+            "agent_completion_tokens": agent_completion,
+            "judge_prompt_tokens": judge_prompt,
+            "judge_completion_tokens": judge_completion,
+            "judge_runs_per_task": JUDGE_RUNS_PER_TASK,
+            "retry_attempt_reserve": retry_attempts,
+            "retry_prompt_tokens": retry_prompt,
+            "retry_completion_tokens": retry_completion,
+            "agent_cost": agent_cost,
+            "judge_cost": judge_cost,
+            "retry_reserve": retry_reserve,
+            "total": agent_cost + judge_cost + retry_reserve,
+        }
     except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
         return None
 
@@ -188,8 +397,25 @@ def summary(results: list[Result], config: dict[str, Any], root: Path, out: Text
   3. Then start the 1MCP server and run the real experiment.""", file=out)
     else:
         print("Do NOT run the 30-task experiment yet. Fix the FAIL above, then re-run this script.", file=out)
-        cost = estimate_cost(config, root)
-        print(f"Estimated cost if you ran anyway: {'~$' + format(cost, '.2f') if cost is not None else 'unknown'} for a single full run (see configs/pricing.json).", file=out)
+        estimate = estimate_cost(config, root)
+        if estimate is None:
+            print("Estimated cost if you ran anyway: unknown (see configs/pricing.json).", file=out)
+        else:
+            print(
+                "Estimated single-version cost if you ran anyway: "
+                f"~${estimate['total']:.2f} = Agent ${estimate['agent_cost']:.2f} "
+                f"+ Judge {estimate['judge_runs_per_task']}x ${estimate['judge_cost']:.2f} "
+                f"+ malformed-Judge retry reserve ${estimate['retry_reserve']:.2f}.",
+                file=out,
+            )
+            print(
+                "Estimate uses the actual stored trajectory text "
+                f"(~{estimate['agent_prompt_tokens'] + estimate['judge_prompt_tokens']:,} "
+                "prompt tokens at 4 chars/token), includes up to "
+                f"{estimate['retry_attempt_reserve']} Judge retries, and excludes "
+                "normally-unbilled HTTP 429 retries. See configs/pricing.json.",
+                file=out,
+            )
 
 
 def run_self_check(*, config_path: Path, env_file: Path, client_factory: Callable[..., Any], environ: Mapping[str, str] | None, stream: TextIO) -> int:
@@ -251,7 +477,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         from openai import OpenAI
         return run_self_check(config_path=args.config, env_file=args.env_file, client_factory=OpenAI, environ=None, stream=sys.stdout)
-    except BaseException as exc:
+    except Exception as exc:
         print(f"[FAIL] Model self-check could not start: {exc}\n       Fix: run scripts/setup_environment.py, then re-run this script.")
         return 1
 

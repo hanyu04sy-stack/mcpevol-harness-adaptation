@@ -58,6 +58,10 @@ estimated USD costs plus `total_est_cost_usd`. If any response omits usage, the
 affected cost remains `null` rather than silently treating missing tokens as zero.
 It also records `provider_reported_model` and every distinct model identifier
 returned during judging so aliases can be audited after a provider-side change.
+For quick audits, the metadata also exposes `configured_model`,
+`provider_reported_model`, total Judge `prompt_tokens` and `completion_tokens`,
+`attempt_count`, and `valid_score_count`; the detailed `usage` object continues
+to separate valid scores from malformed-response retries.
 It also records `rate_limit_retry`: every HTTP 429, `Retry-After` value,
 exponential delay, actual retry, exhausted request, and total wait. SDK retries
 are disabled so this transport behavior is not hidden from the experiment log.

@@ -36,6 +36,11 @@ retry count, exhausted requests, and total backoff time under
 - If unsure, run `.venv/bin/python scripts/check_model_connection.py`; it probes both forms when needed and reports the working endpoint.
 - The configured V3 slug is `deepseek-chat`. Do not use `deepseek-reasoner` as the tool-calling agent.
 - Run `.venv/bin/python scripts/check_model_connection.py` before any paid batch.
+- On failure, its cost estimate reads the actual stored trajectories, includes
+  five Judge scores per task and a conservative malformed-response retry reserve,
+  and prints the token approximation and pricing assumptions.
+- Its tool preflight verifies nested objects, arrays, two consecutive tool calls,
+  and the `tool_call_id` used to attach a tool result to the first call.
 - Provider slugs and prices change. A model-not-found result means the config must be updated before continuing.
 
 ## 3. Preflight checks

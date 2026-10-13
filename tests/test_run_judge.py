@@ -9,6 +9,31 @@ import run_judge  # noqa: E402
 
 
 class RunJudgeTest(unittest.TestCase):
+    def test_model_usage_audit_includes_attempts_and_all_tokens(self) -> None:
+        audit = run_judge.judge_audit_summary(
+            "deepseek-chat",
+            ["deepseek-chat-v3-20250324"],
+            {
+                "prompt_tokens": 100,
+                "completion_tokens": 20,
+                "retry_prompt_tokens": 30,
+                "retry_completion_tokens": 5,
+            },
+            attempt_count=6,
+            valid_score_count=5,
+        )
+        self.assertEqual(
+            audit,
+            {
+                "configured_model": "deepseek-chat",
+                "provider_reported_model": "deepseek-chat-v3-20250324",
+                "prompt_tokens": 130,
+                "completion_tokens": 25,
+                "attempt_count": 6,
+                "valid_score_count": 5,
+            },
+        )
+
     def test_judge_uses_configured_model_and_token_limit(self) -> None:
         calls = []
 
