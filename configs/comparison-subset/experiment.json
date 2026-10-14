@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "experiment_name": "selective-patch-comparison",
+  "benchmark": {
+    "repository": "https://github.com/Octobrist/MCPEvol-Bench.git",
+    "root": "external/MCPEvol-Bench",
+    "commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+    "runner": "src/custom/real_mcp/tool_level_test.py"
+  },
+  "dataset": {
+    "mode": "fixed_subset",
+    "path": "data/subsets/comparison-subset/test_cases.json",
+    "sha256": "cb76131b56d89a18b74df2662671b9e20c8121d0714a7f7814a9e13a85dc3d58",
+    "runnability_matrix": "reports/comparison-runnability-matrix.json",
+    "runnability_matrix_sha256": "e2e4ea87bd9b73c255cf672279fa2471f21c43430915c7e603dbfadde372fa1b",
+    "startup_stability_report": "reports/pilot-30-startup-stability.json",
+    "startup_stability_report_sha256": "1b11b6d3b23eca8193772021a603e20ec2aa8a96b651d8fff1fe389cb2e937e7",
+    "size": 23,
+    "seed": 6203
+  },
+  "harness": {
+    "default_dir": "harness/original"
+  },
+  "model": {
+    "provider": "openai_compatible",
+    "name": "gpt-4o-mini",
+    "temperature": 0.0,
+    "max_completion_tokens": 4096,
+    "api_key_env": "MODEL_API_KEY",
+    "base_url_env": "MODEL_BASE_URL"
+  },
+  "judge": {
+    "name": "gpt-4o-mini",
+    "temperature": 0.0,
+    "api_key_env": "JUDGE_API_KEY",
+    "base_url_env": "JUDGE_BASE_URL"
+  },
+  "runner": {
+    "step": 3,
+    "part_num": -1,
+    "part_idx": 0,
+    "fschat": false
+  },
+  "mcp": {
+    "versions": {
+      "early": {
+        "url": "http://127.0.0.1:3051/mcp",
+        "server_config": "generated/1mcp/early.json"
+      },
+      "middle": {
+        "url": "http://127.0.0.1:3052/mcp",
+        "server_config": "generated/1mcp/middle.json"
+      },
+      "late": {
+        "url": "http://127.0.0.1:3053/mcp",
+        "server_config": "generated/1mcp/late.json"
+      }
+    }
+  },
+  "output": {
+    "root": "results",
+    "layout": "{experiment_name}/{version}"
+  },
+  "environment": {
+    "file": ".env"
+  }
+}

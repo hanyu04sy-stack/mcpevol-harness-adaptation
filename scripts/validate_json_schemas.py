@@ -31,7 +31,7 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
     targets: list[tuple[str, Path]] = []
     targets.extend(
         ("experiment", path)
-        for path in sorted((root / "configs").glob("*.json"))
+        for path in sorted((root / "configs").rglob("*.json"))
         if "experiment_name" in read_json(path)
     )
     targets.extend(("tasks", path) for path in sorted((root / "data/subsets").glob("*/test_cases.json")))
@@ -56,6 +56,9 @@ def validation_targets(root: Path) -> list[tuple[str, Path]]:
     result_summary = root / "results/summary.json"
     if result_summary.is_file():
         targets.append(("summary", result_summary))
+    selective_patch_summary = root / "reports/selective-patch/summary.json"
+    if selective_patch_summary.is_file():
+        targets.append(("summary", selective_patch_summary))
     return targets
 
 

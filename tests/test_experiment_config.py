@@ -230,7 +230,10 @@ class ExperimentConfigTest(unittest.TestCase):
                 encoding="utf-8",
             )
             loaded = run_benchmark.load_harness(harness, "abc")
-            self.assertEqual(loaded["harness_prompt"], prompt)
+            self.assertEqual(
+                loaded["harness_prompt"],
+                prompt.rstrip() + "\n\n" + run_benchmark.SHARED_COMPLETION_PROTOCOL + "\n",
+            )
             self.assertEqual(len(loaded["harness_files"]), 3)
             self.assertEqual(len(loaded["harness_manifest_sha256"]), 64)
 

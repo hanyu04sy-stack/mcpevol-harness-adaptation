@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "strategy": "selective_patch",
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "generated_at": "2026-10-13T13:09:44.509334+00:00",
+  "from_version": "early",
+  "target_version": "late",
+  "formal_run_ready": true,
+  "unknown_servers": [],
+  "adaptation_method": {
+    "name": "schema_grounded_selective_patch",
+    "scope": "changed tool contracts only",
+    "rename_policy": "No inferred aliases; removals and additions remain separate."
+  },
+  "source_files": [
+    {
+      "path": "harness/original/system_prompt.md",
+      "sha256": "72fdeda55f80b2a07e387d5fbbc69bd86521dafa7385b83fae62fe64193c4c0b"
+    },
+    {
+      "path": "harness/original/tool_usage_rules.md",
+      "sha256": "038ea9f1d8295ef86b5eac8709871496e19f5ea6a1a11364c4d8f545f86260d7"
+    },
+    {
+      "path": "harness/original/manifest.json",
+      "sha256": "e6c8bb659667057153fb5e3ec5b227ae4d9eaea60d5752c0cebfbaeb8c2c19db"
+    },
+    {
+      "path": "reports/tool-schemas/early.json",
+      "sha256": "ca1ade445adc85bd3858032f5d911c3293429b21cc6dfcd761cf37b23c805a6f"
+    },
+    {
+      "path": "reports/tool-schemas/late.json",
+      "sha256": "581ed0093aec3145d5594a5aae2a3f4ca2b7d6b788ee927219d31235da022dc1"
+    }
+  ],
+  "adaptation_cost": {
+    "generation_mode": "deterministic",
+    "api_prompt_tokens": 0,
+    "api_completion_tokens": 0,
+    "api_cost_usd": 0,
+    "generation_seconds": 0.010078415973111987,
+    "patch_utf8_bytes": 32197,
+    "notes": "Generation time excludes environment setup and runtime inference. Prompt tokens are not estimated."
+  },
+  "changed_tool_count": 38
+}

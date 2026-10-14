@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import re
 import runpy
 import string
 import sys
@@ -27,6 +29,17 @@ from experiment_config import (
 
 
 HARNESS_FILENAMES = ("system_prompt.md", "tool_usage_rules.md", "manifest.json")
+SHARED_COMPLETION_PROTOCOL = (
+    "After the requested tool work is complete, give the final answer beginning "
+    "with [FINISH]. Do not repeat successful tool calls merely to produce the final answer."
+)
+
+
+def provider_model_id(configured_name: str, base_url: str | None) -> str:
+    """Map a canonical OpenAI name to OpenRouter's provider-qualified ID."""
+    if base_url and urlsplit(base_url).hostname == "openrouter.ai" and "/" not in configured_name:
+        return f"openai/{configured_name}"
+    return configured_name
 
 
 def injected_tool_rules(document: str) -> str:
@@ -38,6 +51,37 @@ def injected_tool_rules(document: str) -> str:
     if "\n## " in section:
         section = section.split("\n## ", 1)[0]
     return section.strip()
+
+
+def select_task_harness_prompt(
+    resolved: dict[str, object],
+    tools: list[dict[str, object]],
+    tool_server_map: dict[str, str],
+) -> str:
+    """Inject only patch sections for the current task's servers and tools."""
+    directory = Path(resolved["harness_dir"])
+    if directory.parent.name != "selective_patch":
+        return str(resolved["harness_prompt"])
+    system_prompt = (directory / "system_prompt.md").read_text(encoding="utf-8")
+    rules = injected_tool_rules((directory / "tool_usage_rules.md").read_text(encoding="utf-8"))
+    sections = re.split(r"(?=^### Tool )", rules, flags=re.MULTILINE)
+    base = sections[0].strip()
+    available = {(tool_server_map.get(str(tool.get("name"))), str(tool.get("name"))) for tool in tools}
+    task_servers = set(tool_server_map.values())
+    selected = []
+    for section in sections[1:]:
+        heading = section.splitlines()[0]
+        match = re.fullmatch(r"### Tool (.+) / (.+)", heading)
+        if not match:
+            raise ConfigError(f"invalid selective patch heading: {heading}")
+        server, name = match.groups()
+        is_removal = "This tool was removed" in section
+        if (server, name) in available or (is_removal and server in task_servers):
+            selected.append(section.strip())
+    task_rules = "\n\n".join([base, *selected])
+    if task_rules in system_prompt:
+        return f"{system_prompt.rstrip()}\n\n{SHARED_COMPLETION_PROTOCOL}\n"
+    return f"{system_prompt.rstrip()}\n\n{task_rules}\n\n{SHARED_COMPLETION_PROTOCOL}\n"
 
 
 def load_harness(harness_dir: Path, benchmark_commit: str) -> dict[str, object]:
@@ -80,6 +124,7 @@ def load_harness(harness_dir: Path, benchmark_commit: str) -> dict[str, object]:
     resolved_prompt = system_prompt
     if rules not in system_prompt:
         resolved_prompt = f"{system_prompt.rstrip()}\n\n{rules}\n"
+    resolved_prompt = f"{resolved_prompt.rstrip()}\n\n{SHARED_COMPLETION_PROTOCOL}\n"
     files = [
         {"name": name, "sha256": sha256(path)}
         for name, path in paths.items()
@@ -89,6 +134,9 @@ def load_harness(harness_dir: Path, benchmark_commit: str) -> dict[str, object]:
         "harness_manifest_sha256": sha256(paths["manifest.json"]),
         "harness_files": files,
         "harness_prompt": resolved_prompt,
+        "shared_completion_protocol_sha256": hashlib.sha256(
+            SHARED_COMPLETION_PROTOCOL.encode("utf-8")
+        ).hexdigest(),
     }
 
 
@@ -161,6 +209,16 @@ def resolve_run_output(resolved: dict[str, object], run_id: int) -> Path:
     if run_id < 1:
         raise ConfigError("run-id must be positive")
     strategy = Path(resolved["harness_dir"]).name
+    directory = Path(resolved["harness_dir"])
+    if directory.parent.name == "selective_patch":
+        manifest = json.loads((directory / "manifest.json").read_text())
+        if manifest.get("strategy") != "selective_patch":
+            raise ConfigError("versioned patch must declare selective_patch strategy")
+        if manifest.get("target_version") != resolved["version"]:
+            raise ConfigError("selective patch target version does not match run version")
+        if manifest.get("formal_run_ready") is not True:
+            raise ConfigError("selective patch has incomplete schema evidence; regenerate snapshots")
+        strategy = "selective_patch"
     if not strategy or strategy in {".", ".."}:
         raise ConfigError("cannot derive a strategy name from harness directory")
     output = Path(resolved["output_root"]) / strategy / str(resolved["version"]) / f"run-{run_id:02d}"
@@ -175,16 +233,51 @@ def configured_initializer(
     resolved: dict[str, object],
     api_key: str,
     base_url: str | None,
+    prompt_module: object | None = None,
 ) -> Callable[..., None]:
     """Wrap the upstream agent so shared settings replace its placeholders."""
     def configured_init(instance: object, *args: object, **kwargs: object) -> None:
+        if prompt_module is not None:
+            prompt_module.SINGLE_SERVER_INTERATION_SYSTEM_PROMPT = select_task_harness_prompt(
+                resolved,
+                kwargs.get("tools", []),
+                kwargs.get("tool_server_map", {}),
+            )
         kwargs["api_key"] = api_key
         kwargs["model_url"] = base_url
+        if "model_name" in kwargs:
+            kwargs["model_name"] = provider_model_id(str(kwargs["model_name"]), base_url)
         kwargs["temperature"] = resolved["temperature"]
         kwargs["max_new_tokens"] = resolved["max_completion_tokens"]
         original_init(instance, *args, **kwargs)
 
     return configured_init
+
+
+def prepare_annotation_links(resolved: dict[str, object]) -> list[Path]:
+    """Expose benchmark assets at both the agent and MCP server working directories."""
+    benchmark_root = Path(resolved["benchmark_root"])
+    asset_dir = benchmark_root / "anotation_path"
+    if not asset_dir.is_dir():
+        raise ConfigError(f"benchmark annotation assets are missing: {asset_dir}")
+
+    links = [Path(resolved["project_root"]) / "anotation_path", benchmark_root / "src/anotation_path"]
+    created: list[Path] = []
+    try:
+        for link in links:
+            if link.is_symlink():
+                if link.resolve() != asset_dir.resolve():
+                    raise ConfigError(f"annotation link points to a different directory: {link}")
+                continue
+            if link.exists():
+                raise ConfigError(f"annotation path already exists and cannot be replaced: {link}")
+            link.symlink_to(os.path.relpath(asset_dir, link.parent), target_is_directory=True)
+            created.append(link)
+    except BaseException:
+        for link in reversed(created):
+            link.unlink()
+        raise
+    return created
 
 
 def run_upstream(
@@ -196,17 +289,13 @@ def run_upstream(
     agent_module = None
     original_init = None
     original_prompt = None
-    created_annotation_link = False
+    created_annotation_links: list[Path] = []
     old_dont_write_bytecode = sys.dont_write_bytecode
-    annotation_link = benchmark_src / "anotation_path"
-    annotation_target = Path(resolved["benchmark_root"]) / "anotation_path"
-    if not annotation_link.exists() and annotation_target.is_dir():
-        annotation_link.symlink_to(Path("..") / "anotation_path", target_is_directory=True)
-        created_annotation_link = True
-    sys.dont_write_bytecode = True
-    sys.path.insert(0, str(benchmark_src))
-    os.chdir(benchmark_src)
     try:
+        created_annotation_links = prepare_annotation_links(resolved)
+        sys.dont_write_bytecode = True
+        sys.path.insert(0, str(benchmark_src))
+        os.chdir(benchmark_src)
         from custom.agents import SimpleOpenAIAgent as agent_module
 
         original_init = agent_module.ChatModel.__init__
@@ -215,7 +304,7 @@ def run_upstream(
             resolved["harness_prompt"]
         )
         agent_module.ChatModel.__init__ = configured_initializer(
-            original_init, resolved, api_key, base_url
+            original_init, resolved, api_key, base_url, prompt_module=agent_module
         )
         sys.argv = upstream_arguments(resolved)
         runpy.run_path(str(resolved["benchmark_runner"]), run_name="__main__")
@@ -229,8 +318,9 @@ def run_upstream(
         if sys.path and sys.path[0] == str(benchmark_src):
             sys.path.pop(0)
         sys.dont_write_bytecode = old_dont_write_bytecode
-        if created_annotation_link and annotation_link.is_symlink():
-            annotation_link.unlink()
+        for link in reversed(created_annotation_links):
+            if link.is_symlink():
+                link.unlink()
 
 
 def write_metadata(
@@ -260,6 +350,13 @@ def write_metadata(
                 "api_key_env": resolved["judge_api_key_env"],
             },
             "status": status,
+            "shared_completion_protocol_sha256": resolved.get(
+                "shared_completion_protocol_sha256"
+            ),
+            "provider_model_name": provider_model_id(
+                str(resolved["model_name"]),
+                os.environ.get(str(resolved["model_base_url_env"]), "") or None,
+            ),
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "mcp_status_at_start": mcp_status,
             "total_prompt_tokens": None,
