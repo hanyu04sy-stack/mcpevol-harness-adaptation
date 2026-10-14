@@ -22,7 +22,11 @@ class ValidateJSONSchemasTest(unittest.TestCase):
         report = validate_json_schemas.validate_repository(ROOT)
         self.assertTrue(report["passed"], report["errors"])
         self.assertEqual(report["schemas_checked"], 7)
-        self.assertEqual(report["documents_checked"], 19)
+        self.assertGreaterEqual(report["documents_checked"], 19)
+        checked = {item["file"] for item in report["checked"]}
+        self.assertIn("configs/comparison-subset/experiment.json", checked)
+        self.assertIn("data/subsets/comparison-subset/test_cases.json", checked)
+        self.assertIn("data/subsets/comparison-subset/manifest.json", checked)
 
     def test_config_schema_rejects_missing_late_version(self) -> None:
         config = json.loads((ROOT / "configs/experiment.json").read_text(encoding="utf-8"))

@@ -16,6 +16,8 @@ This repository contains the group project for 6203 Case 4. Member A prepared MC
 
 The fixed subset makes an end-to-end run practical with limited compute. The configuration can later be upgraded to the full dataset as a separate experiment.
 
+The archived baseline and Selective Patch formal results use the same 23 task IDs, documented in [the comparison subset](data/subsets/comparison-subset/README.md). This is the intersection of the six baseline result groups, not the complete original 30-task development set. The baseline summary does not explain why seven originally selected tasks are absent. The [Selective Patch result handoff](reports/selective-patch/README.md) records its run protocol and comparison limits.
+
 ## Repository layout
 
 ```text

@@ -11,5 +11,6 @@ generated/1mcp/
 generated/1mcp-smoke/
 generated/1mcp-canary/
 results/
+/anotation_path
 logs/
 knowledge_graph/

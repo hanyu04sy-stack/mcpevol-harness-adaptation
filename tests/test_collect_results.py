@@ -70,6 +70,19 @@ class CollectResultsTest(unittest.TestCase):
             self.assertEqual(original["mean_tf"], 8.0)
             self.assertEqual(original["total_cost_tokens"], 120)
 
+    def test_missing_usage_is_unknown_not_zero(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_run(root, "selective_patch", 8, 6)
+            metadata = root / "selective_patch/late/run-01/run-metadata.json"
+            payload = json.loads(metadata.read_text(encoding="utf-8"))
+            payload["total_prompt_tokens"] = None
+            payload["total_completion_tokens"] = None
+            metadata.write_text(json.dumps(payload), encoding="utf-8")
+            details, aggregates = collect_results.collect(root, 6)
+            self.assertIsNone(details[0]["prompt_tokens"])
+            self.assertIsNone(aggregates[0]["total_cost_tokens"])
+
 
 if __name__ == "__main__":
     unittest.main()

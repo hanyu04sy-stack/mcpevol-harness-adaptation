@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
-  "generated_at": "2026-10-11T19:15:16.857877+00:00",
+  "generated_at": "2026-10-13T12:56:15.345106+00:00",
   "comparisons": [
     {
       "from_version": "early",
@@ -814,44 +814,173 @@
       "added_servers": [],
       "removed_servers": [],
       "compared_servers": [
+        "@aiuluna/knowledge-graph-mcp",
         "@antv/mcp-server-chart",
         "@driflyte/mcp-server",
+        "@j0kz/orchestrator-mcp",
         "@kazuph/mcp-taskmanager",
         "@likec4/mcp",
-        "@umengfe/mcp-server-chart",
-        "basic-memory",
-        "coffee-mcp-agent",
-        "interactive-mcp",
-        "mcp-server-commands",
-        "metatag-genie",
-        "nfty-mcp-server",
-        "time"
-      ],
-      "unavailable_in_from_version": [],
-      "unavailable_in_to_version": [
-        "@aiuluna/knowledge-graph-mcp",
-        "@j0kz/orchestrator-mcp",
         "@magicuidesign/mcp",
         "@regle/mcp-server",
         "@rtuin/mcp-mermaid-validator",
+        "@umengfe/mcp-server-chart",
+        "basic-memory",
         "bazi-mcp",
+        "coffee-mcp-agent",
+        "interactive-mcp",
         "mcp-calculator",
         "mcp-filesystem-server",
+        "mcp-server-commands",
         "mcp-shrimp-task-manager",
         "mcp-tasks",
         "mcp-tung-shing",
         "mcp-weather-demo",
+        "metatag-genie",
+        "nfty-mcp-server",
         "pantheon-mcp",
+        "time",
         "time-mcp"
       ],
+      "unavailable_in_from_version": [],
+      "unavailable_in_to_version": [],
       "added_tools": [
+        {
+          "server": "@j0kz/orchestrator-mcp",
+          "tool": "inspect_workflow"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentDetails"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentsByNames"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "searchComponents"
+        },
         {
           "server": "coffee-mcp-agent",
           "tool": "checkOrderEstimate"
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "break_even_analysis"
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "percentage_calculator"
         }
       ],
       "removed_tools": [],
       "changed_tools": [
+        {
+          "server": "@j0kz/orchestrator-mcp",
+          "tool": "run_workflow",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "run_workflow",
+            "description": "Execute an intelligent workflow with optional focus detection and user-intent context.\n\nIMPORTANT: Always call this tool when user asks to \"review my code\", \"check my code\", or \"analyze this\".\n\n**Smart Focus Detection:**\n- Ambiguous request \u2192 Call WITHOUT workflow and focus to get clarification\n- Specific request \u2192 Call WITH workflow or focus parameter\n- Richer requests \u2192 Include prompt to preserve the user's original intent for downstream workflow context\n\n**Focus Areas (Auto-selects appropriate workflow):**\n- security: Fast security scan\n- quality: Code quality review with tests\n- performance: Architecture and performance analysis\n- comprehensive: Complete multi-dimensional analysis\n\n**Direct Workflows (Bypass focus selection):**\n- pre-commit: Git pre-commit checks\n- pre-merge: PR validation\n- quality-audit: Deep audit with reports\n\n**Examples:**\n- \"review my code\" \u2192 omit workflow and focus (get clarification)\n- \"check security in this project\" \u2192 focus='security', prompt='check security in this project'\n- \"run pre-commit for my repo\" \u2192 workflow='pre-commit', prompt='run pre-commit for my repo'",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "workflow": {
+                  "type": "string",
+                  "enum": [
+                    "pre-commit",
+                    "pre-merge",
+                    "quality-audit"
+                  ],
+                  "description": "Explicit workflow name (optional)"
+                },
+                "focus": {
+                  "type": "string",
+                  "enum": [
+                    "security",
+                    "quality",
+                    "performance",
+                    "comprehensive"
+                  ],
+                  "description": "Focus area for smart workflow selection (optional)"
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "Original user request for workflow context (optional)"
+                },
+                "projectPath": {
+                  "type": "string",
+                  "description": "Project root (optional, defaults to cwd)"
+                }
+              },
+              "required": []
+            }
+          },
+          "after": {
+            "name": "run_workflow",
+            "description": "Execute an intelligent workflow with optional focus detection and user-intent context.\n\nIMPORTANT: Always call this tool when user asks to \"review my code\", \"check my code\", or \"analyze this\".\n\n**Smart Focus Detection:**\n- Ambiguous request \u2192 Call WITHOUT workflow and focus to get clarification\n- Specific request \u2192 Call WITH workflow or focus parameter\n- Richer requests \u2192 Include prompt to preserve the user's original intent for downstream workflow context\n\n**Focus Areas (Auto-selects appropriate workflow):**\n- security: Fast security scan\n- quality: Code quality review with tests\n- performance: Architecture and performance analysis\n- comprehensive: Complete multi-dimensional analysis\n\n**Direct Workflows (Bypass focus selection):**\n- pre-commit: Git pre-commit checks\n- pre-merge: PR validation\n- quality-audit: Deep audit with reports\n\n**Examples:**\n- \"review my code\" \u2192 omit workflow and focus (get clarification)\n- \"check security in this project\" \u2192 focus='security', prompt='check security in this project'\n- \"run pre-commit for my repo\" \u2192 workflow='pre-commit', prompt='run pre-commit for my repo'",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "workflow": {
+                  "type": "string",
+                  "enum": [
+                    "pre-commit",
+                    "pre-merge",
+                    "quality-audit"
+                  ],
+                  "description": "Explicit workflow name (optional)"
+                },
+                "focus": {
+                  "type": "string",
+                  "enum": [
+                    "security",
+                    "quality",
+                    "performance",
+                    "comprehensive"
+                  ],
+                  "description": "Focus area for smart workflow selection (optional)"
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "Original user request for workflow context (optional)"
+                },
+                "projectPath": {
+                  "type": "string",
+                  "description": "Project root (optional, defaults to cwd)"
+                },
+                "excludePaths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Glob patterns or paths to exclude from analysis (optional, e.g. [\"node_modules\", \"dist\"])"
+                },
+                "severity_threshold": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ],
+                  "description": "Minimum severity level to include in results (optional, defaults to low)"
+                },
+                "output_format": {
+                  "type": "string",
+                  "enum": [
+                    "full",
+                    "summary",
+                    "minimal"
+                  ],
+                  "description": "Response structure: full (default), summary, or minimal (optional)"
+                }
+              },
+              "required": []
+            }
+          }
+        },
         {
           "server": "@kazuph/mcp-taskmanager",
           "tool": "request_planning",
@@ -1008,6 +1137,320 @@
           }
         },
         {
+          "server": "@magicuidesign/mcp",
+          "tool": "getAnimations",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getAnimations",
+            "description": "Provides detailed implementation data for blur-fade components in the Animations category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getAnimations",
+            "description": "Provides detailed implementation data for blur-fade components in the Animations category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getBackgrounds",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getBackgrounds",
+            "description": "Provides detailed implementation data for warp-background, flickering-grid, animated-grid-pattern, retro-grid, ripple, dot-pattern, grid-pattern, interactive-grid-pattern components in the Backgrounds category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getBackgrounds",
+            "description": "Provides detailed implementation data for warp-background, flickering-grid, animated-grid-pattern, retro-grid, ripple, dot-pattern, grid-pattern, interactive-grid-pattern components in the Backgrounds category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getButtons",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getButtons",
+            "description": "Provides detailed implementation data for rainbow-button, shimmer-button, shiny-button, interactive-hover-button, animated-subscribe-button, pulsating-button, ripple-button components in the Buttons category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getButtons",
+            "description": "Provides detailed implementation data for rainbow-button, shimmer-button, shiny-button, interactive-hover-button, animated-subscribe-button, pulsating-button, ripple-button components in the Buttons category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentIndex",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getComponentIndex",
+            "description": "Provides a categorized index of Magic UI components with example coverage counts to help clients discover the most relevant category tool before fetching full implementation details.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getComponentIndex",
+            "description": "Provides a full categorized index of Magic UI components with example coverage counts to help clients discover components by category. Use searchComponents for keyword/category-filtered queries. Once you identify components, call getComponentDetails for a single component, getComponentsByNames for a hand-picked list of known components, or use category-specific tools to fetch multiple components at once.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponents",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getComponents",
+            "description": "Provides detailed implementation data for marquee, terminal, hero-video-dialog, bento-grid, animated-list, dock, globe, tweet-card, client-tweet-card, orbiting-circles, avatar-circles, icon-cloud, animated-circular-progress-bar, file-tree, code-comparison, script-copy-btn, scroll-progress, lens, pointer components in the Components category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getComponents",
+            "description": "Provides detailed implementation data for marquee, terminal, hero-video-dialog, bento-grid, animated-list, dock, globe, tweet-card, client-tweet-card, orbiting-circles, avatar-circles, icon-cloud, animated-circular-progress-bar, file-tree, code-comparison, script-copy-btn, scroll-progress, lens, pointer components in the Components category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getDeviceMocks",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getDeviceMocks",
+            "description": "Provides detailed implementation data for safari, iphone-15-pro, android components in the DeviceMocks category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getDeviceMocks",
+            "description": "Provides detailed implementation data for safari, iphone-15-pro, android components in the DeviceMocks category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getSpecialEffects",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getSpecialEffects",
+            "description": "Provides detailed implementation data for animated-beam, border-beam, shine-border, magic-card, meteors, neon-gradient-card, confetti, particles, cool-mode, scratch-to-reveal components in the SpecialEffects category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getSpecialEffects",
+            "description": "Provides detailed implementation data for animated-beam, border-beam, shine-border, magic-card, meteors, neon-gradient-card, confetti, particles, cool-mode, scratch-to-reveal components in the SpecialEffects category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getTextAnimations",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getTextAnimations",
+            "description": "Provides detailed implementation data for text-animate, line-shadow-text, aurora-text, number-ticker, animated-shiny-text, animated-gradient-text, text-reveal, hyper-text, word-rotate, typing-animation, scroll-based-velocity, flip-text, box-reveal, sparkles-text, morphing-text, spinning-text components in the TextAnimations category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getTextAnimations",
+            "description": "Provides detailed implementation data for text-animate, line-shadow-text, aurora-text, number-ticker, animated-shiny-text, animated-gradient-text, text-reveal, hyper-text, word-rotate, typing-animation, scroll-based-velocity, flip-text, box-reveal, sparkles-text, morphing-text, spinning-text components in the TextAnimations category. Use getComponentIndex first if you need a categorized discovery overview before fetching full component code and examples. If you only need a selected subset of known components, use getComponentsByNames instead.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getUIComponents",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "getUIComponents",
+            "description": "Provides the complete raw catalog of all Magic UI components. Use getComponentIndex for a categorized discovery-oriented overview before requesting detailed category implementations.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          },
+          "after": {
+            "name": "getUIComponents",
+            "description": "Provides the complete raw catalog of all Magic UI components without implementation code or examples. For discovery, use getComponentIndex (categorized overview) or searchComponents (keyword/category filtering). To fetch full implementation details, use getComponentDetails for a single component, getComponentsByNames for a selected set of known components, or category-specific tools for bulk retrieval.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {}
+            }
+          }
+        },
+        {
+          "server": "@rtuin/mcp-mermaid-validator",
+          "tool": "validateMermaid",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "validateMermaid",
+            "description": "Validates a Mermaid diagram and returns the rendered image (PNG or SVG) if valid",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "diagram": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50000
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "svg",
+                    "png"
+                  ]
+                }
+              },
+              "required": [
+                "diagram",
+                "format"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "validateMermaid",
+            "description": "Validates a Mermaid diagram and returns the rendered image (PNG or SVG) if valid",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "diagram": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50000
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "svg",
+                    "png"
+                  ]
+                },
+                "theme": {
+                  "type": "string",
+                  "enum": [
+                    "default",
+                    "dark",
+                    "forest",
+                    "neutral"
+                  ]
+                },
+                "backgroundColor": {
+                  "type": "string"
+                },
+                "scale": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "config": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "diagram",
+                "format"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
           "server": "coffee-mcp-agent",
           "tool": "orderCoffee",
           "description_changed": false,
@@ -1096,6 +1539,317 @@
                 "productName",
                 "spec"
               ]
+            }
+          }
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "loan_payment",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "loan_payment",
+            "description": "\u8ba1\u7b97\u7b49\u989d\u672c\u606f\u8d37\u6b3e\u7684\u6708\u4f9b\u91d1\u989d",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "loan_amount": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u672c\u91d1"
+                },
+                "annual_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u5e74\u5229\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                },
+                "years": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u5e74\u9650"
+                },
+                "payment_frequency": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "default": 12,
+                  "description": "\u6bcf\u5e74\u8fd8\u6b3e\u6b21\u6570\uff08\u9ed8\u8ba412\uff0c12=\u6309\u6708\uff0c4=\u6309\u5b63\uff0c1=\u6309\u5e74\uff09"
+                },
+                "extra_payment": {
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "\u6bcf\u671f\u989d\u5916\u8fd8\u6b3e\u91d1\u989d\uff08\u9ed8\u8ba40\uff09"
+                },
+                "include_schedule": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u7b80\u8981\u8fd8\u6b3e\u8fdb\u5ea6\u6458\u8981"
+                }
+              },
+              "required": [
+                "loan_amount",
+                "annual_rate",
+                "years"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "loan_payment",
+            "description": "\u8ba1\u7b97\u7b49\u989d\u672c\u606f\u8d37\u6b3e\u5728\u4e0d\u540c\u8fd8\u6b3e\u9891\u7387\u4e0b\u7684\u6bcf\u671f\u8fd8\u6b3e\u91d1\u989d\uff0c\u9002\u7528\u4e8e\u8d37\u6b3e\u878d\u8d44\u4e0e\u8fd8\u6b3e\u89c4\u5212\u573a\u666f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "loan_amount": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u672c\u91d1"
+                },
+                "annual_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u5e74\u5229\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                },
+                "years": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u5e74\u9650"
+                },
+                "payment_frequency": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "default": 12,
+                  "description": "\u6bcf\u5e74\u8fd8\u6b3e\u6b21\u6570\uff08\u9ed8\u8ba412\uff0c12=\u6309\u6708\uff0c4=\u6309\u5b63\uff0c1=\u6309\u5e74\uff09"
+                },
+                "extra_payment": {
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "\u6bcf\u671f\u989d\u5916\u8fd8\u6b3e\u91d1\u989d\uff08\u9ed8\u8ba40\uff09"
+                },
+                "include_schedule": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u7b80\u8981\u8fd8\u6b3e\u8fdb\u5ea6\u6458\u8981"
+                }
+              },
+              "required": [
+                "loan_amount",
+                "annual_rate",
+                "years"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "net_present_value",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "net_present_value",
+            "description": "\u8ba1\u7b97\u6295\u8d44\u9879\u76ee\u7684\u51c0\u73b0\u503c\uff08NPV\uff09",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "initial_investment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u521d\u59cb\u6295\u8d44\u989d"
+                },
+                "cash_flows": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "\u5404\u671f\u73b0\u91d1\u6d41"
+                },
+                "discount_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u6298\u73b0\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                }
+              },
+              "required": [
+                "initial_investment",
+                "cash_flows",
+                "discount_rate"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "net_present_value",
+            "description": "\u8ba1\u7b97\u6295\u8d44\u9879\u76ee\u7684\u51c0\u73b0\u503c\uff08NPV\uff09\uff0c\u7528\u4e8e\u57fa\u4e8e\u6298\u73b0\u73b0\u91d1\u6d41\u7684\u6295\u8d44\u53ef\u884c\u6027\u8bc4\u4f30\uff0c\u4e0e\u8fd0\u8425\u5c42\u9762\u7684\u76c8\u4e8f\u5e73\u8861\u5206\u6790\u5f62\u6210\u4e92\u8865",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "initial_investment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u521d\u59cb\u6295\u8d44\u989d"
+                },
+                "cash_flows": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "\u5404\u671f\u73b0\u91d1\u6d41"
+                },
+                "discount_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u6298\u73b0\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                }
+              },
+              "required": [
+                "initial_investment",
+                "cash_flows",
+                "discount_rate"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-filesystem-server",
+          "tool": "read_file",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "read_file",
+            "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the file"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "read_file",
+            "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the file"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                },
+                "startLine": {
+                  "type": "number",
+                  "description": "Starting line number (1-indexed) for reading a specific range"
+                },
+                "endLine": {
+                  "type": "number",
+                  "description": "Ending line number (1-indexed) for reading a specific range"
+                },
+                "maxSize": {
+                  "type": "number",
+                  "description": "Maximum file size in bytes to read (default: no limit)"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-filesystem-server",
+          "tool": "read_multiple_files",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "read_multiple_files",
+            "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Array of file paths to read"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                }
+              },
+              "required": [
+                "paths"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "read_multiple_files",
+            "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Array of file paths to read"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                },
+                "includeMetadata": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Prepend file metadata (size, last modified) before each file's content"
+                },
+                "ignoreErrors": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Silently skip files that cannot be read instead of including error messages"
+                },
+                "separator": {
+                  "type": "string",
+                  "default": "---",
+                  "description": "Separator string inserted between file contents (default: '---')"
+                }
+              },
+              "required": [
+                "paths"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
             }
           }
         },
@@ -1251,6 +2005,362 @@
           }
         },
         {
+          "server": "mcp-tung-shing",
+          "tool": "get-tung-shing",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get-tung-shing",
+            "description": "\u83b7\u53d6\u901a\u80dc\u9ec4\u5386\uff0c\u5305\u62ec\u516c\u5386\u3001\u519c\u5386\u3001\u5b9c\u5fcc\u3001\u5409\u51f6\u3001\u51b2\u715e\u7b49\u4fe1\u606f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "default": "2026-10-11",
+                  "description": "\u5f00\u59cb\u65e5\u671f\uff0c\u683c\u5f0f\u4e3a\"YYYY-MM-DD\"\u7684\u5b57\u7b26\u4e32"
+                },
+                "days": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    }
+                  ],
+                  "default": 1,
+                  "description": "\u8981\u83b7\u53d6\u7684\u8fde\u7eed\u5929\u6570"
+                },
+                "includeHours": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u65f6\u8fb0\u4fe1\u606f"
+                },
+                "tabooFilters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2
+                        ],
+                        "description": "\u8fc7\u6ee4\u7c7b\u578b\uff1a\u5b9c(1)\u3001\u5fcc(2)"
+                      },
+                      "value": {
+                        "type": "string",
+                        "enum": [
+                          "\u796d\u7940",
+                          "\u7948\u798f",
+                          "\u6c42\u55e3",
+                          "\u5f00\u5149",
+                          "\u5851\u7ed8",
+                          "\u658b\u91ae",
+                          "\u6c90\u6d74",
+                          "\u9020\u5e99",
+                          "\u8c22\u571f",
+                          "\u51fa\u706b",
+                          "\u96d5\u523b",
+                          "\u5ac1\u5a36",
+                          "\u7eb3\u91c7",
+                          "\u95ee\u540d",
+                          "\u7eb3\u5a7f",
+                          "\u5f52\u5b81",
+                          "\u5b89\u5e8a",
+                          "\u5408\u5e10",
+                          "\u51a0\u7b04",
+                          "\u8ba2\u76df",
+                          "\u8fdb\u4eba\u53e3",
+                          "\u88c1\u8863",
+                          "\u4fee\u575f",
+                          "\u542f\u94bb",
+                          "\u7834\u571f",
+                          "\u5b89\u846c",
+                          "\u7acb\u7891",
+                          "\u6210\u670d",
+                          "\u9664\u670d",
+                          "\u5f00\u751f\u575f",
+                          "\u5408\u5bff\u6728",
+                          "\u5165\u6b93",
+                          "\u79fb\u67e9",
+                          "\u666e\u6e21",
+                          "\u5165\u5b85",
+                          "\u5b89\u9999",
+                          "\u5b89\u95e8",
+                          "\u4fee\u9020",
+                          "\u8d77\u57fa",
+                          "\u52a8\u571f",
+                          "\u4e0a\u6881",
+                          "\u7ad6\u67f1",
+                          "\u62c6\u5378",
+                          "\u7834\u5c4b",
+                          "\u574f\u57a3",
+                          "\u8865\u57a3",
+                          "\u4f5c\u7076",
+                          "\u89e3\u9664",
+                          "\u5f00\u67f1\u773c",
+                          "\u5f00\u5395",
+                          "\u9020\u4ed3",
+                          "\u585e\u7a74",
+                          "\u5e73\u6cbb\u9053\u6d82",
+                          "\u9020\u6865",
+                          "\u7b51\u5824",
+                          "\u5f00\u6c60",
+                          "\u4f10\u6728",
+                          "\u5f00\u6e20",
+                          "\u6398\u4e95",
+                          "\u626b\u820d",
+                          "\u653e\u6c34",
+                          "\u5408\u810a",
+                          "\u9020\u755c\u7a20",
+                          "\u4fee\u95e8",
+                          "\u5b9a\u78c9",
+                          "\u4f5c\u6881",
+                          "\u4fee\u9970\u57a3\u5899",
+                          "\u67b6\u9a6c",
+                          "\u5f00\u5e02",
+                          "\u6302\u533e",
+                          "\u7eb3\u8d22",
+                          "\u5f00\u4ed3",
+                          "\u7f6e\u4ea7",
+                          "\u96c7\u4f63",
+                          "\u51fa\u8d27\u8d22",
+                          "\u5b89\u673a\u68b0",
+                          "\u9020\u8f66\u5668",
+                          "\u7ecf\u7edc",
+                          "\u9020\u8239",
+                          "\u5272\u871c",
+                          "\u683d\u79cd",
+                          "\u53d6\u6e14",
+                          "\u7ed3\u7f51",
+                          "\u7267\u517b",
+                          "\u5b89\u7893\u78d1",
+                          "\u4e60\u827a",
+                          "\u5165\u5b66",
+                          "\u7406\u53d1",
+                          "\u63a2\u75c5",
+                          "\u4e58\u8239",
+                          "\u9488\u7078",
+                          "\u51fa\u884c",
+                          "\u79fb\u5f99",
+                          "\u5206\u5c45",
+                          "\u6574\u624b\u8db3\u7532",
+                          "\u7eb3\u755c",
+                          "\u6355\u6349",
+                          "\u754b\u730e",
+                          "\u6559\u725b\u9a6c",
+                          "\u4f1a\u4eb2\u53cb",
+                          "\u8d74\u4efb",
+                          "\u6c42\u533b",
+                          "\u6cbb\u75c5",
+                          "\u8bcd\u8bbc",
+                          "\u76d6\u5c4b",
+                          "\u4ea4\u6613",
+                          "\u7acb\u5238",
+                          "\u8bf8\u4e8b\u4e0d\u5b9c",
+                          "\u9980\u4e8b\u52ff\u53d6",
+                          "\u884c\u4e27",
+                          "\u65ad\u8681",
+                          "\u5f52\u5cab"
+                        ],
+                        "description": "\u8981\u7b5b\u9009\u7684\u5b9c\u5fcc\u4e8b\u9879"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "\u591a\u4e2a\u7b5b\u9009\u5b9c\u5fcc\u4e8b\u9879\uff0c\u6761\u4ef6\u4e4b\u95f4\u4e3a\u6216\u5173\u7cfb"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "get-tung-shing",
+            "description": "\u83b7\u53d6\u901a\u80dc\u9ec4\u5386\uff0c\u5305\u62ec\u516c\u5386\u3001\u519c\u5386\u3001\u5b9c\u5fcc\u3001\u5409\u51f6\u3001\u51b2\u715e\u7b49\u4fe1\u606f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "default": "2026-10-13",
+                  "description": "\u5f00\u59cb\u65e5\u671f\uff0c\u683c\u5f0f\u4e3a\"YYYY-MM-DD\"\u7684\u5b57\u7b26\u4e32"
+                },
+                "days": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    }
+                  ],
+                  "default": 1,
+                  "description": "\u8981\u83b7\u53d6\u7684\u8fde\u7eed\u5929\u6570"
+                },
+                "includeHours": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u65f6\u8fb0\u4fe1\u606f"
+                },
+                "tabooFilters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2
+                        ],
+                        "description": "\u8fc7\u6ee4\u7c7b\u578b\uff1a\u5b9c(1)\u3001\u5fcc(2)"
+                      },
+                      "value": {
+                        "type": "string",
+                        "enum": [
+                          "\u796d\u7940",
+                          "\u7948\u798f",
+                          "\u6c42\u55e3",
+                          "\u5f00\u5149",
+                          "\u5851\u7ed8",
+                          "\u658b\u91ae",
+                          "\u6c90\u6d74",
+                          "\u9020\u5e99",
+                          "\u8c22\u571f",
+                          "\u51fa\u706b",
+                          "\u96d5\u523b",
+                          "\u5ac1\u5a36",
+                          "\u7eb3\u91c7",
+                          "\u95ee\u540d",
+                          "\u7eb3\u5a7f",
+                          "\u5f52\u5b81",
+                          "\u5b89\u5e8a",
+                          "\u5408\u5e10",
+                          "\u51a0\u7b04",
+                          "\u8ba2\u76df",
+                          "\u8fdb\u4eba\u53e3",
+                          "\u88c1\u8863",
+                          "\u4fee\u575f",
+                          "\u542f\u94bb",
+                          "\u7834\u571f",
+                          "\u5b89\u846c",
+                          "\u7acb\u7891",
+                          "\u6210\u670d",
+                          "\u9664\u670d",
+                          "\u5f00\u751f\u575f",
+                          "\u5408\u5bff\u6728",
+                          "\u5165\u6b93",
+                          "\u79fb\u67e9",
+                          "\u666e\u6e21",
+                          "\u5165\u5b85",
+                          "\u5b89\u9999",
+                          "\u5b89\u95e8",
+                          "\u4fee\u9020",
+                          "\u8d77\u57fa",
+                          "\u52a8\u571f",
+                          "\u4e0a\u6881",
+                          "\u7ad6\u67f1",
+                          "\u62c6\u5378",
+                          "\u7834\u5c4b",
+                          "\u574f\u57a3",
+                          "\u8865\u57a3",
+                          "\u4f5c\u7076",
+                          "\u89e3\u9664",
+                          "\u5f00\u67f1\u773c",
+                          "\u5f00\u5395",
+                          "\u9020\u4ed3",
+                          "\u585e\u7a74",
+                          "\u5e73\u6cbb\u9053\u6d82",
+                          "\u9020\u6865",
+                          "\u7b51\u5824",
+                          "\u5f00\u6c60",
+                          "\u4f10\u6728",
+                          "\u5f00\u6e20",
+                          "\u6398\u4e95",
+                          "\u626b\u820d",
+                          "\u653e\u6c34",
+                          "\u5408\u810a",
+                          "\u9020\u755c\u7a20",
+                          "\u4fee\u95e8",
+                          "\u5b9a\u78c9",
+                          "\u4f5c\u6881",
+                          "\u4fee\u9970\u57a3\u5899",
+                          "\u67b6\u9a6c",
+                          "\u5f00\u5e02",
+                          "\u6302\u533e",
+                          "\u7eb3\u8d22",
+                          "\u5f00\u4ed3",
+                          "\u7f6e\u4ea7",
+                          "\u96c7\u4f63",
+                          "\u51fa\u8d27\u8d22",
+                          "\u5b89\u673a\u68b0",
+                          "\u9020\u8f66\u5668",
+                          "\u7ecf\u7edc",
+                          "\u9020\u8239",
+                          "\u5272\u871c",
+                          "\u683d\u79cd",
+                          "\u53d6\u6e14",
+                          "\u7ed3\u7f51",
+                          "\u7267\u517b",
+                          "\u5b89\u7893\u78d1",
+                          "\u4e60\u827a",
+                          "\u5165\u5b66",
+                          "\u7406\u53d1",
+                          "\u63a2\u75c5",
+                          "\u4e58\u8239",
+                          "\u9488\u7078",
+                          "\u51fa\u884c",
+                          "\u79fb\u5f99",
+                          "\u5206\u5c45",
+                          "\u6574\u624b\u8db3\u7532",
+                          "\u7eb3\u755c",
+                          "\u6355\u6349",
+                          "\u754b\u730e",
+                          "\u6559\u725b\u9a6c",
+                          "\u4f1a\u4eb2\u53cb",
+                          "\u8d74\u4efb",
+                          "\u6c42\u533b",
+                          "\u6cbb\u75c5",
+                          "\u8bcd\u8bbc",
+                          "\u76d6\u5c4b",
+                          "\u4ea4\u6613",
+                          "\u7acb\u5238",
+                          "\u8bf8\u4e8b\u4e0d\u5b9c",
+                          "\u9980\u4e8b\u52ff\u53d6",
+                          "\u884c\u4e27",
+                          "\u65ad\u8681",
+                          "\u5f52\u5cab"
+                        ],
+                        "description": "\u8981\u7b5b\u9009\u7684\u5b9c\u5fcc\u4e8b\u9879"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "\u591a\u4e2a\u7b5b\u9009\u5b9c\u5fcc\u4e8b\u9879\uff0c\u6761\u4ef6\u4e4b\u95f4\u4e3a\u6216\u5173\u7cfb"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
           "server": "nfty-mcp-server",
           "tool": "send-ntfy",
           "description_changed": false,
@@ -1338,19 +2448,278 @@
               "$schema": "http://json-schema.org/draft-07/schema#"
             }
           }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "convert_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "convert_time",
+            "description": "Convert time between timezones.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "sourceTimezone": {
+                  "type": "string",
+                  "description": "The source timezone. IANA timezone name, e.g. Asia/Shanghai"
+                },
+                "targetTimezone": {
+                  "type": "string",
+                  "description": "The target timezone. IANA timezone name, e.g. Europe/London"
+                },
+                "time": {
+                  "type": "string",
+                  "description": "Date and time in 24-hour format. e.g. 2025-03-23 12:30:00"
+                }
+              },
+              "required": [
+                "sourceTimezone",
+                "targetTimezone",
+                "time"
+              ]
+            }
+          },
+          "after": {
+            "name": "convert_time",
+            "description": "Convert time between timezones.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "sourceTimezone": {
+                  "type": "string"
+                },
+                "targetTimezone": {
+                  "type": "string"
+                },
+                "time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "sourceTimezone",
+                "targetTimezone",
+                "time"
+              ]
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "current_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "current_time",
+            "description": "Get the current date and time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "format": {
+                  "default": "YYYY-MM-DD HH:mm:ss",
+                  "type": "string",
+                  "enum": [
+                    "h:mm A",
+                    "h:mm:ss A",
+                    "YYYY-MM-DD HH:mm:ss",
+                    "YYYY-MM-DD",
+                    "YYYY-MM",
+                    "MM/DD/YYYY",
+                    "MM/DD/YY",
+                    "YYYY/MM/DD",
+                    "YYYY/MM"
+                  ],
+                  "description": "The format of the time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "description": "The timezone of the time, IANA timezone name, e.g. Asia/Shanghai"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "current_time",
+            "description": "Get the current date and time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "format": {
+                  "default": "YYYY-MM-DD HH:mm:ss",
+                  "type": "string",
+                  "enum": [
+                    "h:mm A",
+                    "h:mm:ss A",
+                    "YYYY-MM-DD HH:mm:ss",
+                    "YYYY-MM-DD",
+                    "YYYY-MM",
+                    "MM/DD/YYYY",
+                    "MM/DD/YY",
+                    "YYYY/MM/DD",
+                    "YYYY/MM"
+                  ]
+                },
+                "timezone": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "days_in_month",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "days_in_month",
+            "description": "Get the number of days in a month. If no date is provided, get the number of days in the current month.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date to get the days in month. Format: YYYY-MM-DD"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "days_in_month",
+            "description": "Get the number of days in a month. If no date is provided, get the number of days in the current month.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "get_timestamp",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get_timestamp",
+            "description": "Get the timestamp for the time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string",
+                  "description": "The time to get the timestamp. Format: YYYY-MM-DD HH:mm:ss.SSS"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "get_timestamp",
+            "description": "Get the timestamp for the time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "get_week_year",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get_week_year",
+            "description": "Get the week and isoWeek of the year.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date to get the week and isoWeek of the year. e.g. 2025-03-23"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "get_week_year",
+            "description": "Get the week and isoWeek of the year.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "relative_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "relative_time",
+            "description": "Get the relative time from now.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string",
+                  "description": "The time to get the relative time from now. Format: YYYY-MM-DD HH:mm:ss"
+                }
+              },
+              "required": [
+                "time"
+              ]
+            }
+          },
+          "after": {
+            "name": "relative_time",
+            "description": "Get the relative time from now.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "time"
+              ]
+            }
+          }
         }
       ],
       "summary": {
         "added_server_count": 0,
         "removed_server_count": 0,
-        "added_tool_count": 1,
+        "added_tool_count": 7,
         "removed_tool_count": 0,
-        "changed_tool_count": 4,
-        "description_change_count": 1,
-        "input_schema_change_count": 4,
-        "compared_server_count": 12,
+        "changed_tool_count": 26,
+        "description_change_count": 12,
+        "input_schema_change_count": 15,
+        "compared_server_count": 26,
         "unavailable_in_from_version_count": 0,
-        "unavailable_in_to_version_count": 14
+        "unavailable_in_to_version_count": 0
       }
     },
     {
@@ -1359,44 +2728,237 @@
       "added_servers": [],
       "removed_servers": [],
       "compared_servers": [
+        "@aiuluna/knowledge-graph-mcp",
         "@antv/mcp-server-chart",
         "@driflyte/mcp-server",
+        "@j0kz/orchestrator-mcp",
         "@kazuph/mcp-taskmanager",
         "@likec4/mcp",
-        "@umengfe/mcp-server-chart",
-        "basic-memory",
-        "coffee-mcp-agent",
-        "interactive-mcp",
-        "mcp-server-commands",
-        "metatag-genie",
-        "nfty-mcp-server",
-        "time"
-      ],
-      "unavailable_in_from_version": [],
-      "unavailable_in_to_version": [
-        "@aiuluna/knowledge-graph-mcp",
-        "@j0kz/orchestrator-mcp",
         "@magicuidesign/mcp",
         "@regle/mcp-server",
         "@rtuin/mcp-mermaid-validator",
+        "@umengfe/mcp-server-chart",
+        "basic-memory",
         "bazi-mcp",
+        "coffee-mcp-agent",
+        "interactive-mcp",
         "mcp-calculator",
         "mcp-filesystem-server",
+        "mcp-server-commands",
         "mcp-shrimp-task-manager",
         "mcp-tasks",
         "mcp-tung-shing",
         "mcp-weather-demo",
+        "metatag-genie",
+        "nfty-mcp-server",
         "pantheon-mcp",
+        "time",
         "time-mcp"
       ],
+      "unavailable_in_from_version": [],
+      "unavailable_in_to_version": [],
       "added_tools": [
+        {
+          "server": "@j0kz/orchestrator-mcp",
+          "tool": "inspect_workflow"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getAnimations"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getBackgrounds"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getButtons"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentDetails"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentIndex"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponents"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getComponentsByNames"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getDeviceMocks"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getSpecialEffects"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getTextAnimations"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getUIComponents"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "searchComponents"
+        },
         {
           "server": "coffee-mcp-agent",
           "tool": "checkOrderEstimate"
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "break_even_analysis"
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "percentage_calculator"
+        },
+        {
+          "server": "mcp-weather-demo",
+          "tool": "get-weather-advice"
         }
       ],
-      "removed_tools": [],
+      "removed_tools": [
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "getRegistryItem"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "listRegistryItems"
+        },
+        {
+          "server": "@magicuidesign/mcp",
+          "tool": "searchRegistryItems"
+        }
+      ],
       "changed_tools": [
+        {
+          "server": "@j0kz/orchestrator-mcp",
+          "tool": "run_workflow",
+          "description_changed": true,
+          "input_schema_changed": true,
+          "before": {
+            "name": "run_workflow",
+            "description": "Execute intelligent workflow with optional focus detection.\n\nIMPORTANT: Always call this tool when user asks to \"review my code\", \"check my code\", or \"analyze this\".\n\n**Smart Focus Detection:**\n- Ambiguous request \u2192 Call WITHOUT workflow parameter to get clarification\n- Specific request \u2192 Call WITH workflow or focus parameter\n\n**Focus Areas (Auto-selects appropriate workflow):**\n- security: Fast security scan\n- quality: Code quality review with tests\n- performance: Architecture and performance analysis\n- comprehensive: Complete multi-dimensional analysis\n\n**Direct Workflows (Bypass focus selection):**\n- pre-commit: Git pre-commit checks\n- pre-merge: PR validation\n- quality-audit: Deep audit with reports\n\n**Examples:**\n- \"review my code\" \u2192 omit workflow (get clarification)\n- \"check security\" \u2192 workflow='security' OR focus='security'\n- \"run pre-commit\" \u2192 workflow='pre-commit'",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "workflow": {
+                  "type": "string",
+                  "enum": [
+                    "pre-commit",
+                    "pre-merge",
+                    "quality-audit"
+                  ],
+                  "description": "Explicit workflow name (optional)"
+                },
+                "focus": {
+                  "type": "string",
+                  "enum": [
+                    "security",
+                    "quality",
+                    "performance",
+                    "comprehensive"
+                  ],
+                  "description": "Focus area for smart workflow selection (optional)"
+                },
+                "files": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Files to process (optional for project-level)"
+                },
+                "projectPath": {
+                  "type": "string",
+                  "description": "Project root (optional, defaults to cwd)"
+                },
+                "language": {
+                  "type": "string",
+                  "enum": [
+                    "en",
+                    "es"
+                  ],
+                  "description": "Response language (optional, auto-detects from user input)"
+                }
+              },
+              "required": []
+            }
+          },
+          "after": {
+            "name": "run_workflow",
+            "description": "Execute an intelligent workflow with optional focus detection and user-intent context.\n\nIMPORTANT: Always call this tool when user asks to \"review my code\", \"check my code\", or \"analyze this\".\n\n**Smart Focus Detection:**\n- Ambiguous request \u2192 Call WITHOUT workflow and focus to get clarification\n- Specific request \u2192 Call WITH workflow or focus parameter\n- Richer requests \u2192 Include prompt to preserve the user's original intent for downstream workflow context\n\n**Focus Areas (Auto-selects appropriate workflow):**\n- security: Fast security scan\n- quality: Code quality review with tests\n- performance: Architecture and performance analysis\n- comprehensive: Complete multi-dimensional analysis\n\n**Direct Workflows (Bypass focus selection):**\n- pre-commit: Git pre-commit checks\n- pre-merge: PR validation\n- quality-audit: Deep audit with reports\n\n**Examples:**\n- \"review my code\" \u2192 omit workflow and focus (get clarification)\n- \"check security in this project\" \u2192 focus='security', prompt='check security in this project'\n- \"run pre-commit for my repo\" \u2192 workflow='pre-commit', prompt='run pre-commit for my repo'",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "workflow": {
+                  "type": "string",
+                  "enum": [
+                    "pre-commit",
+                    "pre-merge",
+                    "quality-audit"
+                  ],
+                  "description": "Explicit workflow name (optional)"
+                },
+                "focus": {
+                  "type": "string",
+                  "enum": [
+                    "security",
+                    "quality",
+                    "performance",
+                    "comprehensive"
+                  ],
+                  "description": "Focus area for smart workflow selection (optional)"
+                },
+                "prompt": {
+                  "type": "string",
+                  "description": "Original user request for workflow context (optional)"
+                },
+                "projectPath": {
+                  "type": "string",
+                  "description": "Project root (optional, defaults to cwd)"
+                },
+                "excludePaths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Glob patterns or paths to exclude from analysis (optional, e.g. [\"node_modules\", \"dist\"])"
+                },
+                "severity_threshold": {
+                  "type": "string",
+                  "enum": [
+                    "low",
+                    "medium",
+                    "high",
+                    "critical"
+                  ],
+                  "description": "Minimum severity level to include in results (optional, defaults to low)"
+                },
+                "output_format": {
+                  "type": "string",
+                  "enum": [
+                    "full",
+                    "summary",
+                    "minimal"
+                  ],
+                  "description": "Response structure: full (default), summary, or minimal (optional)"
+                }
+              },
+              "required": []
+            }
+          }
+        },
         {
           "server": "@kazuph/mcp-taskmanager",
           "tool": "request_planning",
@@ -1542,6 +3104,102 @@
           }
         },
         {
+          "server": "@rtuin/mcp-mermaid-validator",
+          "tool": "validateMermaid",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "validateMermaid",
+            "description": "Validates a Mermaid diagram and returns the rendered image (PNG or SVG) if valid",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "diagram": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "svg",
+                    "png"
+                  ],
+                  "default": "png"
+                }
+              },
+              "required": [
+                "diagram"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "validateMermaid",
+            "description": "Validates a Mermaid diagram and returns the rendered image (PNG or SVG) if valid",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "diagram": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 50000
+                },
+                "format": {
+                  "type": "string",
+                  "enum": [
+                    "svg",
+                    "png"
+                  ]
+                },
+                "theme": {
+                  "type": "string",
+                  "enum": [
+                    "default",
+                    "dark",
+                    "forest",
+                    "neutral"
+                  ]
+                },
+                "backgroundColor": {
+                  "type": "string"
+                },
+                "scale": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 10
+                },
+                "width": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "height": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000
+                },
+                "config": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": {}
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "diagram",
+                "format"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
           "server": "coffee-mcp-agent",
           "tool": "orderCoffee",
           "description_changed": false,
@@ -1622,6 +3280,367 @@
                 "productName",
                 "spec"
               ]
+            }
+          }
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "loan_payment",
+          "description_changed": true,
+          "input_schema_changed": true,
+          "before": {
+            "name": "loan_payment",
+            "description": "\u8ba1\u7b97\u7b49\u989d\u672c\u606f\u8d37\u6b3e\u7684\u6708\u4f9b\u91d1\u989d",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "loan_amount": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u672c\u91d1"
+                },
+                "annual_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u5e74\u5229\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                },
+                "years": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u5e74\u9650"
+                }
+              },
+              "required": [
+                "loan_amount",
+                "annual_rate",
+                "years"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "loan_payment",
+            "description": "\u8ba1\u7b97\u7b49\u989d\u672c\u606f\u8d37\u6b3e\u5728\u4e0d\u540c\u8fd8\u6b3e\u9891\u7387\u4e0b\u7684\u6bcf\u671f\u8fd8\u6b3e\u91d1\u989d\uff0c\u9002\u7528\u4e8e\u8d37\u6b3e\u878d\u8d44\u4e0e\u8fd8\u6b3e\u89c4\u5212\u573a\u666f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "loan_amount": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u672c\u91d1"
+                },
+                "annual_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u5e74\u5229\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                },
+                "years": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u8d37\u6b3e\u5e74\u9650"
+                },
+                "payment_frequency": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "default": 12,
+                  "description": "\u6bcf\u5e74\u8fd8\u6b3e\u6b21\u6570\uff08\u9ed8\u8ba412\uff0c12=\u6309\u6708\uff0c4=\u6309\u5b63\uff0c1=\u6309\u5e74\uff09"
+                },
+                "extra_payment": {
+                  "type": "number",
+                  "minimum": 0,
+                  "default": 0,
+                  "description": "\u6bcf\u671f\u989d\u5916\u8fd8\u6b3e\u91d1\u989d\uff08\u9ed8\u8ba40\uff09"
+                },
+                "include_schedule": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u7b80\u8981\u8fd8\u6b3e\u8fdb\u5ea6\u6458\u8981"
+                }
+              },
+              "required": [
+                "loan_amount",
+                "annual_rate",
+                "years"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-calculator",
+          "tool": "net_present_value",
+          "description_changed": true,
+          "input_schema_changed": false,
+          "before": {
+            "name": "net_present_value",
+            "description": "\u8ba1\u7b97\u6295\u8d44\u9879\u76ee\u7684\u51c0\u73b0\u503c\uff08NPV\uff09",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "initial_investment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u521d\u59cb\u6295\u8d44\u989d"
+                },
+                "cash_flows": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "\u5404\u671f\u73b0\u91d1\u6d41"
+                },
+                "discount_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u6298\u73b0\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                }
+              },
+              "required": [
+                "initial_investment",
+                "cash_flows",
+                "discount_rate"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "net_present_value",
+            "description": "\u8ba1\u7b97\u6295\u8d44\u9879\u76ee\u7684\u51c0\u73b0\u503c\uff08NPV\uff09\uff0c\u7528\u4e8e\u57fa\u4e8e\u6298\u73b0\u73b0\u91d1\u6d41\u7684\u6295\u8d44\u53ef\u884c\u6027\u8bc4\u4f30\uff0c\u4e0e\u8fd0\u8425\u5c42\u9762\u7684\u76c8\u4e8f\u5e73\u8861\u5206\u6790\u5f62\u6210\u4e92\u8865",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "initial_investment": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u521d\u59cb\u6295\u8d44\u989d"
+                },
+                "cash_flows": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "description": "\u5404\u671f\u73b0\u91d1\u6d41"
+                },
+                "discount_rate": {
+                  "type": "number",
+                  "exclusiveMinimum": 0,
+                  "description": "\u6298\u73b0\u7387\uff08\u5c0f\u6570\u5f62\u5f0f\uff09"
+                }
+              },
+              "required": [
+                "initial_investment",
+                "cash_flows",
+                "discount_rate"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-filesystem-server",
+          "tool": "list_directory",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "list_directory",
+            "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the directory"
+                },
+                "showHidden": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Show hidden files starting with ."
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "list_directory",
+            "description": "Get a detailed listing of all files and directories in a specified path. Results clearly distinguish between files and directories with [FILE] and [DIR] prefixes.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the directory"
+                },
+                "showHidden": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Show hidden files starting with ."
+                },
+                "sortBy": {
+                  "type": "string",
+                  "enum": [
+                    "default",
+                    "name",
+                    "type"
+                  ],
+                  "default": "default",
+                  "description": "Sorting mode: default (directories first), name, or type"
+                },
+                "reverse": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Reverse the sort order"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-filesystem-server",
+          "tool": "read_file",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "read_file",
+            "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the file"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "read_file",
+            "description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot be read.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "The path to the file"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                },
+                "startLine": {
+                  "type": "number",
+                  "description": "Starting line number (1-indexed) for reading a specific range"
+                },
+                "endLine": {
+                  "type": "number",
+                  "description": "Ending line number (1-indexed) for reading a specific range"
+                },
+                "maxSize": {
+                  "type": "number",
+                  "description": "Maximum file size in bytes to read (default: no limit)"
+                }
+              },
+              "required": [
+                "path"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-filesystem-server",
+          "tool": "read_multiple_files",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "read_multiple_files",
+            "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Array of file paths to read"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                }
+              },
+              "required": [
+                "paths"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "read_multiple_files",
+            "description": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files.",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "paths": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Array of file paths to read"
+                },
+                "encoding": {
+                  "type": "string",
+                  "default": "utf-8",
+                  "description": "File encoding (default: utf-8)"
+                },
+                "includeMetadata": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Prepend file metadata (size, last modified) before each file's content"
+                },
+                "ignoreErrors": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Silently skip files that cannot be read instead of including error messages"
+                },
+                "separator": {
+                  "type": "string",
+                  "default": "---",
+                  "description": "Separator string inserted between file contents (default: '---')"
+                }
+              },
+              "required": [
+                "paths"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
             }
           }
         },
@@ -1754,19 +3773,703 @@
               ]
             }
           }
+        },
+        {
+          "server": "mcp-tung-shing",
+          "tool": "get-tung-shing",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get-tung-shing",
+            "description": "\u83b7\u53d6\u901a\u80dc\u9ec4\u5386\uff0c\u5305\u62ec\u516c\u5386\u3001\u519c\u5386\u3001\u5b9c\u5fcc\u3001\u5409\u51f6\u3001\u51b2\u715e\u7b49\u4fe1\u606f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "default": "2026-10-11",
+                  "description": "\u5f00\u59cb\u65e5\u671f\uff0c\u683c\u5f0f\u4e3a\"YYYY-MM-DD\"\u7684\u5b57\u7b26\u4e32"
+                },
+                "days": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    }
+                  ],
+                  "default": 1,
+                  "description": "\u8981\u83b7\u53d6\u7684\u8fde\u7eed\u5929\u6570"
+                },
+                "includeHours": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u65f6\u8fb0\u4fe1\u606f"
+                },
+                "tabooFilters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2
+                        ],
+                        "description": "\u8fc7\u6ee4\u7c7b\u578b\uff1a\u5b9c(1)\u3001\u5fcc(2)"
+                      },
+                      "value": {
+                        "type": "string",
+                        "enum": [
+                          "\u796d\u7940",
+                          "\u7948\u798f",
+                          "\u6c42\u55e3",
+                          "\u5f00\u5149",
+                          "\u5851\u7ed8",
+                          "\u658b\u91ae",
+                          "\u6c90\u6d74",
+                          "\u9020\u5e99",
+                          "\u8c22\u571f",
+                          "\u51fa\u706b",
+                          "\u96d5\u523b",
+                          "\u5ac1\u5a36",
+                          "\u7eb3\u91c7",
+                          "\u95ee\u540d",
+                          "\u7eb3\u5a7f",
+                          "\u5f52\u5b81",
+                          "\u5b89\u5e8a",
+                          "\u5408\u5e10",
+                          "\u51a0\u7b04",
+                          "\u8ba2\u76df",
+                          "\u8fdb\u4eba\u53e3",
+                          "\u88c1\u8863",
+                          "\u4fee\u575f",
+                          "\u542f\u94bb",
+                          "\u7834\u571f",
+                          "\u5b89\u846c",
+                          "\u7acb\u7891",
+                          "\u6210\u670d",
+                          "\u9664\u670d",
+                          "\u5f00\u751f\u575f",
+                          "\u5408\u5bff\u6728",
+                          "\u5165\u6b93",
+                          "\u79fb\u67e9",
+                          "\u666e\u6e21",
+                          "\u5165\u5b85",
+                          "\u5b89\u9999",
+                          "\u5b89\u95e8",
+                          "\u4fee\u9020",
+                          "\u8d77\u57fa",
+                          "\u52a8\u571f",
+                          "\u4e0a\u6881",
+                          "\u7ad6\u67f1",
+                          "\u62c6\u5378",
+                          "\u7834\u5c4b",
+                          "\u574f\u57a3",
+                          "\u8865\u57a3",
+                          "\u4f5c\u7076",
+                          "\u89e3\u9664",
+                          "\u5f00\u67f1\u773c",
+                          "\u5f00\u5395",
+                          "\u9020\u4ed3",
+                          "\u585e\u7a74",
+                          "\u5e73\u6cbb\u9053\u6d82",
+                          "\u9020\u6865",
+                          "\u7b51\u5824",
+                          "\u5f00\u6c60",
+                          "\u4f10\u6728",
+                          "\u5f00\u6e20",
+                          "\u6398\u4e95",
+                          "\u626b\u820d",
+                          "\u653e\u6c34",
+                          "\u5408\u810a",
+                          "\u9020\u755c\u7a20",
+                          "\u4fee\u95e8",
+                          "\u5b9a\u78c9",
+                          "\u4f5c\u6881",
+                          "\u4fee\u9970\u57a3\u5899",
+                          "\u67b6\u9a6c",
+                          "\u5f00\u5e02",
+                          "\u6302\u533e",
+                          "\u7eb3\u8d22",
+                          "\u5f00\u4ed3",
+                          "\u7f6e\u4ea7",
+                          "\u96c7\u4f63",
+                          "\u51fa\u8d27\u8d22",
+                          "\u5b89\u673a\u68b0",
+                          "\u9020\u8f66\u5668",
+                          "\u7ecf\u7edc",
+                          "\u9020\u8239",
+                          "\u5272\u871c",
+                          "\u683d\u79cd",
+                          "\u53d6\u6e14",
+                          "\u7ed3\u7f51",
+                          "\u7267\u517b",
+                          "\u5b89\u7893\u78d1",
+                          "\u4e60\u827a",
+                          "\u5165\u5b66",
+                          "\u7406\u53d1",
+                          "\u63a2\u75c5",
+                          "\u4e58\u8239",
+                          "\u9488\u7078",
+                          "\u51fa\u884c",
+                          "\u79fb\u5f99",
+                          "\u5206\u5c45",
+                          "\u6574\u624b\u8db3\u7532",
+                          "\u7eb3\u755c",
+                          "\u6355\u6349",
+                          "\u754b\u730e",
+                          "\u6559\u725b\u9a6c",
+                          "\u4f1a\u4eb2\u53cb",
+                          "\u8d74\u4efb",
+                          "\u6c42\u533b",
+                          "\u6cbb\u75c5",
+                          "\u8bcd\u8bbc",
+                          "\u76d6\u5c4b",
+                          "\u4ea4\u6613",
+                          "\u7acb\u5238",
+                          "\u8bf8\u4e8b\u4e0d\u5b9c",
+                          "\u9980\u4e8b\u52ff\u53d6",
+                          "\u884c\u4e27",
+                          "\u65ad\u8681",
+                          "\u5f52\u5cab"
+                        ],
+                        "description": "\u8981\u7b5b\u9009\u7684\u5b9c\u5fcc\u4e8b\u9879"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "\u591a\u4e2a\u7b5b\u9009\u5b9c\u5fcc\u4e8b\u9879\uff0c\u6761\u4ef6\u4e4b\u95f4\u4e3a\u6216\u5173\u7cfb"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "get-tung-shing",
+            "description": "\u83b7\u53d6\u901a\u80dc\u9ec4\u5386\uff0c\u5305\u62ec\u516c\u5386\u3001\u519c\u5386\u3001\u5b9c\u5fcc\u3001\u5409\u51f6\u3001\u51b2\u715e\u7b49\u4fe1\u606f",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "startDate": {
+                  "type": "string",
+                  "default": "2026-10-13",
+                  "description": "\u5f00\u59cb\u65e5\u671f\uff0c\u683c\u5f0f\u4e3a\"YYYY-MM-DD\"\u7684\u5b57\u7b26\u4e32"
+                },
+                "days": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    {
+                      "type": "string",
+                      "pattern": "^\\d+$"
+                    }
+                  ],
+                  "default": 1,
+                  "description": "\u8981\u83b7\u53d6\u7684\u8fde\u7eed\u5929\u6570"
+                },
+                "includeHours": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "\u662f\u5426\u5305\u542b\u65f6\u8fb0\u4fe1\u606f"
+                },
+                "tabooFilters": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "number",
+                        "enum": [
+                          1,
+                          2
+                        ],
+                        "description": "\u8fc7\u6ee4\u7c7b\u578b\uff1a\u5b9c(1)\u3001\u5fcc(2)"
+                      },
+                      "value": {
+                        "type": "string",
+                        "enum": [
+                          "\u796d\u7940",
+                          "\u7948\u798f",
+                          "\u6c42\u55e3",
+                          "\u5f00\u5149",
+                          "\u5851\u7ed8",
+                          "\u658b\u91ae",
+                          "\u6c90\u6d74",
+                          "\u9020\u5e99",
+                          "\u8c22\u571f",
+                          "\u51fa\u706b",
+                          "\u96d5\u523b",
+                          "\u5ac1\u5a36",
+                          "\u7eb3\u91c7",
+                          "\u95ee\u540d",
+                          "\u7eb3\u5a7f",
+                          "\u5f52\u5b81",
+                          "\u5b89\u5e8a",
+                          "\u5408\u5e10",
+                          "\u51a0\u7b04",
+                          "\u8ba2\u76df",
+                          "\u8fdb\u4eba\u53e3",
+                          "\u88c1\u8863",
+                          "\u4fee\u575f",
+                          "\u542f\u94bb",
+                          "\u7834\u571f",
+                          "\u5b89\u846c",
+                          "\u7acb\u7891",
+                          "\u6210\u670d",
+                          "\u9664\u670d",
+                          "\u5f00\u751f\u575f",
+                          "\u5408\u5bff\u6728",
+                          "\u5165\u6b93",
+                          "\u79fb\u67e9",
+                          "\u666e\u6e21",
+                          "\u5165\u5b85",
+                          "\u5b89\u9999",
+                          "\u5b89\u95e8",
+                          "\u4fee\u9020",
+                          "\u8d77\u57fa",
+                          "\u52a8\u571f",
+                          "\u4e0a\u6881",
+                          "\u7ad6\u67f1",
+                          "\u62c6\u5378",
+                          "\u7834\u5c4b",
+                          "\u574f\u57a3",
+                          "\u8865\u57a3",
+                          "\u4f5c\u7076",
+                          "\u89e3\u9664",
+                          "\u5f00\u67f1\u773c",
+                          "\u5f00\u5395",
+                          "\u9020\u4ed3",
+                          "\u585e\u7a74",
+                          "\u5e73\u6cbb\u9053\u6d82",
+                          "\u9020\u6865",
+                          "\u7b51\u5824",
+                          "\u5f00\u6c60",
+                          "\u4f10\u6728",
+                          "\u5f00\u6e20",
+                          "\u6398\u4e95",
+                          "\u626b\u820d",
+                          "\u653e\u6c34",
+                          "\u5408\u810a",
+                          "\u9020\u755c\u7a20",
+                          "\u4fee\u95e8",
+                          "\u5b9a\u78c9",
+                          "\u4f5c\u6881",
+                          "\u4fee\u9970\u57a3\u5899",
+                          "\u67b6\u9a6c",
+                          "\u5f00\u5e02",
+                          "\u6302\u533e",
+                          "\u7eb3\u8d22",
+                          "\u5f00\u4ed3",
+                          "\u7f6e\u4ea7",
+                          "\u96c7\u4f63",
+                          "\u51fa\u8d27\u8d22",
+                          "\u5b89\u673a\u68b0",
+                          "\u9020\u8f66\u5668",
+                          "\u7ecf\u7edc",
+                          "\u9020\u8239",
+                          "\u5272\u871c",
+                          "\u683d\u79cd",
+                          "\u53d6\u6e14",
+                          "\u7ed3\u7f51",
+                          "\u7267\u517b",
+                          "\u5b89\u7893\u78d1",
+                          "\u4e60\u827a",
+                          "\u5165\u5b66",
+                          "\u7406\u53d1",
+                          "\u63a2\u75c5",
+                          "\u4e58\u8239",
+                          "\u9488\u7078",
+                          "\u51fa\u884c",
+                          "\u79fb\u5f99",
+                          "\u5206\u5c45",
+                          "\u6574\u624b\u8db3\u7532",
+                          "\u7eb3\u755c",
+                          "\u6355\u6349",
+                          "\u754b\u730e",
+                          "\u6559\u725b\u9a6c",
+                          "\u4f1a\u4eb2\u53cb",
+                          "\u8d74\u4efb",
+                          "\u6c42\u533b",
+                          "\u6cbb\u75c5",
+                          "\u8bcd\u8bbc",
+                          "\u76d6\u5c4b",
+                          "\u4ea4\u6613",
+                          "\u7acb\u5238",
+                          "\u8bf8\u4e8b\u4e0d\u5b9c",
+                          "\u9980\u4e8b\u52ff\u53d6",
+                          "\u884c\u4e27",
+                          "\u65ad\u8681",
+                          "\u5f52\u5cab"
+                        ],
+                        "description": "\u8981\u7b5b\u9009\u7684\u5b9c\u5fcc\u4e8b\u9879"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "value"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "\u591a\u4e2a\u7b5b\u9009\u5b9c\u5fcc\u4e8b\u9879\uff0c\u6761\u4ef6\u4e4b\u95f4\u4e3a\u6216\u5173\u7cfb"
+                }
+              },
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "mcp-weather-demo",
+          "tool": "get-forecast",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get-forecast",
+            "description": "Get weather forecast for a location",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90,
+                  "description": "Latitude of the location"
+                },
+                "longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180,
+                  "description": "Longitude of the location"
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          },
+          "after": {
+            "name": "get-forecast",
+            "description": "Get weather forecast for a location",
+            "inputSchema": {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "type": "number",
+                  "minimum": -90,
+                  "maximum": 90,
+                  "description": "Latitude of the location"
+                },
+                "longitude": {
+                  "type": "number",
+                  "minimum": -180,
+                  "maximum": 180,
+                  "description": "Longitude of the location"
+                },
+                "periods": {
+                  "type": "integer",
+                  "exclusiveMinimum": 0,
+                  "description": "Maximum number of forecast periods to return"
+                },
+                "includeDetails": {
+                  "type": "boolean",
+                  "description": "Whether to include detailed lines such as wind information"
+                }
+              },
+              "required": [
+                "latitude",
+                "longitude"
+              ],
+              "additionalProperties": false,
+              "$schema": "http://json-schema.org/draft-07/schema#"
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "convert_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "convert_time",
+            "description": "Convert time between timezones.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "sourceTimezone": {
+                  "type": "string",
+                  "description": "The source timezone. IANA timezone name, e.g. Asia/Shanghai"
+                },
+                "targetTimezone": {
+                  "type": "string",
+                  "description": "The target timezone. IANA timezone name, e.g. Europe/London"
+                },
+                "time": {
+                  "type": "string",
+                  "description": "Date and time in 24-hour format. e.g. 2025-03-23 12:30:00"
+                }
+              },
+              "required": [
+                "sourceTimezone",
+                "targetTimezone",
+                "time"
+              ]
+            }
+          },
+          "after": {
+            "name": "convert_time",
+            "description": "Convert time between timezones.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "sourceTimezone": {
+                  "type": "string"
+                },
+                "targetTimezone": {
+                  "type": "string"
+                },
+                "time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "sourceTimezone",
+                "targetTimezone",
+                "time"
+              ]
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "current_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "current_time",
+            "description": "Get the current date and time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "format": {
+                  "default": "YYYY-MM-DD HH:mm:ss",
+                  "type": "string",
+                  "enum": [
+                    "h:mm A",
+                    "h:mm:ss A",
+                    "YYYY-MM-DD HH:mm:ss",
+                    "YYYY-MM-DD",
+                    "YYYY-MM",
+                    "MM/DD/YYYY",
+                    "MM/DD/YY",
+                    "YYYY/MM/DD",
+                    "YYYY/MM"
+                  ],
+                  "description": "The format of the time"
+                },
+                "timezone": {
+                  "type": "string",
+                  "description": "The timezone of the time, IANA timezone name, e.g. Asia/Shanghai"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "current_time",
+            "description": "Get the current date and time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "format": {
+                  "default": "YYYY-MM-DD HH:mm:ss",
+                  "type": "string",
+                  "enum": [
+                    "h:mm A",
+                    "h:mm:ss A",
+                    "YYYY-MM-DD HH:mm:ss",
+                    "YYYY-MM-DD",
+                    "YYYY-MM",
+                    "MM/DD/YYYY",
+                    "MM/DD/YY",
+                    "YYYY/MM/DD",
+                    "YYYY/MM"
+                  ]
+                },
+                "timezone": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "days_in_month",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "days_in_month",
+            "description": "Get the number of days in a month. If no date is provided, get the number of days in the current month.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date to get the days in month. Format: YYYY-MM-DD"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "days_in_month",
+            "description": "Get the number of days in a month. If no date is provided, get the number of days in the current month.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "get_timestamp",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get_timestamp",
+            "description": "Get the timestamp for the time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string",
+                  "description": "The time to get the timestamp. Format: YYYY-MM-DD HH:mm:ss.SSS"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "get_timestamp",
+            "description": "Get the timestamp for the time.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "get_week_year",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "get_week_year",
+            "description": "Get the week and isoWeek of the year.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string",
+                  "description": "The date to get the week and isoWeek of the year. e.g. 2025-03-23"
+                }
+              }
+            }
+          },
+          "after": {
+            "name": "get_week_year",
+            "description": "Get the week and isoWeek of the year.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "server": "time-mcp",
+          "tool": "relative_time",
+          "description_changed": false,
+          "input_schema_changed": true,
+          "before": {
+            "name": "relative_time",
+            "description": "Get the relative time from now.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string",
+                  "description": "The time to get the relative time from now. Format: YYYY-MM-DD HH:mm:ss"
+                }
+              },
+              "required": [
+                "time"
+              ]
+            }
+          },
+          "after": {
+            "name": "relative_time",
+            "description": "Get the relative time from now.",
+            "inputSchema": {
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "time"
+              ]
+            }
+          }
         }
       ],
       "summary": {
         "added_server_count": 0,
         "removed_server_count": 0,
-        "added_tool_count": 1,
-        "removed_tool_count": 0,
-        "changed_tool_count": 3,
-        "description_change_count": 2,
-        "input_schema_change_count": 3,
-        "compared_server_count": 12,
+        "added_tool_count": 17,
+        "removed_tool_count": 3,
+        "changed_tool_count": 18,
+        "description_change_count": 5,
+        "input_schema_change_count": 17,
+        "compared_server_count": 26,
         "unavailable_in_from_version_count": 0,
-        "unavailable_in_to_version_count": 14
+        "unavailable_in_to_version_count": 0
       }
     }
   ]

@@ -1,0 +1,444 @@
+{
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "version_mapping": {
+    "early": "original",
+    "middle": "iter3",
+    "late": "iter5"
+  },
+  "seed": 6203,
+  "requested_size": 23,
+  "actual_size": 23,
+  "affected_count": 17,
+  "retention_count": 6,
+  "change_type_task_counts": {
+    "tool": 14,
+    "parameter": 16,
+    "description": 13
+  },
+  "selected_indices": [
+    2,
+    28,
+    34,
+    142,
+    144,
+    161,
+    218,
+    235,
+    246,
+    249,
+    260,
+    273,
+    281,
+    289,
+    291,
+    358,
+    385,
+    386,
+    389,
+    403,
+    434,
+    445,
+    448
+  ],
+  "selected_task_details": [
+    {
+      "idx": 2,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-shrimp-task-manager",
+        "pantheon-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "pantheon-mcp"
+      ]
+    },
+    {
+      "idx": 28,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-filesystem-server",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-filesystem-server",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 34,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-weather-demo",
+        "pantheon-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-weather-demo",
+        "pantheon-mcp"
+      ]
+    },
+    {
+      "idx": 142,
+      "status": "affected",
+      "affected_servers": [
+        "@regle/mcp-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "@regle/mcp-server",
+        "time"
+      ]
+    },
+    {
+      "idx": 144,
+      "status": "affected",
+      "affected_servers": [
+        "time-mcp"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "time",
+        "time-mcp"
+      ]
+    },
+    {
+      "idx": 161,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "@likec4/mcp",
+        "time"
+      ]
+    },
+    {
+      "idx": 218,
+      "status": "affected",
+      "affected_servers": [
+        "@rtuin/mcp-mermaid-validator"
+      ],
+      "change_types": [
+        "parameter"
+      ],
+      "required_servers": [
+        "@rtuin/mcp-mermaid-validator",
+        "@umengfe/mcp-server-chart"
+      ]
+    },
+    {
+      "idx": 235,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ]
+    },
+    {
+      "idx": 246,
+      "status": "affected",
+      "affected_servers": [
+        "@magicuidesign/mcp"
+      ],
+      "change_types": [
+        "tool"
+      ],
+      "required_servers": [
+        "@magicuidesign/mcp",
+        "@umengfe/mcp-server-chart"
+      ]
+    },
+    {
+      "idx": 249,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ]
+    },
+    {
+      "idx": 260,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "interactive-mcp",
+        "time"
+      ]
+    },
+    {
+      "idx": 273,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 281,
+      "status": "affected",
+      "affected_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 289,
+      "status": "affected",
+      "affected_servers": [
+        "@aiuluna/knowledge-graph-mcp",
+        "nfty-mcp-server"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "@aiuluna/knowledge-graph-mcp",
+        "basic-memory",
+        "nfty-mcp-server"
+      ]
+    },
+    {
+      "idx": 291,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ]
+    },
+    {
+      "idx": 358,
+      "status": "affected",
+      "affected_servers": [
+        "bazi-mcp",
+        "mcp-server-commands"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "@driflyte/mcp-server",
+        "bazi-mcp",
+        "mcp-server-commands"
+      ]
+    },
+    {
+      "idx": 385,
+      "status": "affected",
+      "affected_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "@j0kz/orchestrator-mcp",
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 386,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 389,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 403,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ],
+      "change_types": [
+        "description",
+        "parameter",
+        "tool"
+      ],
+      "required_servers": [
+        "mcp-shrimp-task-manager",
+        "mcp-tasks"
+      ]
+    },
+    {
+      "idx": 434,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-tung-shing"
+      ],
+      "change_types": [
+        "parameter"
+      ],
+      "required_servers": [
+        "@antv/mcp-server-chart",
+        "mcp-tung-shing"
+      ]
+    },
+    {
+      "idx": 445,
+      "status": "affected",
+      "affected_servers": [
+        "mcp-tung-shing"
+      ],
+      "change_types": [
+        "parameter"
+      ],
+      "required_servers": [
+        "@umengfe/mcp-server-chart",
+        "mcp-tung-shing"
+      ]
+    },
+    {
+      "idx": 448,
+      "status": "retention",
+      "affected_servers": [],
+      "change_types": [],
+      "required_servers": [
+        "@umengfe/mcp-server-chart"
+      ]
+    }
+  ],
+  "source_test_cases_sha256": "b51d09d93afa94b08a67281a95ee8b4c7d69953816adf6769a996e26274bb023",
+  "source_task_count": 393,
+  "eligible_task_count": 66,
+  "excluded_due_to_missing_server_count": 327,
+  "common_configured_server_count": 167,
+  "eligibility_basis": "connected_in_all_versions",
+  "common_eligible_server_count": 45,
+  "common_eligible_servers": [
+    "@aiuluna/knowledge-graph-mcp",
+    "@antv/mcp-server-chart",
+    "@botanicastudios/crossref-mcp",
+    "@cablate/mcp-doc-forge",
+    "@driflyte/mcp-server",
+    "@executeautomation/playwright-mcp-server",
+    "@j0kz/orchestrator-mcp",
+    "@j0kz/smart-reviewer-mcp",
+    "@jzone-mcp/antd-components-mcp",
+    "@kazuph/mcp-taskmanager",
+    "@likec4/mcp",
+    "@magicuidesign/mcp",
+    "@nekzus/mcp-server",
+    "@puchunjie/doc-tools-mcp",
+    "@regle/mcp-server",
+    "@rtuin/mcp-mermaid-validator",
+    "@umengfe/mcp-server-chart",
+    "artic-mcp",
+    "arxiv-mcp-server",
+    "basic-memory",
+    "bazi-mcp",
+    "bytefun-ai-mcp",
+    "calculator",
+    "claude-faf-mcp",
+    "clojars-deps-server",
+    "coffee-mcp-agent",
+    "docuking-mcp",
+    "fetch-mcp",
+    "giisp-openlibrary-mcp",
+    "howtocook-mcp",
+    "interactive-mcp",
+    "mcp-calculator",
+    "mcp-filesystem-server",
+    "mcp-postgres-server",
+    "mcp-server-commands",
+    "mcp-shrimp-task-manager",
+    "mcp-tasks",
+    "mcp-tung-shing",
+    "mcp-weather-demo",
+    "metatag-genie",
+    "nfty-mcp-server",
+    "pantheon-mcp",
+    "slidev-mcp",
+    "time",
+    "time-mcp"
+  ],
+  "availability_report": "reports/environment-validation.json",
+  "availability_report_sha256": "fa23cac842148db2c597050f2e62b8e83fde90b5b867dbff31d9175bfcd3e541",
+  "availability_report_generated_at": "2026-10-11T01:46:16.847131+00:00",
+  "connected_server_counts": {
+    "early": 47,
+    "middle": 55,
+    "late": 54
+  }
+}

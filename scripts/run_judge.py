@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from experiment_config import ConfigError, VERSIONS, load_env_file, load_experiment
-from run_benchmark import load_harness, resolve_run_output
+from run_benchmark import load_harness, provider_model_id, resolve_run_output
 
 
 def extract_json(text: str) -> dict[str, Any]:
@@ -190,7 +190,7 @@ def main() -> None:
                 case,
                 client=client,
                 prompt_builder=prompt_builder,
-                model=str(resolved["judge_name"]),
+                model=provider_model_id(str(resolved["judge_name"]), base_url),
                 temperature=float(resolved["judge_temperature"]),
                 max_tokens=int(resolved["max_completion_tokens"]),
                 num_runs=max(1, args.num_runs),

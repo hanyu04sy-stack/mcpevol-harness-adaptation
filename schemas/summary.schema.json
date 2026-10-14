@@ -55,7 +55,7 @@
         "mean_ecs": {"$ref": "#/$defs/nullableNumber"},
         "recovery_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
         "retention_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
-        "total_cost_tokens": {"type": "integer", "minimum": 0},
+        "total_cost_tokens": {"type": ["integer", "null"], "minimum": 0},
         "n_runs": {"type": "integer", "minimum": 1},
         "n_tasks": {"type": "integer", "minimum": 1}
       }

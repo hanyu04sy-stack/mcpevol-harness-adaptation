@@ -83,7 +83,7 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
     project_root = Path(__file__).resolve().parents[1]
     statuses = manifest_statuses(project_root)
     details: list[dict[str, Any]] = []
-    run_costs: dict[tuple[str, str, int], dict[str, float]] = {}
+    run_costs: dict[tuple[str, str, int], float | None] = {}
 
     for run_dir in sorted(path for path in results_root.rglob("run-[0-9][0-9]") if path.is_dir()):
         metadata_path = run_dir / "run-metadata.json"
@@ -101,10 +101,11 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
         prompt_tokens = numeric(metadata.get("total_prompt_tokens"))
         completion_tokens = numeric(metadata.get("total_completion_tokens"))
         wall_clock = numeric(metadata.get("wall_clock_seconds"))
-        run_costs[(strategy, version, run_id)] = {
-            "prompt": prompt_tokens or 0.0,
-            "completion": completion_tokens or 0.0,
-        }
+        run_costs[(strategy, version, run_id)] = (
+            prompt_tokens + completion_tokens
+            if prompt_tokens is not None and completion_tokens is not None
+            else None
+        )
         for task in rows:
             idx = int(task["task_idx"])
             tf = numeric(task.get("tf"))
@@ -172,8 +173,10 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
                 "retention_rate": (
                     sum(row["success"] for row in retention) / len(retention) if retention else None
                 ),
-                "total_cost_tokens": int(
-                    sum(run_costs[key]["prompt"] + run_costs[key]["completion"] for key in keys)
+                "total_cost_tokens": (
+                    int(sum(run_costs[key] for key in keys))
+                    if all(run_costs[key] is not None for key in keys)
+                    else None
                 ),
                 "n_runs": len({row["run_id"] for row in rows}),
                 "n_tasks": len(rows),
