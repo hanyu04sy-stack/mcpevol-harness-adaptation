@@ -1,6 +1,6 @@
 # MCPEvol Harness Adaptation
 
-> **PE6203 Case 4 · Reproducible evaluation of harness adaptation under MCP environment change**
+> **PE6203 Case 4** · Reproducible evaluation of harness adaptation under MCP environment change
 
 [![Final audit](https://img.shields.io/badge/final_audit-passed-1f883d)](reports/d/final-experiment-audit.json)
 [![Matrix](https://img.shields.io/badge/experiment_cells-27-0969da)](reports/d/final-comparison.csv)
@@ -8,10 +8,22 @@
 [![Judge scores](https://img.shields.io/badge/Judge_scores-4%2C050-bf8700)](reports/d/fairness-audit.md)
 [![Lightweight validation](https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/actions/workflows/ci.yml/badge.svg)](https://github.com/hanyu04sy-stack/mcpevol-harness-adaptation/actions/workflows/ci.yml)
 
-This project asks a practical question: **when MCP tools evolve, should an
-agent keep its old harness, rewrite everything, or patch only the knowledge
-linked to detected changes?** We compare three strategies under one fixed,
-audited protocol:
+This repository reproduces a controlled experiment: **when MCP tools evolve,
+should an agent keep its old harness, rewrite everything, or patch only the
+knowledge linked to detected changes?** All numbers quoted in the report are
+computed from data in this repository by the committed scripts.
+
+## Status
+
+| Component | Status |
+|---|---|
+| Experiment matrix — 3 strategies × 3 versions × 3 runs × 30 tasks | ✅ 27/27 cells audited |
+| Trajectories and Judge scores | ✅ 810/810 scored · 4,050 Judge evaluations |
+| Lightweight CI validation | ✅ passing on ubuntu-24.04 and macos-15 |
+| Course report | ✅ final ([Markdown](reports/final-report.md) · [Word](reports/final-report.docx)) |
+| Raw results archive (3.8 MB) | 📦 delivered separately — not in this repository (see below) |
+
+## The three strategies
 
 | Strategy | Adaptation rule |
 |---|---|
@@ -43,24 +55,71 @@ meets the strict over-update definition. A separately labelled controlled
 Task 235 ablation demonstrates that an unrelated output-protocol rewrite can
 break termination; it is excluded from all formal aggregates.
 
-## Experimental design
+## Reproduce the results
 
-```text
-3 strategies × 3 environment versions × 3 independent runs
-× 30 fixed tasks = 810 trajectories
-× 5 Judge evaluations = 4,050 Judge scores
+### Lightweight gate — no API key, no network (CI runs this)
+
+```bash
+python3 -m pip install -r requirements-ci.txt
+python3 scripts/check_handoff.py
 ```
 
-- **Benchmark:** [MCPEvol-Bench](https://github.com/Octobrist/MCPEvol-Bench),
-  pinned at `888c779a0fe735f612ca62bdd1fdd7c9e6bf8701`
-- **Versions:** Early (`original`), Middle (`iter3`), Late (`iter5`)
-- **Task set:** fixed 30-task subset: 24 affected + 6 retention tasks
-- **Model / Judge:** `gpt-4o-mini`, temperature `0.0`
-- **Fairness:** identical tasks, model, parameters, Judge, runner, endpoints,
-  source commit, and task hashes; only the harness strategy changes
-- **Audit:** 27/27 cells, 810/810 scored tasks, no issues, no secrets recorded
+Expected tail (Linux/macOS): `passed: true` after the inventory check
+(127 required files, none missing or empty) and all five checks —
+tool-change consistency, JSON Schema validation, semantic asset validation,
+Python compilation, and the 71-test unit suite.
 
-## Assignment 4.2 report coverage
+### Full experiment — requires MCP servers and a paid model
+
+Requirements: Linux or WSL, Python 3.12, Node.js 24, pnpm 11.25, and a local
+`.env` (copy `.env.example`) with provider credentials.
+
+```bash
+python3 scripts/setup_environment.py
+.venv/bin/python scripts/check_environment.py --strict
+.venv/bin/python scripts/check_experiment_config.py --config configs/experiment.json
+```
+
+The 27-run matrix, judging, and final audit are driven by
+`scripts/run_experiment_matrix.py` and documented in
+[docs/RUNNING.md](docs/RUNNING.md), [docs/JUDGE.md](docs/JUDGE.md), and
+[docs/D_EVALUATION.md](docs/D_EVALUATION.md). The audit reports
+27/27 cells with no issues and no recorded secrets.
+
+## Where to read what
+
+| You want | Read |
+|---|---|
+| One-page result summary | [conclusion-summary.md](reports/d/conclusion-summary.md) |
+| Full course report (Markdown / Word) | [final-report.md](reports/final-report.md) · [final-report.docx](reports/final-report.docx) |
+| Fairness and protocol audit | [fairness-audit.md](reports/d/fairness-audit.md) |
+| Failure analysis with trajectories | [failure-analysis.md](reports/d/failure-analysis.md) |
+| Metric definitions | [metric-definitions.md](docs/metric-definitions.md) |
+| Machine-readable final audit | [final-experiment-audit.json](reports/d/final-experiment-audit.json) |
+| Assignment 4.2 report coverage | [§ Report coverage](#report-coverage) |
+
+## Repository map
+
+| Path | What is in it | In Git |
+|---|---|---|
+| `configs/` | pinned experiment and ablation configurations | ✅ |
+| `data/subsets/` | fixed task sets and affected/retention labels | ✅ |
+| `harness/` | No Update, Full Rewrite, Selective Patch, and the ablation harness | ✅ |
+| `scripts/` | setup, validation, execution, judging, and analysis | ✅ |
+| `tests/` | offline validation tests | ✅ |
+| `docs/` | environment, metrics, execution, and handoff documentation | ✅ |
+| `reports/` | final report, audits, comparisons, and curated evidence | ✅ |
+| `results/` | raw experiment outputs (21.8 MB) | ❌ kept local, excluded by `.gitignore` |
+| `deliverables/` | D handoff manifest ([README-D-deliverable.md](deliverables/README-D-deliverable.md)) | ✅ (archive ❌, see below) |
+
+**About the raw results archive.** The complete raw trajectory archive
+(`mcpevol-D-raw-results-2026-10-16.tar.gz`, 3.8 MB) is intentionally excluded
+from Git and is delivered separately with the course submission. Curated
+summaries, comparisons, audits, and failure evidence are committed under
+`reports/d/`, so every number in the report remains reproducible from this
+repository.
+
+## Report coverage
 
 | Required report component | Where to read it |
 |---|---|
@@ -70,51 +129,6 @@ break termination; it is excluded from all formal aggregates.
 | Under-update trajectory | [Task 2 analysis](reports/d/failure-analysis.md#under-update-case--task-2-confirmed-all-3-versions) |
 | Over-update trajectory | [Task 235 controlled ablation](reports/d/failure-analysis.md#controlled-over-update-ablation-supplementary-case--not-part-of-the-formal-statistics) |
 | Discussion | [Final report §8](reports/final-report.md#8-discussion) |
-
-## Start here
-
-- **Course report:** [Markdown](reports/final-report.md) · [Word](reports/final-report.docx)
-- **One-page result summary:** [conclusion-summary.md](reports/d/conclusion-summary.md)
-- **Fairness and protocol audit:** [fairness-audit.md](reports/d/fairness-audit.md)
-- **Failure analysis and trajectories:** [failure-analysis.md](reports/d/failure-analysis.md)
-- **Metric definitions:** [metric-definitions.md](docs/metric-definitions.md)
-- **Final machine-readable audit:** [final-experiment-audit.json](reports/d/final-experiment-audit.json)
-- **Complete D handoff archive:** `deliverables/mcpevol-D-raw-results-2026-10-16.tar.gz`
-
-## Repository map
-
-```text
-configs/       pinned experiment and ablation configurations
-data/subsets/  fixed task sets and affected/retention labels
-harness/       No Update, Full Rewrite, Selective Patch, and ablation harnesses
-scripts/       setup, validation, execution, judging, and analysis
-tests/         offline validation tests
-docs/          environment, metrics, execution, and handoff documentation
-reports/       final report, audits, comparisons, and curated evidence
-results/       raw experiment outputs (normally excluded from Git)
-deliverables/  packaged handoff archive and retained execution logs
-```
-
-## Reproduce the environment
-
-Requirements: Linux or WSL, Python 3.12, Node.js 24, and pnpm 11.25.
-
-```bash
-python3 scripts/setup_environment.py
-.venv/bin/python scripts/check_environment.py --strict
-.venv/bin/python scripts/check_experiment_config.py --config configs/experiment.json
-```
-
-Run the lightweight handoff gate without paid API calls:
-
-```bash
-python3 -m pip install -r requirements-ci.txt
-python3 scripts/check_handoff.py
-```
-
-For complete execution commands and resume behavior, see
-[docs/RUNNING.md](docs/RUNNING.md), [docs/JUDGE.md](docs/JUDGE.md), and
-[docs/HANDOFF.md](docs/HANDOFF.md).
 
 ## Interpretation boundaries
 
@@ -133,4 +147,3 @@ For complete execution commands and resume behavior, see
 API credentials belong only in the local `.env`. The final audit reports
 `secrets_recorded: false`; `.env` is excluded from Git and from the packaged
 handoff archive.
-

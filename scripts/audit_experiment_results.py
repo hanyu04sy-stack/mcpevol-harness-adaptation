@@ -134,7 +134,7 @@ def audit(
 
     expected_runs = len(STRATEGIES) * len(VERSIONS) * len(run_ids)
     try:
-        reported_config = config_path.relative_to(root).as_posix()
+        reported_config = config_path.resolve().relative_to(root).as_posix()
     except ValueError:
         reported_config = str(config_path)
     return {

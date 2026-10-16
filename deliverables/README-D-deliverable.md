@@ -16,14 +16,10 @@ gpt-4o-mini reference prices, not provider invoices. Judge wall-clock time is
 recorded for 26 of 27 cells; the missing `no_update/early/run-01` value remains
 `unknown` and is excluded from runtime totals rather than inferred.
 
-The local `.env` file and the `不上传/` holding directory are not deliverable
-content. Move `不上传/` out of the project folder and remove `.env` before the
-final submission. No compressed package is required for this handoff.
+## Repository contents
 
-## What to commit to the GitHub repository
-
-The repo already ignores `results/`, `logs/`, `external/`, `generated/`,
-`.env` and `knowledge_graph/`. For the final GitHub push, commit:
+The GitHub repository contains everything needed to read, audit, and reproduce
+the D results:
 
 - `reports/d/` — all analysis/audit documents, `final-comparison.{csv,json}`,
   `cost-analysis.{csv,json}`, `summary.{csv,json}` (copies of the unified
@@ -40,8 +36,11 @@ The repo already ignores `results/`, `logs/`, `external/`, `generated/`,
   frozen harness hashes, and the raw `middle/middle` naming artifact.
 - `docs/` (incl. `metric-definitions.md`), `scripts/`, `harness/` (the three
   strategies plus the `over_broad_rewrite/` ablation harness), `configs/`,
-  `data/subsets/` (pilot-30 + ablation-over-broad), `tests/`, and this README.
+  `data/subsets/` (pilot-30 + ablation-over-broad), and `tests/`.
 
-The complete local folder retains `results/` as the raw trajectory record.
-Because `results/` is ignored by Git, anyone submitting through GitHub must
-preserve those raw results separately or intentionally change the upload plan.
+The raw trajectory archive `mcpevol-D-raw-results-2026-10-16.tar.gz` (3.8 MB)
+is deliberately kept out of Git (see `deliverables/*.tar.gz` in `.gitignore`)
+and is delivered separately with the course submission, so that the full
+`results/` tree — including all raw trajectories, run metadata, and logs —
+remains available to graders. The committed summaries and audits under
+`reports/d/` are the canonical source for every number in the final report.
