@@ -23,22 +23,22 @@ audited protocol — 3 strategies × 3 environment versions × 3 independent run
 | **Full Rewrite** | **8.75 ± 2.41** | **7.92** | **81.5%** | **8.63** |
 | Selective Patch | 8.21 ± 2.84 | 7.70 | 75.2% | 7.82 |
 
-**Main finding.** Full Rewrite performs best in this experiment. Selective
-Patch does not show a reliable improvement over No Update on affected tasks
+**Main finding.** Full Rewrite performed best under this specific protocol and
+fixed subset. Selective Patch does not show a reliable improvement over No
+Update on affected tasks
 (paired TF difference +0.10; 95% bootstrap interval −0.14 to +0.35), and it
 underperforms Full Rewrite (−0.51; interval −0.72 to −0.33).
 
-**Failure evidence.** Task 2 exposes a query-planning gap: failed Selective
+**Failure evidence.** Task 2 is a candidate under-update case. Failed Selective
 Patch trajectories use combined keywords, while Full Rewrite succeeds in all
-nine cells. Its classification as under-update remains a candidate: the
-exported `search_agents` contract is unchanged across versions and failures
-also occur in Early, so a changed-contract cause is not established.
+nine cells. The exported `search_agents` contract is unchanged across versions
+and failures also occur in Early, so a changed-contract cause is not established.
 
 **Retention.** Five of six retention tasks remain successful under every
-formal strategy; four stay perfect throughout. No natural formal-matrix case
-meets the strict over-update definition. A separately labelled controlled
-Task 235 ablation demonstrates that an unrelated output-protocol rewrite can
-break termination; it is excluded from all formal aggregates.
+formal strategy; four stay perfect throughout. No natural over-update case was
+observed in the formal matrix. Task 235 is a controlled over-update ablation:
+it demonstrates that an unrelated output-protocol rewrite can break
+termination and is excluded from all formal aggregates.
 
 Where to read the evidence:
 

@@ -122,8 +122,9 @@ TF 6 success threshold.
 
 ## Controlled over-update ablation (supplementary case — NOT part of the formal statistics)
 
-Because no natural retention failure satisfies the over-update criteria
-above, D ran a small controlled ablation on retention task 235 (middle
+No natural over-update case was observed in the formal matrix under the
+criteria above. Task 235 is a controlled over-update ablation on a retention
+task (middle
 version, single-task subset `data/subsets/ablation-over-broad/`, config
 `configs/ablation-over-broad/experiment.json`, harness
 `harness/over_broad_rewrite/middle/`). The harness is a deliberate
@@ -164,9 +165,9 @@ broken termination, not the individual tool calls.)
 
 Interpretation. v1–v3 show that tool-contract-level over-rewriting is
 rejected in these exploratory attempts. This does not explain the absence of
-natural over-update across the entire matrix. v4 shows
-the one mechanism that does degrade a retention task: rewriting an unrelated
-output protocol breaks normal task termination. This case is a
+natural over-update across the entire matrix. The v4 controlled ablation shows
+that rewriting an unrelated output protocol can degrade a retention task by
+breaking normal task termination. This case is a
 **supplementary controlled ablation** (complete trajectory reproduced under
 `reports/d/evidence/task235-over-update-ablation.json`, original under
 `results/ablation-over-broad/`), explicitly not part of the formal
@@ -190,8 +191,8 @@ iteration, and raw path-naming details are documented in
   independent repeats. A single low TF cell is not a failure case by itself.
 - Shared failures do not by themselves identify an environment cause; they
   also do not establish that an update caused the failure.
-- The under-update case (task 2) is the only affected task where FR is
-  consistently perfect while SP is mostly failing; task 434 shows a similar
+- Task 2 is a candidate under-update case and the only affected task where FR
+  is consistently perfect while SP is mostly failing; task 434 shows a similar
   shape (FR 10.0 vs SP 5.2 mean) and is listed as a secondary candidate in
   collected task rows. The comparison-analysis JSON contains aggregate views,
   not a per-task candidate list.
