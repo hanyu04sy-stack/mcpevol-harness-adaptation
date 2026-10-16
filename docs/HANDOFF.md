@@ -91,6 +91,11 @@ formal batch.
 
 ## Member D: collect and verify output
 
+For the final three-repeat, five-Judge protocol, follow
+[`D_EVALUATION.md`](D_EVALUATION.md). It includes the resumable matrix runner,
+provider-reported token collection, and the final machine-readable fairness and
+completeness audit.
+
 ```bash
 python3 -m json.tool reports/environment-validation.json >/dev/null
 python3 -m json.tool reports/pilot-30-environment-validation.json >/dev/null

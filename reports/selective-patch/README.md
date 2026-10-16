@@ -1,5 +1,12 @@
 # Selective Patch results
 
+Archive status: the results below are C's historical 23-task, one-Judge run.
+The final evaluation is the 30-task, three-repeat, five-Judge matrix in
+`reports/d/`. The legacy `configs/comparison-subset/experiment.json` now points
+to that 30-task dataset; the historical commands below therefore no longer
+reproduce the 23-task run unchanged. Its original configuration is retained
+under `provenance/` in `raw-results.zip`.
+
 This folder is the C strategy's reproducible result handoff. The implementation is in `scripts/build_selective_patch.py` and `harness/selective_patch/{early,middle,late}/`. The common task file and pinned configuration are `data/subsets/comparison-subset/test_cases.json` and `configs/comparison-subset/experiment.json`.
 
 The formal run uses the 23 task IDs present in every group of `reports/baseline-run20-summary.json`, with one benchmark run per version and one successful Judge evaluation per task. All three versions have 23 trajectories and 23 scored tasks (69 of each in total). The model and Judge were configured as `gpt-4o-mini` at temperature 0; the OpenRouter model identifier at the API boundary was `openai/gpt-4o-mini`. Each version started with 26 of 26 MCP servers connected. A later three-trajectory diagnostic for task 28, with one successful Judge scoring run per version, is recorded separately below and is not part of these formal results.

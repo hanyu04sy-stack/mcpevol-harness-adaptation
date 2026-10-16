@@ -1,0 +1,14 @@
+strategy,version,mean_tf,sd_tf,mean_pe,sd_pe,mean_ecs,sd_ecs,success_rate,affected_success_rate,retention_success_rate,n_trajectories
+no_update,early,8.2178,2.9234,8.0956,2.7935,7.9772,3.0436,0.7333,0.7083,0.8333,90
+no_update,middle,8.24,2.8791,7.6222,3.0486,7.9772,3.0436,0.7556,0.7361,0.8333,90
+no_update,late,8.2778,2.8433,7.7556,2.8944,7.9772,3.0436,0.7667,0.7361,0.8889,90
+full_rewrite,early,8.74,2.4383,7.8844,2.7541,8.6336,2.5256,0.8222,0.7917,0.9444,90
+full_rewrite,middle,8.7911,2.3642,7.96,2.7429,8.6336,2.5256,0.8,0.7917,0.8333,90
+full_rewrite,late,8.7289,2.4385,7.9133,2.9251,8.6336,2.5256,0.8222,0.7917,0.9444,90
+selective_patch,early,8.2378,2.8853,7.88,3.0415,7.8165,3.0126,0.7444,0.7222,0.8333,90
+selective_patch,middle,8.0267,2.9405,7.4311,2.981,7.8165,3.0126,0.7333,0.7083,0.8333,90
+selective_patch,late,8.3622,2.6879,7.7889,2.8107,7.8165,3.0126,0.7778,0.7639,0.8333,90
+affected_recovery_gain.sp_minus_nu,,0.0991,,,,,,,,,216
+affected_recovery_gain.sp_minus_fr,,-0.513,,,,,,,,,216
+retention_loss.sp_minus_nu,,-0.0815,,,,,,,,,54
+retention_loss.sp_minus_fr,,-0.0074,,,,,,,,,54
