@@ -10,7 +10,9 @@ import os
 import re
 import runpy
 import string
+import subprocess
 import sys
+import threading
 import urllib.request
 import time
 from collections.abc import Callable
@@ -33,6 +35,47 @@ SHARED_COMPLETION_PROTOCOL = (
     "After the requested tool work is complete, give the final answer beginning "
     "with [FINISH]. Do not repeat successful tool calls merely to produce the final answer."
 )
+
+
+class UsageTotals:
+    """Thread-safe OpenAI-compatible response usage accumulator."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._prompt_tokens = 0
+        self._completion_tokens = 0
+        self._responses = 0
+
+    @staticmethod
+    def _value(usage: object, name: str) -> int:
+        if isinstance(usage, dict):
+            value = usage.get(name, 0)
+        else:
+            value = getattr(usage, name, 0)
+        return int(value) if isinstance(value, (int, float)) and not isinstance(value, bool) else 0
+
+    def record(self, response: object) -> None:
+        usage = getattr(response, "usage", None)
+        if usage is None and isinstance(response, dict):
+            usage = response.get("usage")
+        if usage is None:
+            return
+        with self._lock:
+            self._prompt_tokens += self._value(usage, "prompt_tokens")
+            self._completion_tokens += self._value(usage, "completion_tokens")
+            self._responses += 1
+
+    def snapshot(self) -> dict[str, int]:
+        with self._lock:
+            prompt = self._prompt_tokens
+            completion = self._completion_tokens
+            responses = self._responses
+        return {
+            "total_prompt_tokens": prompt,
+            "total_completion_tokens": completion,
+            "total_tokens": prompt + completion,
+            "metered_responses": responses,
+        }
 
 
 def provider_model_id(configured_name: str, base_url: str | None) -> str:
@@ -208,7 +251,15 @@ def resolve_run_output(resolved: dict[str, object], run_id: int) -> Path:
     """Use the shared strategy/version/run-NN layout for formal runs."""
     if run_id < 1:
         raise ConfigError("run-id must be positive")
-    strategy = Path(resolved["harness_dir"]).name
+    # Derive the strategy from the harness path. Versioned harnesses live at
+    # harness/<strategy>/<version> (e.g. harness/full_rewrite/early), so the
+    # strategy is the path component that names a known strategy, not the last
+    # component (which would be the version name).
+    known = ("no_update", "full_rewrite", "selective_patch")
+    parts = Path(resolved["harness_dir"]).parts
+    strategy = next((part for part in parts if part in known), None)
+    if strategy is None:
+        strategy = Path(resolved["harness_dir"]).name
     directory = Path(resolved["harness_dir"])
     if directory.parent.name == "selective_patch":
         manifest = json.loads((directory / "manifest.json").read_text())
@@ -219,6 +270,13 @@ def resolve_run_output(resolved: dict[str, object], run_id: int) -> Path:
         if manifest.get("formal_run_ready") is not True:
             raise ConfigError("selective patch has incomplete schema evidence; regenerate snapshots")
         strategy = "selective_patch"
+    if directory.parent.name == "full_rewrite":
+        manifest = json.loads((directory / "manifest.json").read_text())
+        if manifest.get("strategy") != "full_rewrite":
+            raise ConfigError("versioned rewrite must declare full_rewrite strategy")
+        if manifest.get("target_version") != resolved["version"]:
+            raise ConfigError("full rewrite target version does not match run version")
+        strategy = "full_rewrite"
     if not strategy or strategy in {".", ".."}:
         raise ConfigError("cannot derive a strategy name from harness directory")
     output = Path(resolved["output_root"]) / strategy / str(resolved["version"]) / f"run-{run_id:02d}"
@@ -234,6 +292,7 @@ def configured_initializer(
     api_key: str,
     base_url: str | None,
     prompt_module: object | None = None,
+    usage_totals: UsageTotals | None = None,
 ) -> Callable[..., None]:
     """Wrap the upstream agent so shared settings replace its placeholders."""
     def configured_init(instance: object, *args: object, **kwargs: object) -> None:
@@ -250,6 +309,15 @@ def configured_initializer(
         kwargs["temperature"] = resolved["temperature"]
         kwargs["max_new_tokens"] = resolved["max_completion_tokens"]
         original_init(instance, *args, **kwargs)
+        if usage_totals is not None:
+            original_chat = getattr(instance, "chat")
+
+            def tracked_chat(*chat_args: object, **chat_kwargs: object) -> object:
+                response = original_chat(*chat_args, **chat_kwargs)
+                usage_totals.record(response)
+                return response
+
+            setattr(instance, "chat", tracked_chat)
 
     return configured_init
 
@@ -281,7 +349,10 @@ def prepare_annotation_links(resolved: dict[str, object]) -> list[Path]:
 
 
 def run_upstream(
-    resolved: dict[str, object], api_key: str, base_url: str | None
+    resolved: dict[str, object],
+    api_key: str,
+    base_url: str | None,
+    usage_totals: UsageTotals | None = None,
 ) -> None:
     benchmark_src = Path(resolved["benchmark_root"]) / "src"
     old_cwd = Path.cwd()
@@ -304,8 +375,26 @@ def run_upstream(
             resolved["harness_prompt"]
         )
         agent_module.ChatModel.__init__ = configured_initializer(
-            original_init, resolved, api_key, base_url, prompt_module=agent_module
+            original_init,
+            resolved,
+            api_key,
+            base_url,
+            prompt_module=agent_module,
+            usage_totals=usage_totals,
         )
+        import custom.utils.test_utils as benchmark_test_utils
+
+        # D-side documented deviation (see reports/d/fairness-audit.md):
+        # The upstream runner filters the pinned test_case_file through its
+        # built-in official chosen set (custom/data/test_cases/chosen_idx.json,
+        # 201 tasks). That silently drops 7 of the 30 fixed pilot tasks even
+        # though they are runnable. Override the filter in memory (identity) so
+        # every task in the pinned task file is evaluated. No upstream file is
+        # modified; `verify_untouched.py` still passes because the upstream git
+        # checkout remains clean. The subset is fixed and identical for every
+        # strategy/version/repeat, per the case's "fixed documented subset" rule.
+        benchmark_test_utils.clean_all_test_cases = lambda cases: cases
+
         sys.argv = upstream_arguments(resolved)
         runpy.run_path(str(resolved["benchmark_runner"]), run_name="__main__")
     finally:
@@ -321,6 +410,27 @@ def run_upstream(
         for link in reversed(created_annotation_links):
             if link.is_symlink():
                 link.unlink()
+        # D-side self-clean (mirrors the canary recipe): the upstream agent
+        # writes analysis byproducts (bazi_analysis_report.md,
+        # log_analysis_report.md, tasks.md) into the upstream checkout's
+        # anotation_path and may rewrite the tracked work.md. Restore the
+        # subtree to the pinned commit (checkout tracked + clean untracked)
+        # after every cell so the next cell's fairness preflight and the Judge
+        # phase pass. Only the anotation_path subtree is touched; all other
+        # tracked upstream content is untouched.
+        try:
+            subprocess.run(
+                ["git", "-C", str(Path(resolved["benchmark_root"])), "checkout", "--", "anotation_path"],
+                check=True,
+                capture_output=True,
+            )
+            subprocess.run(
+                ["git", "-C", str(Path(resolved["benchmark_root"])), "clean", "-fdq", "--", "anotation_path"],
+                check=True,
+                capture_output=True,
+            )
+        except Exception as exc:  # pragma: no cover - cleanup is best effort
+            print(f"WARNING: could not clean upstream byproducts: {exc}")
 
 
 def write_metadata(
@@ -329,11 +439,18 @@ def write_metadata(
     status: str,
     *,
     wall_clock_seconds: float | None = None,
+    usage_totals: UsageTotals | None = None,
 ) -> Path:
     output_dir = Path(resolved["output_dir"])
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / "run-metadata.json"
     payload = public_summary(resolved)
+    usage = usage_totals.snapshot() if usage_totals is not None else {
+        "total_prompt_tokens": None,
+        "total_completion_tokens": None,
+        "total_tokens": None,
+        "metered_responses": None,
+    }
     payload.update(
         {
             "strategy": resolved["strategy"],
@@ -359,8 +476,7 @@ def write_metadata(
             ),
             "recorded_at": datetime.now(timezone.utc).isoformat(),
             "mcp_status_at_start": mcp_status,
-            "total_prompt_tokens": None,
-            "total_completion_tokens": None,
+            **usage,
             "wall_clock_seconds": wall_clock_seconds,
             "secrets_recorded": False,
         }
@@ -444,15 +560,19 @@ def main() -> None:
                 raise ConfigError("fairness guard failed; see reports/fairness-check.json")
         mcp_status = check_mcp(resolved)
         started = time.monotonic()
-        metadata = write_metadata(resolved, mcp_status, "running")
+        usage_totals = UsageTotals()
+        metadata = write_metadata(
+            resolved, mcp_status, "running", usage_totals=usage_totals
+        )
         try:
-            run_upstream(resolved, api_key, base_url)
+            run_upstream(resolved, api_key, base_url, usage_totals=usage_totals)
         except BaseException:
             write_metadata(
                 resolved,
                 mcp_status,
                 "failed",
                 wall_clock_seconds=round(time.monotonic() - started, 3),
+                usage_totals=usage_totals,
             )
             raise
         write_metadata(
@@ -460,6 +580,7 @@ def main() -> None:
             mcp_status,
             "completed",
             wall_clock_seconds=round(time.monotonic() - started, 3),
+            usage_totals=usage_totals,
         )
         print(f"Run completed; metadata: {metadata}")
         print(
