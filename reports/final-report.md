@@ -10,14 +10,14 @@ Full Rewrite, and a Selective Patch method that changes only knowledge linked
 to detected tool changes. We run a fixed 30-task subset across Early, Middle,
 and Late environments, with three independent runs and five Judge scores per
 task. The final matrix contains 27 experiment cells, 810 trajectories, and
-4,050 successful Judge scores. Full Rewrite achieves the strongest overall
-result (mean TF 8.75, success 81.5%), while Selective Patch does not show a
-reliable improvement over No Update. Paired trajectories identify one
-candidate under-update failure in Selective Patch and a Full Rewrite efficiency
-regression that remains above the success threshold. Because the formal matrix
-contains no natural over-update failure, a separate controlled retention-task
-ablation demonstrates how an over-broad output-protocol rewrite can break task
-termination. The results show that selective adaptation can preserve
+4,050 successful Judge scores. Full Rewrite performed best under this specific
+protocol and fixed subset (mean TF 8.75, success 81.5%), while Selective Patch
+does not show a reliable improvement over No Update. Task 2 is a candidate
+under-update case, and paired trajectories also identify a Full Rewrite
+efficiency regression that remains above the success threshold. No natural
+over-update case was observed in the formal matrix. Task 235 is a controlled
+over-update ablation showing how an over-broad output-protocol rewrite can
+break task termination. The results show that selective adaptation can preserve
 unaffected behavior, but its benefit depends on complete change detection.
 
 ## 1. Problem and research question
@@ -120,7 +120,7 @@ strategy, rather than uncertainty across the three repeat means. Bootstrap
 intervals below resample individual paired task/run/version differences and
 do not account for repeated-task clustering; they are descriptive.
 
-Full Rewrite is the strongest strategy under the evaluated protocol.
+Full Rewrite performed best under this specific protocol and fixed subset.
 Selective Patch has nearly the same overall success rate as No Update and a
 slightly lower mean TF.
 
@@ -160,7 +160,7 @@ receives empty results. It fails in six of nine cells, similar to No Update.
 Full Rewrite sends individual keyword queries
 and scores TF 10.0 in all nine cells.
 
-This is a candidate under-update, not a confirmed changed-contract failure.
+Task 2 is a candidate under-update case, not a confirmed changed-contract failure.
 The exported `search_agents` description and input schema are identical in
 Early, Middle, and Late, and the original harness contains generic rules
 rather than an old keyword contract. The manifest marks whole servers as
@@ -191,8 +191,8 @@ rule as the cause.
 
 ### 6.3 Controlled over-update ablation: Task 235
 
-No natural retention failure in the 27-cell matrix satisfies the strict
-over-update definition. A supplementary controlled ablation therefore applies
+No natural over-update case was observed in the formal matrix. A supplementary
+controlled ablation therefore applies
 an intentionally over-broad rewrite to retention Task 235 in the Middle
 environment. This ablation is stored outside the three formal strategy result
 trees and is excluded from every aggregate and confidence interval.
@@ -206,8 +206,9 @@ protocol: final answers must be JSON-only and must not contain `[FINISH]`.
 The agent obeys that rewrite, never terminates normally, repeats the three-call
 chart sequence for 11 rounds (33 calls), exhausts the step budget
 (`exceeded=True`), and returns an
-empty answer. This paired trajectory is a confirmed over-update mechanism:
-unrelated rewritten knowledge breaks a previously successful retention task.
+empty answer. This is the controlled over-update ablation result: unrelated
+rewritten knowledge breaks a previously successful retention task under the
+deliberately modified harness.
 
 The tool-call-oriented Judge still assigns TF 10.0 because the individual
 chart calls succeed. The reported failure is therefore based on runner state,
@@ -245,12 +246,10 @@ the patch, while its attribution to a missed environment change remains
 unproven. Change coverage and semantic validation remain useful design
 priorities, rather than causes established by this experiment.
 
-Full Rewrite performs best in this matrix and directs the model to live
-schemas. However, Task 260 shows that broad guidance can coexist with a
-systematic efficiency regression even when the task remains successful. The
-Task 235 ablation separately demonstrates a causal over-update mechanism:
-rewriting an unrelated output protocol can break termination despite correct
-tool calls. Recovery and retention therefore require both current contracts
+Full Rewrite performed best under this specific protocol and fixed subset and
+directs the model to live schemas. However, Task 260 shows that broad guidance can coexist with a
+systematic efficiency regression even when the task remains successful. Task 235 is a controlled over-update ablation: rewriting an unrelated output
+protocol can break termination despite correct tool calls. Recovery and retention therefore require both current contracts
 and strict scope control over what the adaptation is allowed to rewrite.
 
 The most difficult changes are not necessarily syntactically large schema
@@ -281,8 +280,8 @@ validation or trajectory-based tests.
 
 ## 10. Conclusion
 
-Under the completed protocol, Full Rewrite provides the strongest recovery
-and cross-version stability. The current Selective Patch does not reliably
+Full Rewrite performed best under this specific protocol and fixed subset,
+providing the strongest observed recovery and cross-version stability. The current Selective Patch does not reliably
 improve over No Update; the mechanism behind its Task 2 deficit remains a
 candidate explanation. Full Rewrite also introduces a measurable retention efficiency
 regression on Task 260, while the controlled Task 235 ablation shows that an
