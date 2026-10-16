@@ -27,8 +27,8 @@ class EnglishOnlyRepositoryTest(unittest.TestCase):
             # comparison subset preserves A's cases with literal Unicode.
             if relative_path.parts[:2] == ("data", "subsets") and relative_path.name == "test_cases.json":
                 continue
-            if relative_path.suffix in (".zip", ".docx"):
-                continue  # Zip archives and compressed OOXML documents are binary containers.
+            if relative_path.suffix == ".zip":
+                continue
 
             path = ROOT / relative_path
             if not path.is_file():

@@ -10,13 +10,12 @@ import random
 import re
 import statistics
 import sys
-import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 from experiment_config import ConfigError, VERSIONS, load_env_file, load_experiment
-from run_benchmark import UsageTotals, load_harness, provider_model_id, resolve_run_output
+from run_benchmark import load_harness, provider_model_id, resolve_run_output
 
 
 def extract_json(text: str) -> dict[str, Any]:
@@ -96,7 +95,6 @@ def judge_case(
     seed: int,
 ) -> dict[str, Any]:
     rng = random.Random(seed)
-    usage_totals = UsageTotals()
     attempts: list[dict[str, Any]] = []
     scores: list[dict[str, Any]] = []
     max_attempts = num_runs * 3
@@ -116,7 +114,6 @@ def judge_case(
             temperature=temperature,
             max_tokens=max_tokens,
         )
-        usage_totals.record(response)
         raw = response.choices[0].message.content or ""
         try:
             parsed = extract_json(raw)
@@ -128,7 +125,6 @@ def judge_case(
         raise RuntimeError(f"judge returned no valid score after {max_attempts} attempts")
     return {
         "runs": attempts,
-        "usage": usage_totals.snapshot(),
         "aggregate": {
             "successful_runs": len(scores),
             "total_runs": len(attempts),
@@ -182,15 +178,11 @@ def main() -> None:
 
         from openai import OpenAI
 
-        client = OpenAI(api_key=key, base_url=base_url, timeout=120.0, max_retries=3)
+        client = OpenAI(api_key=key, base_url=base_url)
         prompt_builder = load_prompt_builder(Path(resolved["benchmark_root"]))
         task_dir = run_dir / "judge-tasks"
         task_dir.mkdir(parents=True, exist_ok=True)
         normalized: list[dict[str, Any]] = []
-        judge_prompt_tokens = 0
-        judge_completion_tokens = 0
-        judge_metered_responses = 0
-        judge_started = time.time()
         for source in trajectories:
             case = json.loads(source.read_text(encoding="utf-8"))
             idx = int(case["idx"])
@@ -214,10 +206,6 @@ def main() -> None:
                 encoding="utf-8",
             )
             aggregate = evaluated["aggregate"]
-            usage = evaluated["usage"]
-            judge_prompt_tokens += int(usage["total_prompt_tokens"])
-            judge_completion_tokens += int(usage["total_completion_tokens"])
-            judge_metered_responses += int(usage["metered_responses"])
             tf = aggregate["task_fulfillment_mean"]
             normalized.append(
                 {
@@ -228,14 +216,9 @@ def main() -> None:
                     "success": tf >= 6,
                     "failure_category": "" if tf >= 6 else "unknown",
                     "successful_judge_runs": aggregate["successful_runs"],
-                    "judge_prompt_tokens": usage["total_prompt_tokens"],
-                    "judge_completion_tokens": usage["total_completion_tokens"],
-                    "judge_total_tokens": usage["total_tokens"],
                     "source_file": str(source.relative_to(run_dir)),
                 }
             )
-
-        judge_elapsed = time.time() - judge_started
 
         generated_at = datetime.now(timezone.utc).isoformat()
         output = run_dir / "judge-results.json"
@@ -266,12 +249,6 @@ def main() -> None:
                     "judge": public["judge"],
                     "input_files": public["trajectory_files"],
                     "output_file": output.name,
-                    "num_runs_requested_per_task": max(1, args.num_runs),
-                    "judge_wall_clock_seconds": round(judge_elapsed, 3),
-                    "total_prompt_tokens": judge_prompt_tokens,
-                    "total_completion_tokens": judge_completion_tokens,
-                    "total_tokens": judge_prompt_tokens + judge_completion_tokens,
-                    "metered_responses": judge_metered_responses,
                     "secrets_recorded": False,
                 },
                 indent=2,

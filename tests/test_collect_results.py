@@ -83,27 +83,6 @@ class CollectResultsTest(unittest.TestCase):
             self.assertIsNone(details[0]["prompt_tokens"])
             self.assertIsNone(aggregates[0]["total_cost_tokens"])
 
-    def test_collects_judge_usage_separately(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            self.make_run(root, "selective_patch", 8, 6)
-            run = root / "selective_patch/late/run-01"
-            (run / "judge-metadata.json").write_text(
-                json.dumps(
-                    {
-                        "total_prompt_tokens": 40,
-                        "total_completion_tokens": 10,
-                    }
-                ),
-                encoding="utf-8",
-            )
-            details, aggregates = collect_results.collect(root, 6)
-            self.assertEqual(details[0]["judge_prompt_tokens"], 40)
-            self.assertEqual(details[0]["judge_completion_tokens"], 10)
-            self.assertEqual(details[0]["all_tokens"], 170)
-            self.assertEqual(aggregates[0]["total_judge_tokens"], 50)
-            self.assertEqual(aggregates[0]["total_all_tokens"], 170)
-
 
 if __name__ == "__main__":
     unittest.main()

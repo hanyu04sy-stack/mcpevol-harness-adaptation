@@ -36,9 +36,6 @@
         "failure_category": {"enum": ["", "under_update", "over_update", "other", "unknown"]},
         "prompt_tokens": {"$ref": "#/$defs/nullableNumber"},
         "completion_tokens": {"$ref": "#/$defs/nullableNumber"},
-        "judge_prompt_tokens": {"$ref": "#/$defs/nullableNumber"},
-        "judge_completion_tokens": {"$ref": "#/$defs/nullableNumber"},
-        "all_tokens": {"$ref": "#/$defs/nullableNumber"},
         "wall_clock_s": {"$ref": "#/$defs/nullableNumber"},
         "task_status": {"enum": ["affected", "retention", "unknown"]},
         "model": {"type": "string"},
@@ -59,8 +56,6 @@
         "recovery_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
         "retention_rate": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]},
         "total_cost_tokens": {"type": ["integer", "null"], "minimum": 0},
-        "total_judge_tokens": {"type": ["integer", "null"], "minimum": 0},
-        "total_all_tokens": {"type": ["integer", "null"], "minimum": 0},
         "n_runs": {"type": "integer", "minimum": 1},
         "n_tasks": {"type": "integer", "minimum": 1}
       }

@@ -27,9 +27,6 @@ CSV_FIELDS = (
     "failure_category",
     "prompt_tokens",
     "completion_tokens",
-    "judge_prompt_tokens",
-    "judge_completion_tokens",
-    "all_tokens",
     "wall_clock_s",
 )
 
@@ -87,7 +84,6 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
     statuses = manifest_statuses(project_root)
     details: list[dict[str, Any]] = []
     run_costs: dict[tuple[str, str, int], float | None] = {}
-    judge_costs: dict[tuple[str, str, int], float | None] = {}
 
     for run_dir in sorted(path for path in results_root.rglob("run-[0-9][0-9]") if path.is_dir()):
         metadata_path = run_dir / "run-metadata.json"
@@ -104,19 +100,10 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
             raise ValueError(f"{run_dir}: no judge task results")
         prompt_tokens = numeric(metadata.get("total_prompt_tokens"))
         completion_tokens = numeric(metadata.get("total_completion_tokens"))
-        judge_metadata_path = run_dir / "judge-metadata.json"
-        judge_metadata = read_json(judge_metadata_path) if judge_metadata_path.is_file() else {}
-        judge_prompt_tokens = numeric(judge_metadata.get("total_prompt_tokens"))
-        judge_completion_tokens = numeric(judge_metadata.get("total_completion_tokens"))
         wall_clock = numeric(metadata.get("wall_clock_seconds"))
         run_costs[(strategy, version, run_id)] = (
             prompt_tokens + completion_tokens
             if prompt_tokens is not None and completion_tokens is not None
-            else None
-        )
-        judge_costs[(strategy, version, run_id)] = (
-            judge_prompt_tokens + judge_completion_tokens
-            if judge_prompt_tokens is not None and judge_completion_tokens is not None
             else None
         )
         for task in rows:
@@ -144,24 +131,6 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
                     "failure_category": category,
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
-                    "judge_prompt_tokens": judge_prompt_tokens,
-                    "judge_completion_tokens": judge_completion_tokens,
-                    "all_tokens": (
-                        prompt_tokens
-                        + completion_tokens
-                        + judge_prompt_tokens
-                        + judge_completion_tokens
-                        if all(
-                            value is not None
-                            for value in (
-                                prompt_tokens,
-                                completion_tokens,
-                                judge_prompt_tokens,
-                                judge_completion_tokens,
-                            )
-                        )
-                        else None
-                    ),
                     "wall_clock_s": wall_clock,
                     "task_status": statuses.get(idx, "unknown"),
                     "model": metadata_name(metadata.get("model") or metadata.get("model_name")),
@@ -207,19 +176,6 @@ def collect(results_root: Path, success_threshold: float) -> tuple[list[dict[str
                 "total_cost_tokens": (
                     int(sum(run_costs[key] for key in keys))
                     if all(run_costs[key] is not None for key in keys)
-                    else None
-                ),
-                "total_judge_tokens": (
-                    int(sum(judge_costs[key] for key in keys))
-                    if all(judge_costs[key] is not None for key in keys)
-                    else None
-                ),
-                "total_all_tokens": (
-                    int(sum(run_costs[key] + judge_costs[key] for key in keys))
-                    if all(
-                        run_costs[key] is not None and judge_costs[key] is not None
-                        for key in keys
-                    )
                     else None
                 ),
                 "n_runs": len({row["run_id"] for row in rows}),
