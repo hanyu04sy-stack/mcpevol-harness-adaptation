@@ -1,5 +1,12 @@
 # Comparison task subset
 
+Historical record: this page documents the archived B/C 23-task comparison.
+The final D matrix uses 30 pilot tasks. The legacy configuration path below
+was subsequently repointed to `pilot-30`; the commands now preview the final
+30-task setup, not an exact reproduction of the historical 23-task run. The
+original C configuration is preserved in `reports/selective-patch/raw-results.zip`
+under `provenance/`. See `docs/D_EVALUATION.md` for the final protocol.
+
 This subset contains the exact `task_idx` intersection of the six No Update and Full Rewrite groups in `reports/baseline-run20-summary.json`. All six groups have the same 23 IDs. The task objects retain their original order and content from `data/subsets/pilot-30/test_cases.json`; the original 30-task files and configuration are unchanged.
 
 IDs: `2, 28, 34, 142, 144, 161, 218, 235, 246, 249, 260, 273, 281, 289, 291, 358, 385, 386, 389, 403, 434, 445, 448`.

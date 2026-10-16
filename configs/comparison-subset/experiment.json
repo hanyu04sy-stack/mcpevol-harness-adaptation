@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "experiment_name": "selective-patch-comparison",
+  "experiment_name": "d-evaluation-30",
   "benchmark": {
     "repository": "https://github.com/Octobrist/MCPEvol-Bench.git",
     "root": "external/MCPEvol-Bench",
@@ -9,13 +9,13 @@
   },
   "dataset": {
     "mode": "fixed_subset",
-    "path": "data/subsets/comparison-subset/test_cases.json",
-    "sha256": "cb76131b56d89a18b74df2662671b9e20c8121d0714a7f7814a9e13a85dc3d58",
-    "runnability_matrix": "reports/comparison-runnability-matrix.json",
-    "runnability_matrix_sha256": "e2e4ea87bd9b73c255cf672279fa2471f21c43430915c7e603dbfadde372fa1b",
+    "path": "data/subsets/pilot-30/test_cases.json",
+    "sha256": "9e7ab1d858ae8d8df2808e46d804d94baf13a3e94ca6c57755d246c3a30f4d92",
+    "runnability_matrix": "reports/pilot-30-runnability-matrix.json",
+    "runnability_matrix_sha256": "7fd33bc19910214d89d77d928caa567c5cf9519530235d8ecc180595a0ad1a25",
     "startup_stability_report": "reports/pilot-30-startup-stability.json",
     "startup_stability_report_sha256": "1b11b6d3b23eca8193772021a603e20ec2aa8a96b651d8fff1fe389cb2e937e7",
-    "size": 23,
+    "size": 30,
     "seed": 6203
   },
   "harness": {

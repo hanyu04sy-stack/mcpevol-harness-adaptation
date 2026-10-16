@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-15T18:24:46.706405+00:00",
+  "config": "configs/experiment.json",
+  "task_count": 30,
+  "task_ids": [
+    2,
+    28,
+    34,
+    37,
+    142,
+    144,
+    161,
+    162,
+    177,
+    218,
+    235,
+    246,
+    249,
+    251,
+    260,
+    273,
+    281,
+    289,
+    291,
+    327,
+    358,
+    384,
+    385,
+    386,
+    389,
+    403,
+    422,
+    434,
+    445,
+    448
+  ],
+  "judge_runs_per_task": 5,
+  "benchmark_run_count": 27,
+  "expected_trajectory_count": 810,
+  "expected_judge_score_count": 4050,
+  "full_rewrite_is_version_specific": true,
+  "warnings": [],
+  "runs": [
+    {
+      "strategy": "no_update",
+      "version": "early",
+      "run_id": 1,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "early",
+      "run_id": 2,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "early",
+      "run_id": 3,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "early",
+      "run_id": 1,
+      "harness_dir": "harness/full_rewrite/early"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "early",
+      "run_id": 2,
+      "harness_dir": "harness/full_rewrite/early"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "early",
+      "run_id": 3,
+      "harness_dir": "harness/full_rewrite/early"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "early",
+      "run_id": 1,
+      "harness_dir": "harness/selective_patch/early"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "early",
+      "run_id": 2,
+      "harness_dir": "harness/selective_patch/early"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "early",
+      "run_id": 3,
+      "harness_dir": "harness/selective_patch/early"
+    },
+    {
+      "strategy": "no_update",
+      "version": "middle",
+      "run_id": 1,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "middle",
+      "run_id": 2,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "middle",
+      "run_id": 3,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "middle",
+      "run_id": 1,
+      "harness_dir": "harness/full_rewrite/middle"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "middle",
+      "run_id": 2,
+      "harness_dir": "harness/full_rewrite/middle"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "middle",
+      "run_id": 3,
+      "harness_dir": "harness/full_rewrite/middle"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "middle",
+      "run_id": 1,
+      "harness_dir": "harness/selective_patch/middle"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "middle",
+      "run_id": 2,
+      "harness_dir": "harness/selective_patch/middle"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "middle",
+      "run_id": 3,
+      "harness_dir": "harness/selective_patch/middle"
+    },
+    {
+      "strategy": "no_update",
+      "version": "late",
+      "run_id": 1,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "late",
+      "run_id": 2,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "no_update",
+      "version": "late",
+      "run_id": 3,
+      "harness_dir": "harness/no_update"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "late",
+      "run_id": 1,
+      "harness_dir": "harness/full_rewrite/late"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "late",
+      "run_id": 2,
+      "harness_dir": "harness/full_rewrite/late"
+    },
+    {
+      "strategy": "full_rewrite",
+      "version": "late",
+      "run_id": 3,
+      "harness_dir": "harness/full_rewrite/late"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "late",
+      "run_id": 1,
+      "harness_dir": "harness/selective_patch/late"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "late",
+      "run_id": 2,
+      "harness_dir": "harness/selective_patch/late"
+    },
+    {
+      "strategy": "selective_patch",
+      "version": "late",
+      "run_id": 3,
+      "harness_dir": "harness/selective_patch/late"
+    }
+  ],
+  "secrets_recorded": false
+}
