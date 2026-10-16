@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "strategy": "over_broad_rewrite",
+  "ablation": true,
+  "formal_run_ready": false,
+  "benchmark_commit": "888c779a0fe735f612ca62bdd1fdd7c9e6bf8701",
+  "generated_at": "2026-10-16T00:00:00+00:00",
+  "source_files": [
+    {
+      "path": "harness/full_rewrite/middle/system_prompt.md"
+    },
+    {
+      "path": "harness/full_rewrite/middle/tool_usage_rules.md"
+    },
+    {
+      "path": "reports/tool-schemas/middle.json"
+    }
+  ],
+  "adaptation_method": {
+    "name": "over_broad_rewrite",
+    "description": "CONTROLLED ABLATION: full_rewrite harness + deliberately over-broad injections (renamed chart tool, renamed parameter, unrelated filesystem staging requirement) to simulate an over-update that damages an untouched retention task. Supplemental case only; excluded from the formal comparison statistics.",
+    "scope": "retention task 235 (middle environment), supplemental",
+    "changes_allowed": [],
+    "changes_disallowed": [
+      "benchmark commit",
+      "task set",
+      "task labels",
+      "model settings",
+      "judge settings",
+      "MCP endpoint mapping",
+      "upstream benchmark source"
+    ]
+  },
+  "target_version": "middle"
+}
