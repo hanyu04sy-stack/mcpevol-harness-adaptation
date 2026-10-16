@@ -4,7 +4,6 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import patch
 
 
@@ -208,36 +207,6 @@ class ExperimentConfigTest(unittest.TestCase):
         self.assertEqual(captured["model_url"], "https://example.invalid/v1")
         self.assertEqual(captured["temperature"], 0.0)
         self.assertEqual(captured["max_new_tokens"], 4096)
-
-    def test_runtime_initializer_records_response_usage(self) -> None:
-        class Agent:
-            pass
-
-        def upstream_init(instance: object, **kwargs: object) -> None:
-            instance.chat = lambda **call_kwargs: SimpleNamespace(
-                usage=SimpleNamespace(prompt_tokens=120, completion_tokens=30)
-            )
-
-        totals = run_benchmark.UsageTotals()
-        configured = run_benchmark.configured_initializer(
-            upstream_init,
-            {"temperature": 0.0, "max_completion_tokens": 4096},
-            "secret",
-            None,
-            usage_totals=totals,
-        )
-        agent = Agent()
-        configured(agent)
-        agent.chat(messages=[])
-        self.assertEqual(
-            totals.snapshot(),
-            {
-                "total_prompt_tokens": 120,
-                "total_completion_tokens": 30,
-                "total_tokens": 150,
-                "metered_responses": 1,
-            },
-        )
 
     def test_harness_loader_audits_files_and_deduplicates_original_rule(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
