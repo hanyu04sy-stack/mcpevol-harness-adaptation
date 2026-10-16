@@ -9,9 +9,9 @@ scores. All numbers below are from `reports/d/final-comparison.{csv,json}`
 
 ## One-paragraph headline
 
-Under a single unified protocol (same 30 tasks, same model and temperature,
-same runner, same Judge with 5 scores per task, 3 independent runs), **Full
-Rewrite is the strongest harness strategy**: mean TF 8.75 ± 2.41 and a 81.5%
+Under this specific protocol and fixed subset (same 30 tasks, same model and
+temperature, same runner, same Judge with 5 scores per task, 3 independent
+runs), **Full Rewrite performed best**: mean TF 8.75 ± 2.41 and an 81.5%
 success rate, ahead of No Update (8.25 ± 2.88, 75.2%) and Selective Patch
 (8.21 ± 2.84, 75.2%). On the 24 environment-affected tasks, Full Rewrite
 recovers 79.2% vs. 70.8–76.4% for the other two. Selective Patch shows **no
@@ -22,11 +22,11 @@ delta +0.10, 95% bootstrap CI −0.14…+0.35, contains 0), and it is
 retention tasks remain successful under all strategies, and 4 of 6 stay at
 full score throughout. Task 260 has a mild Full Rewrite dip to 8.67 but still
 passes; task 161 has a below-six mean under each strategy and remains in
-all aggregate statistics. One **candidate under-update**
-case is documented (Task 2: Selective Patch's patch list missed the affected
-`pantheon-mcp` / `search_agents` contract that Full Rewrite handled
-perfectly in all 9 cells). No natural **over-update** case exists in the
-matrix; a controlled ablation on a retention task showed that tool-contract
+all aggregate statistics. Task 2 is a **candidate under-update case**: Selective Patch's patch list
+missed the affected `pantheon-mcp` / `search_agents` contract that Full
+Rewrite handled perfectly in all 9 cells. No natural over-update case was
+observed in the formal matrix. Task 235 is a controlled over-update ablation;
+it showed that tool-contract
 over-rewriting was rejected in three exploratory attempts, while an
 output-protocol over-rewrite broke task termination (`exceeded=True`, 11
 rounds, empty answer) — reported as a supplementary case excluded from the
@@ -80,9 +80,9 @@ broad rewriting can still introduce a systematic efficiency regression.
   like Selective Patch (6 of 9). However, the exported contract is identical
   across versions and failures also occur in Early. These observations show a
   query-planning gap; a changed-contract cause remains unproven.
-- **Over-update — controlled ablation (supplementary case, not in the
-  formal statistics).** No natural retention failure satisfies the over-update
-  criteria (see `reports/d/failure-analysis.md`), so D ran a small controlled
+- **Controlled over-update ablation — Task 235 (supplementary case, not in the
+  formal statistics).** No natural over-update case was observed in the formal
+  matrix under the stated criteria (see `reports/d/failure-analysis.md`), so D ran a small controlled
   ablation on retention task 235 (middle, `harness/over_broad_rewrite/middle/`,
   `results/ablation-over-broad/`, trajectory reproduced in
   `reports/d/evidence/task235-over-update-ablation.json`). Tool-contract-level
