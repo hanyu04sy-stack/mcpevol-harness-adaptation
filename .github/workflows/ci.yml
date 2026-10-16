@@ -44,3 +44,13 @@ jobs:
 
       - name: Run complete A handoff gate
         run: python scripts/check_handoff.py
+
+      - name: Verify raw results archive checksum
+        working-directory: deliverables
+        run: shasum -a 256 -c SHA256SUMS
+
+      - name: Extract raw results archive
+        run: tar -xzf deliverables/mcpevol-D-raw-results-2026-10-16.tar.gz
+
+      - name: Audit extracted formal experiment matrix
+        run: python scripts/audit_experiment_results.py --output "${RUNNER_TEMP}/final-experiment-audit.json"
